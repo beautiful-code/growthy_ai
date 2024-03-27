@@ -19,12 +19,6 @@ The project is organized into key directories, each serving a distinct role in t
   - **Queries:** API queries and data fetching logic for this feature.
   - **Chains:** AI Prompts related to the feature.
 
-### 2. Domain-logic
-
-- **Purpose:** Houses business logic and domain-specific classes essential for the application's operations, not directly tied to the UI.
-- **Structure:**
-  - **Classes:** Object-oriented representations of domain entities and their behaviors, encapsulating business logic and rules.
-
 ### 3. Common
 
 - **Purpose:** Contains reusable components and hooks not tied to specific features but used across the application, avoiding duplication and fostering consistency.

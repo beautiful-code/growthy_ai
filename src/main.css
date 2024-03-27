@@ -1,0 +1,66 @@
+@tailwind base;
+
+h1 {
+  @apply text-2xl;
+}
+h2 {
+  @apply text-xl;
+}
+h3 {
+  @apply text-lg;
+}
+a {
+  @apply text-blue-600 underline;
+}
+
+@tailwind components;
+
+@tailwind utilities;
+
+/* Custom blockquote styling */
+blockquote {
+  @apply italic my-8 pl-4 border-l-4 border-gray-200;
+}
+
+blockquote::before {
+  content: open-quote;
+  @apply text-3xl text-gray-400;
+}
+
+blockquote::after {
+  content: close-quote;
+  @apply text-3xl text-gray-400;
+}
+
+/* Adjust li::before to only apply to ul */
+ul li::before {
+  content: "• "; /* Custom marker for unordered lists */
+  @apply mr-2; /* Add some right margin for spacing */
+}
+
+/* Custom styling for .custom-list */
+ul.custom-list li {
+  @apply text-blue-500;
+}
+
+ul.custom-list li::before {
+  content: '"→"'; /* Custom marker for custom unordered lists */
+  @apply text-red-500 mr-2; /* Styling for the custom marker */
+}
+
+/* Ordered List */
+ol {
+  counter-reset: item; /* Initializes the counter */
+}
+
+ol li {
+  list-style: none; /* Removes default numbering */
+  position: relative;
+  @apply pl-8; /* Provide space for custom numbers */
+}
+
+ol li::before {
+  content: counter(item) ". "; /* Custom numbering format */
+  counter-increment: item; /* Increments the counter */
+  @apply absolute left-0 text-gray-500; /* Styling for the custom numbering */
+}
