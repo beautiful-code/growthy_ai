@@ -1,30 +1,39 @@
-# React + TypeScript + Vite
+# Frontend Codebase Structure and Practices
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+- **Goal:** Establish a clear, consistent structure and set of practices for developing and maintaining the frontend codebase.
+- **Principle:** Each item (file, component, function) should have a single responsibility and purpose, enhancing the code's understandability, testability, and maintainability.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Folder Structure
 
-## Expanding the ESLint configuration
+The project is organized into key directories, each serving a distinct role in the application's architecture:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+### 1. Feature
 
-- Configure the top-level `parserOptions` property like this:
+- **Purpose:** Contains all elements specific to a feature of the application (e.g., user authentication, dashboard).
+- **Structure:**
+  - **Component:** UI components specific to this feature, focusing on a single visual element or function.
+  - **Hook:** Custom React hooks encapsulating reusable logic for the feature.
+  - **Models:** Definitions of data structures and types used by this feature.
+  - **Queries:** API queries and data fetching logic for this feature.
+  - **Chains:** AI Prompts related to the feature.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
+### 2. Domain-logic
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+- **Purpose:** Houses business logic and domain-specific classes essential for the application's operations, not directly tied to the UI.
+- **Structure:**
+  - **Classes:** Object-oriented representations of domain entities and their behaviors, encapsulating business logic and rules.
+
+### 3. Common
+
+- **Purpose:** Contains reusable components and hooks not tied to specific features but used across the application, avoiding duplication and fostering consistency.
+- **Structure:**
+  - **Components:** Generic UI components like buttons, modals, form elements, and layout components, designed for flexibility and customization through props.
+  - **Hooks:** Custom React hooks for logic applicable across the application, including managing global state, accessing context, or reusing logic like form validation or data fetching.
+
+# Commands
+
+- Running the project: `yarn dev`
+- Building the project: `yarn build`
+- Deploying the project: `firebase deploy`
