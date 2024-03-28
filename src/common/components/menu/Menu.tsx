@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { Flex, Grid, GridItem } from "@chakra-ui/react";
-import { UserAvatar, NavMenu } from "components";
+import { UserAvatar } from "common/components/menu/UserAvatar";
+import { NavMenu } from "common/components/menu/NavMenu";
 import { useNavigate } from "react-router-dom";
 
 type MenuProps = {
@@ -21,7 +22,7 @@ export const Menu: React.FC<MenuProps> = ({ title }) => {
         </Flex>
       </GridItem>
       <GridItem colSpan={1}>
-        <Flex mr={"20%"} justify={"flex-end"} align="center">
+        <Flex mr={"20px"} justify={"flex-end"} align="center">
           <div onClick={handleNavigateHome}>
             <UserAvatar />
           </div>
