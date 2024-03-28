@@ -4,9 +4,9 @@ import { ChakraProvider } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import { AuthProvider } from "login/AuthContext";
+import { AuthProvider } from "login/context/AuthContext";
 import { Home } from "home/HomeView";
-import { Login } from "login/Login";
+import { LoginView } from "login/LoginView";
 import { useExperienceSettingsState } from "store";
 
 import "App.css";
@@ -19,7 +19,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: <LoginView />,
   },
 ]);
 

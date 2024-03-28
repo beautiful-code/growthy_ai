@@ -8,6 +8,8 @@ import React, {
 import { Session, AuthChangeEvent } from "@supabase/supabase-js";
 import { supabaseClient } from "supabaseClient";
 
+import { createUserIfNotExists } from "login/queries";
+
 // Define the shape of the context state
 interface AuthContextType {
   session: Session | null;
@@ -45,6 +47,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       async (_event: AuthChangeEvent, session: Session | null) => {
         setSession(session);
+
+        if (session) {
+          const { user } = session;
+          createUserIfNotExists({
+            id: user.id,
+            username: user.user_metadata.full_name,
+            email: user.email || "",
+            avatar_url: user.user_metadata.avatar_url,
+          });
+        }
       }
     );
 

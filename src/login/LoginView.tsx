@@ -5,7 +5,7 @@ import { supabaseClient } from "supabaseClient";
 
 type Props = {};
 
-export const Login: React.FC<Props> = () => {
+export const LoginView: React.FC<Props> = () => {
   async function signInWithGoogle() {
     const { data, error } = await supabaseClient.auth.signInWithOAuth({
       provider: "google",
@@ -15,6 +15,7 @@ export const Login: React.FC<Props> = () => {
       console.error("Error signing in with Google:", error.message);
       return null;
     }
+
     return { data };
   }
 
