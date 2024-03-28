@@ -18,6 +18,37 @@ The project is organized into key directories, each serving a distinct role in t
   - **Models:** Definitions of data structures and types used by this feature.
   - **Queries:** API queries and data fetching logic for this feature.
   - **Chains:** AI Prompts related to the feature.
+ 
+- Example features
+- Guilds
+- Growth Exercise
+
+Approach 2
+- Pages (Pure FE)
+- Domain-Logic (Pure Buiz logic )
+
+Example - Home Page
+- Components
+  - Home.tsx
+  - ExercisesList.tsx
+  - Exercise.tsx
+- queries.ts
+- Home.css
+- utils.ts
+
+- Common
+  - Components
+    - Sidebar.tsx
+
+- Domain-Logic
+  - Exercise.ts
+    - Name
+    - Author
+  - 
+
+### 2 Principles
+- React Component is only for view, all non-view logic should be moved to a diff place and imported.
+- 
 
 ### 3. Common
 
@@ -25,6 +56,7 @@ The project is organized into key directories, each serving a distinct role in t
 - **Structure:**
   - **Components:** Generic UI components like buttons, modals, form elements, and layout components, designed for flexibility and customization through props.
   - **Hooks:** Custom React hooks for logic applicable across the application, including managing global state, accessing context, or reusing logic like form validation or data fetching.
+
 
 # Commands
 
