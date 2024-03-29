@@ -7,7 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "login/context/AuthContext";
 import { Home } from "home/HomeView";
 import { GuildShowView } from "guilds/GuildShowView";
-// import { CreateGrowthExerciseView } from "growth-exercise/CreateGrowthExerciseView";
+import { CreateGrowthExerciseView } from "growth-exercise/CreateGrowthExerciseView";
 import { LoginView } from "login/LoginView";
 import { useExperienceSettingsState } from "store";
 
@@ -27,10 +27,10 @@ const router = createBrowserRouter([
     path: "/guild/:id",
     element: <GuildShowView />,
   },
-  // {
-  //   path: "/guild/:id/create-growth-exercise/:type",
-  //   element: <CreateGrowthExerciseView />,
-  // },
+  {
+    path: "/guild/:id/create-growth-exercise/:type",
+    element: <CreateGrowthExerciseView />,
+  },
 ]);
 
 function App() {
