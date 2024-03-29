@@ -44,3 +44,14 @@ export const deleteNode = async (
 
   return { data, error };
 };
+
+export const deleteNodes = async (
+  nodeIds: string[]
+): Promise<{ data: TNode[] | null; error: PostgrestError | null }> => {
+  const { data, error } = await supabaseClient
+    .from("nodes")
+    .delete()
+    .in("id", nodeIds);
+
+  return { data, error };
+};

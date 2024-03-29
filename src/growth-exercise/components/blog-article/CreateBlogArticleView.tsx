@@ -1,8 +1,5 @@
-import React, {
-  useState,
-  // useEffect
-} from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import ResizeTextarea from "react-textarea-autosize";
 import {
@@ -32,14 +29,13 @@ import { saveGrowthExercise } from "growth-exercise/queries";
 type Props = {};
 
 export const CreateBlogArticleView: React.FC<Props> = () => {
-  const { specialisationId } = useParams();
   const navigate = useNavigate();
 
   const [isGettingIdeas, setIsGettingIdeas] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [blogTitle, setBlogTitle] = useState("");
   const [blogPoints, setBlogPoints] = useState<string[]>([]);
-  const [blogNodes, setBlogNodes] = useState<Node[]>([]);
+  const [allNodes, setAllNodes] = useState<Node[]>([]);
   const [generatedBlogTitle, setGeneratedBlogTitle] = useState("");
 
   const handleGetIdeas = () => {
@@ -60,7 +56,7 @@ export const CreateBlogArticleView: React.FC<Props> = () => {
     const uiTree = new UITree([], "");
     uiTree.createNodesFromSections(blogArticle.sections);
     const nodes = uiTree.nodes || [];
-    setBlogNodes(nodes);
+    setAllNodes(nodes);
 
     setGeneratedBlogTitle(blogArticle.title);
 
@@ -83,24 +79,14 @@ export const CreateBlogArticleView: React.FC<Props> = () => {
       if (!growthExerciseId) {
         return;
       }
-      const outlineNodesWithGrowthExerciseId = blogNodes
+      const outlineNodesWithGrowthExerciseId = allNodes
         ?.map((node: Node) => {
           node.growth_exercise_id = growthExerciseId;
           return node;
         })
-        .map(
-          (node: Node): TNode => ({
-            id: node.id || "",
-            text: node.text,
-            rel_order: node.rel_order,
-            is_task: node.is_task ? 1 : 0,
-            is_checked: node.is_checked ? 1 : 0,
-            growth_exercise_id: node.growth_exercise_id || "",
-            parent_id: node.parent_id || "",
-          })
-        );
+        .map((node: Node): TNode => node.toTNode());
       saveNodes(outlineNodesWithGrowthExerciseId)?.then(() => {
-        navigate(`/${growthExerciseId}/notes-with-publish`);
+        navigate(`/${growthExerciseId}/execute`);
       });
     });
   };
@@ -170,18 +156,17 @@ export const CreateBlogArticleView: React.FC<Props> = () => {
             {isLoading && <Spinner ml={4} />}
           </Flex>
           <Box mt="16px">
-            {blogNodes?.length > 0 && (
+            {allNodes?.length > 0 && (
               <Box>
                 <OutlineWrapper
-                  specialisationId={specialisationId || ""}
-                  idea={{
+                  suggestedGrowthExercise={{
                     id: "",
                     title: generatedBlogTitle,
                     summary: "",
-                    outline: blogNodes,
+                    outline: allNodes,
                   }}
-                  bulletNodes={blogNodes}
-                  setBulletNodes={setBlogNodes}
+                  allNodes={allNodes}
+                  setAllNodes={setAllNodes}
                 />
                 <Box mt="16px" mb="8px">
                   <Button colorScheme="green" onClick={handleAddBlogArticle}>
@@ -196,7 +181,6 @@ export const CreateBlogArticleView: React.FC<Props> = () => {
       <GridItem colSpan={1}>
         {isGettingIdeas && (
           <GetIdeasAssistence
-            specialisation=""
             blogTitle={blogTitle}
             blogPoints={blogPoints}
             isAdditionalPrompt={blogPoints.length > 0}

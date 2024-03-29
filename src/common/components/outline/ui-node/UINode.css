@@ -1,0 +1,21 @@
+.actions {
+  display: none;
+}
+
+.bullet-point {
+  margin-left: 8px !important;
+}
+
+.bullet-point-accordion-btn:hover .actions {
+  display: flex;
+}
+
+.hidden-actions-span {
+  display: block;
+  height: 24px;
+  width: 24px;
+}
+
+.bullet-point-accordion-btn:hover .hidden-actions-span {
+  display: none;
+}

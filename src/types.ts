@@ -21,7 +21,7 @@ export type Section = {
   tasks: Task[];
 };
 
-export type TSuggestedIdea = {
+export type TSuggestedGrowthExercise = {
   id: string;
   summary: string;
   title: string;
@@ -55,8 +55,8 @@ export type TNode = {
   id: string;
   text: string;
   rel_order: number;
-  is_task: number;
-  is_checked: number;
+  is_task: boolean;
+  is_checked: boolean;
   growth_exercise_id: string;
   parent_id: string;
   created_at?: string;

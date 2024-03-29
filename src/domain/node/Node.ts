@@ -1,3 +1,5 @@
+import { TNode } from "types";
+
 /**
  * Node class
  * This class represents a single bullet point in the tree.
@@ -11,10 +13,6 @@ export class Node {
   is_task: boolean;
   is_checked: boolean;
   growth_exercise_id: string;
-  locked: boolean;
-
-  content: string;
-  notes: string;
 
   constructor({
     id,
@@ -24,9 +22,6 @@ export class Node {
     is_task = false,
     is_checked = false,
     growth_exercise_id = "",
-    locked = false,
-    content = "",
-    notes = "",
   }: {
     id: string | null;
     text: string;
@@ -35,9 +30,6 @@ export class Node {
     is_task: boolean;
     is_checked: boolean;
     growth_exercise_id: string;
-    locked: boolean;
-    content: string;
-    notes: string;
   }) {
     this.id = id;
     this.text = text;
@@ -46,9 +38,6 @@ export class Node {
     this.is_task = is_task;
     this.is_checked = is_checked;
     this.growth_exercise_id = growth_exercise_id;
-    this.notes = notes;
-    this.content = content;
-    this.locked = locked;
   }
 
   /**
@@ -110,9 +99,6 @@ export class Node {
       is_task,
       is_checked,
       growth_exercise_id,
-      locked: false,
-      content: "",
-      notes: "",
     });
     return newNode;
   }
@@ -184,5 +170,20 @@ export class Node {
     }
 
     return ancestors;
+  }
+
+  /**
+   * Returns the TNode object representation of the current node
+   */
+  toTNode(): TNode {
+    return {
+      id: this.id || "",
+      text: this.text,
+      parent_id: this.parent_id || "",
+      rel_order: this.rel_order,
+      is_task: this.is_task,
+      is_checked: this.is_checked,
+      growth_exercise_id: this.growth_exercise_id,
+    };
   }
 }

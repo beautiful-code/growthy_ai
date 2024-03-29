@@ -1,0 +1,29 @@
+.action-item-checkbox .chakra-checkbox__control {
+  background-color: #f5f5f5;
+  border: 1px solid black;
+  border-radius: 4px;
+}
+
+.bullet-action-hidden {
+  display: block;
+  height: 16px;
+  width: 16px;
+}
+
+.bullet-point:hover .bullet-action-hidden {
+  display: none;
+}
+
+.bullet-actions {
+  display: none;
+}
+
+.bullet-point:hover .bullet-actions {
+  display: flex;
+}
+
+.selected-editing-bullet {
+  background-color: #f0faf0;
+  border: 1px solid #79b979;
+  border-radius: 4px;
+}

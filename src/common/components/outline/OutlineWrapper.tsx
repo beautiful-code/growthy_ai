@@ -1,64 +1,55 @@
-import React, {
-  // useState,
-  useEffect,
-} from "react";
+import React, { useState, useEffect } from "react";
 import { Box } from "@chakra-ui/react";
-// import { BulletListV2 } from "bullet-list/list-view/BulletListV2";
+import { UITreeView } from "common/components/outline/ui-tree-view/UITreeView";
 
 import { Node } from "domain/node/Node";
-// import { NodeForRender } from "domain/node-for-render/NodeForRender";
-// import { saveBulletListItems } from "bullet-list/bulletListQueries";
-import { TSuggestedIdea } from "types";
+import { NodeForRender } from "domain/node-for-render/NodeForRender";
+import { TSuggestedGrowthExercise } from "types";
 
 type Props = {
-  specialisationId: string;
-  idea: TSuggestedIdea | null;
-  bulletNodes: Node[];
-  setBulletNodes: React.Dispatch<React.SetStateAction<Node[]>>;
+  suggestedGrowthExercise: TSuggestedGrowthExercise | null;
+  allNodes: Node[];
+  setAllNodes: React.Dispatch<React.SetStateAction<Node[]>>;
 };
 
 export const OutlineWrapper: React.FC<Props> = ({
-  //   specialisationId,
-  idea,
-  //   bulletNodes,
-  //   setBulletNodes,
+  suggestedGrowthExercise,
+  allNodes,
+  setAllNodes,
 }) => {
-  //   const [editingBullet, setEditingBullet] = useState<NodeForRender | null>(
-  //     null
-  //   );
+  const [editingNode, setEditingNode] = useState<NodeForRender | null>(null);
 
   useEffect(() => {
-    const outlineLength = idea?.outline?.length || 0;
+    const outlineLength = suggestedGrowthExercise?.outline?.length || 0;
     if (!outlineLength && outlineLength === 0) {
       return;
     }
 
-    // setBulletNodes(idea?.outline || []);
-    // saveBulletListItems(outlineNodes);
+    setAllNodes(suggestedGrowthExercise?.outline || []);
   }, []);
 
   return (
     <Box>
-      {/* <BulletListV2
+      <UITreeView
         shouldLoadInitialBullets={false}
-        areActionItemsClickable={false}
+        areTasksClickable={false}
         shouldSelectFirstNode={false}
-        idea={{
-          ...idea,
-          id: idea?.id || "",
-          title: idea?.title || "",
-          about: idea?.summary || "",
-          benefits_for_readers: idea?.benefits || "",
-          benefits_for_you: idea?.benefits || "",
-          specialisation_id: specialisationId,
-          type: "growth-exercise",
+        growthExercise={{
+          ...suggestedGrowthExercise,
+          id: suggestedGrowthExercise?.id || "",
+          title: suggestedGrowthExercise?.title || "",
+          inputs: {},
+          state: "created",
+          user_id: "",
+          guild_id: "",
+          type: "blog-article",
         }}
         loading={false}
-        editingBullet={editingBullet}
-        bulletNodes={bulletNodes}
-        setBulletNodes={setBulletNodes}
-        setEditingBullet={setEditingBullet}
-      /> */}
+        editingNode={editingNode}
+        setEditingNode={setEditingNode}
+        allNodes={allNodes}
+        setAllNodes={setAllNodes}
+      />
     </Box>
   );
 };

@@ -24,9 +24,6 @@ describe("BlogArticle", () => {
           is_task: false,
           is_checked: false,
           growth_exercise_id: "",
-          locked: false,
-          content: "",
-          notes: "",
         }),
         new Node({
           id: "2",
@@ -36,9 +33,6 @@ describe("BlogArticle", () => {
           is_task: true,
           is_checked: false,
           growth_exercise_id: "",
-          locked: false,
-          content: "",
-          notes: "",
         }),
       ];
 

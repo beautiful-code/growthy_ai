@@ -28,16 +28,14 @@ const getConversationalRetrievalChain = (prompt: string) =>
     parser,
   ]);
 
-export const getFormattedPrompt = async ({
-  specialization,
-  blog_article_goal,
-  blog_article_points,
-  context,
-  conversation,
+export const getGuidance = async ({
+  blog_article_goal = "",
+  blog_article_points = [],
+  context = "",
   isAdditionalPrompt = false,
   isInitialPrompt = false,
+  conversation = [],
 }: {
-  specialization: string;
   blog_article_goal: string;
   blog_article_points: string[];
   context: string;
@@ -45,52 +43,6 @@ export const getFormattedPrompt = async ({
   isInitialPrompt: boolean;
   conversation: { type: string; text: string }[];
 }) => {
-  const config = getGrowthyConfig();
-
-  const suggestedPointsPrompt =
-    config?.blog_article?.suggest_points_for_goal?.prompt;
-  const suggestedPointsConvoPrompt = `Given this context and histroy, please respond to the user {context}`;
-  const suggestAdditionalPointsPrompt =
-    config?.blog_article?.suggest_additional_points_for_goal?.prompt;
-  const suggestAdditionalPointsConvoPrompt = `Given this context and histroy, please respond to the user {context}`;
-
-  const conversationPrompt = getAnswerGenerationChainPrompt(
-    isInitialPrompt
-      ? isAdditionalPrompt
-        ? suggestAdditionalPointsPrompt
-        : suggestedPointsPrompt
-      : isAdditionalPrompt
-      ? suggestAdditionalPointsConvoPrompt
-      : suggestedPointsConvoPrompt
-  );
-
-  const prompt = await conversationPrompt.format({
-    specialization,
-    blog_article_goal,
-    currentPoints: JSON.stringify(blog_article_points),
-    context,
-    format_instructions: parser.getFormatInstructions(),
-    history: conversation.map((message) => {
-      if (message.type === "user") {
-        return new HumanMessage(message.text);
-      } else {
-        return new AIMessage(message.text);
-      }
-    }),
-  });
-
-  return prompt;
-};
-
-export const getGuidance = async (
-  specialization = "",
-  blog_article_goal = "",
-  blog_article_points: string[] = [],
-  context = "",
-  isAdditionalPrompt = false,
-  isInitialPrompt = false,
-  conversation: { type: string; text: string }[] = []
-) => {
   const config = getGrowthyConfig();
   const suggestedPointsPrompt =
     config?.blog_article?.suggest_points_for_goal?.prompt;
@@ -109,7 +61,7 @@ export const getGuidance = async (
       : suggestedPointsConvoPrompt
   );
   const response = await conversationPrompt.stream({
-    specialization,
+    specialization: "",
     blog_article_goal,
     current_points: JSON.stringify(blog_article_points),
     context,

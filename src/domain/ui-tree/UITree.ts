@@ -577,12 +577,8 @@ export class UITree {
           parent_id: node.parent_id,
           rel_order: node.rel_order,
           is_task: node.is_task,
-          locked: node.locked,
           is_checked: node.is_checked,
           growth_exercise_id: node.growth_exercise_id,
-          content: node.content,
-          notes: node.notes,
-          children: [],
         });
       }
     });
@@ -624,9 +620,6 @@ export class UITree {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       });
       this.nodes.push(sectionNode);
 
@@ -641,9 +634,6 @@ export class UITree {
           is_task: task.is_task,
           is_checked: false,
           growth_exercise_id: "",
-          locked: false,
-          content: task.content || "",
-          notes: task.notes || "",
         });
         this.nodes.push(taskNode);
       });

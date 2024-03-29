@@ -1,3 +1,6 @@
+import { TNode } from "types";
+import { Node } from "domain/node/Node";
+
 export class NodeForRender {
   id: string | null;
   parent_id: string | null;
@@ -8,9 +11,6 @@ export class NodeForRender {
   public pos_index: number = -1;
   growth_exercise_id: string;
   children: NodeForRender[];
-  content: string | null;
-  locked: boolean;
-  notes: string;
 
   constructor({
     id,
@@ -20,9 +20,6 @@ export class NodeForRender {
     is_task = false,
     is_checked = false,
     growth_exercise_id = "",
-    locked = false,
-    content = "",
-    notes = "",
     children = [],
   }: {
     id: string | null;
@@ -32,9 +29,6 @@ export class NodeForRender {
     is_task: boolean;
     is_checked: boolean;
     growth_exercise_id: string;
-    locked: boolean;
-    content: string;
-    notes: string;
     children: NodeForRender[];
   }) {
     this.id = id;
@@ -45,9 +39,6 @@ export class NodeForRender {
     this.is_checked = is_checked;
     this.children = children;
     this.growth_exercise_id = growth_exercise_id;
-    this.content = content;
-    this.notes = notes;
-    this.locked = locked;
   }
 
   /**
@@ -67,5 +58,35 @@ export class NodeForRender {
     });
 
     return accumulator;
+  }
+
+  /**
+   * Returns the TNode representation of this NodeForRender instance.
+   */
+  toTNode(): TNode {
+    return {
+      id: this.id || "",
+      text: this.text,
+      parent_id: this.parent_id || "",
+      rel_order: this.rel_order,
+      is_task: this.is_task,
+      is_checked: this.is_checked,
+      growth_exercise_id: this.growth_exercise_id,
+    };
+  }
+
+  /**
+   * Returns a Node object representation of this NodeForRender instance.
+   */
+  toNode(): Node {
+    return new Node({
+      id: this.id,
+      text: this.text,
+      parent_id: this.parent_id,
+      rel_order: this.rel_order,
+      is_task: this.is_task,
+      is_checked: this.is_checked,
+      growth_exercise_id: this.growth_exercise_id,
+    });
   }
 }

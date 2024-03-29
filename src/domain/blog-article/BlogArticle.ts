@@ -27,9 +27,6 @@ export class BlogArticle {
             text: childNode.text,
             is_task: childNode.is_task,
             indentation_level: 1,
-            notes: childNode.notes,
-            locked: childNode.locked,
-            content: childNode.content,
           }));
         return { name: sectionName, tasks };
       });

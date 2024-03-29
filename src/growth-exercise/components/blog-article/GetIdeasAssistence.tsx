@@ -37,7 +37,6 @@ type TConvo = {
 };
 
 type Props = {
-  specialisation: string;
   blogTitle: string;
   blogPoints: string[];
   isAdditionalPrompt: boolean;
@@ -45,7 +44,6 @@ type Props = {
 };
 
 export const GetIdeasAssistence: React.FC<Props> = ({
-  specialisation,
   blogTitle,
   blogPoints,
   isAdditionalPrompt,
@@ -55,12 +53,13 @@ export const GetIdeasAssistence: React.FC<Props> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const resultRef = useRef("");
   const [result, setResult] = useState("");
+
   const [newContent, setNewContent] = useState("");
   const [conversation, setConversation] = useState<TConvo[]>([]);
 
   useEffect(() => {
     inputRef.current?.focus();
-
+    console.log(1);
     handleRespond("", true);
   }, []);
 
@@ -77,15 +76,14 @@ export const GetIdeasAssistence: React.FC<Props> = ({
 
     setConversation(updatedConversation);
 
-    const stream = await getGuidance(
-      specialisation,
-      blogTitle,
-      blogPoints,
-      content,
+    const stream = await getGuidance({
+      blog_article_goal: blogTitle,
+      blog_article_points: blogPoints,
+      context: content,
       isAdditionalPrompt,
       isInitialPrompt,
-      updatedConversation
-    );
+      conversation: updatedConversation,
+    });
     setNewContent("");
     let chatbotResponse = "";
     for await (const chunk of stream) {
@@ -102,10 +100,8 @@ export const GetIdeasAssistence: React.FC<Props> = ({
       },
     ]);
 
-    setTimeout(() => {
-      resultRef.current = "";
-      setResult("");
-    }, 100);
+    resultRef.current = "";
+    setResult("");
   };
 
   const handleKeyDown = async (
@@ -131,19 +127,7 @@ export const GetIdeasAssistence: React.FC<Props> = ({
           <MdClose onClick={onClose} />
         </Box>
       </Flex>
-      {/* Scrollable content container */}
-      <Box
-        overflowY="auto"
-        overflowX="hidden"
-        flex="1" // Allows this box to expand and fill the space, making sure the input stays at the bottom
-      >
-        {/* Conditional rendering for the highlightedBullet */}
-        {/* {!highlightedBullet && (
-          <Box>
-            <Text>Select a step to get suggestions</Text>
-          </Box>
-        )} */}
-        {/* Messages container */}
+      <Box overflowY="auto" overflowX="hidden" flex="1">
         <Box ml="20px">
           <Box>
             {conversation.map((item) => {
@@ -161,7 +145,6 @@ export const GetIdeasAssistence: React.FC<Props> = ({
         </Box>
       </Box>
 
-      {/* Fixed input at the bottom */}
       <Box mt="8px">
         <MessageHeader item={{ type: "user", text: "I am thinking..." }} />
         <Textarea

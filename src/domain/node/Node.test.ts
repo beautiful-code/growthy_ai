@@ -13,9 +13,6 @@ describe("Node class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       }),
       new Node({
         id: "node1",
@@ -25,9 +22,6 @@ describe("Node class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       }),
       new Node({
         id: "node2",
@@ -37,9 +31,6 @@ describe("Node class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       }),
       new Node({
         id: "node3",
@@ -49,9 +40,6 @@ describe("Node class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       }),
       new Node({
         id: "node4",
@@ -61,9 +49,6 @@ describe("Node class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       }),
 
       // Add more nodes as necessary for testing

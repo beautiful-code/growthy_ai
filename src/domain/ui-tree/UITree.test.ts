@@ -25,9 +25,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     new Node({
       id: "node1",
@@ -37,9 +34,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     new Node({
       id: "node3",
@@ -49,9 +43,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     new Node({
       id: "node4",
@@ -61,9 +52,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     new Node({
       id: "node5",
@@ -73,9 +61,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     new Node({
       id: "node2",
@@ -85,9 +70,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     new Node({
       id: "node6",
@@ -97,9 +79,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     new Node({
       id: "node8",
@@ -109,9 +88,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     new Node({
       id: "node9",
@@ -121,9 +97,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     new Node({
       id: "node10",
@@ -133,9 +106,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     new Node({
       id: "node7",
@@ -145,9 +115,6 @@ function createTestTree(): UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
     }),
     // Add more nodes as necessary for testing
   ];
@@ -342,9 +309,6 @@ describe("UITree class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       });
       const newChild1 = new Node({
         id: "node12",
@@ -354,9 +318,6 @@ describe("UITree class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       });
       const newChild2 = new Node({
         id: "node13",
@@ -366,9 +327,6 @@ describe("UITree class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       });
       const newChild3 = new Node({
         id: "node16",
@@ -379,9 +337,6 @@ describe("UITree class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       });
       const newSubChild1 = new Node({
         id: "node14",
@@ -391,9 +346,6 @@ describe("UITree class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       });
       const newSubChild2 = new Node({
         id: "node15",
@@ -403,9 +355,6 @@ describe("UITree class tests", () => {
         is_task: false,
         is_checked: false,
         growth_exercise_id: "",
-        locked: false,
-        content: "",
-        notes: "",
       });
 
       const updatedNodes = [
@@ -502,9 +451,6 @@ describe("UITree class tests", () => {
           is_task: false,
           is_checked: false,
           growth_exercise_id: "",
-          locked: false,
-          content: "",
-          notes: "",
         }),
         new Node({
           id: "task1",
@@ -514,9 +460,6 @@ describe("UITree class tests", () => {
           is_task: true,
           is_checked: false,
           growth_exercise_id: "",
-          locked: false,
-          content: "",
-          notes: "",
         }), // Action item under Section 1
         new Node({
           id: "section2",
@@ -526,9 +469,6 @@ describe("UITree class tests", () => {
           is_task: false,
           is_checked: false,
           growth_exercise_id: "",
-          locked: false,
-          content: "",
-          notes: "",
         }),
         new Node({
           id: "task2",
@@ -538,9 +478,6 @@ describe("UITree class tests", () => {
           is_task: false,
           is_checked: false,
           growth_exercise_id: "",
-          locked: false,
-          content: "",
-          notes: "",
         }), // Task under Section 2
       ];
       const tree = new UITree(nodes);

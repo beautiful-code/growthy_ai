@@ -39,6 +39,24 @@ function App() {
   const isSmallFont = experienceSettings.userFontSize === "small";
 
   const extendedTheme = extendTheme({
+    styles: {
+      global: {
+        "html, body, #root": {
+          height: "100%",
+        },
+      },
+    },
+    components: {
+      Button: {
+        baseStyle: {
+          border: "2px solid",
+          borderColor: "transparent",
+          _hover: {
+            borderColor: "transparent",
+          },
+        },
+      },
+    },
     colors: {
       primary: {
         50: "#0B870B",
