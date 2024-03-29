@@ -58,7 +58,7 @@ export type TNode = {
   is_task: boolean;
   is_checked: boolean;
   growth_exercise_id: string;
-  parent_id: string;
+  parent_id: string | null;
   created_at?: string;
   updated_at?: string;
 };

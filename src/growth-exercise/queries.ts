@@ -8,7 +8,7 @@ export const saveGrowthExercise = async (
   growthExercise: TGrowthExercise
 ): Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }> => {
   const userId = await getCurrentUserId();
-  const { data, error } = await supabaseClient.from("ideas").upsert({
+  const { data, error } = await supabaseClient.from("growth_exercise").upsert({
     ...growthExercise,
     user_id: userId,
   });
@@ -34,7 +34,7 @@ export const getGrowthExerciseById = async (
   id: string
 ): Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }> => {
   const { data, error } = await supabaseClient
-    .from("ideas")
+    .from("growth_exercise")
     .select("*")
     .eq("id", id);
 
@@ -45,7 +45,7 @@ export const getGrowthExerciseByGuildId = async (
   guildId: string
 ): Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }> => {
   const { data, error } = await supabaseClient
-    .from("ideas")
+    .from("growth_exercise")
     .select("*")
     .eq("guild_id", guildId);
 
@@ -56,7 +56,7 @@ export const deleteGrowthExercise = async (
   id: string
 ): Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }> => {
   const { data, error } = await supabaseClient
-    .from("ideas")
+    .from("growth_exercise")
     .delete()
     .eq("id", id);
 

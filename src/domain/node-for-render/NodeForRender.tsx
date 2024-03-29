@@ -67,7 +67,7 @@ export class NodeForRender {
     return {
       id: this.id || "",
       text: this.text,
-      parent_id: this.parent_id || "",
+      parent_id: this.parent_id,
       rel_order: this.rel_order,
       is_task: this.is_task,
       is_checked: this.is_checked,

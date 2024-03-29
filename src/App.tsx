@@ -8,6 +8,7 @@ import { AuthProvider } from "login/context/AuthContext";
 import { Home } from "home/HomeView";
 import { GuildShowView } from "guilds/GuildShowView";
 import { CreateGrowthExerciseView } from "growth-exercise/CreateGrowthExerciseView";
+import { ExecuteView } from "execute/ExecuteView";
 import { LoginView } from "login/LoginView";
 import { useExperienceSettingsState } from "store";
 
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "/guild/:id/create-growth-exercise/:type",
     element: <CreateGrowthExerciseView />,
+  },
+  {
+    path: "/:growthExerciseId/execute",
+    element: <ExecuteView />,
   },
 ]);
 
