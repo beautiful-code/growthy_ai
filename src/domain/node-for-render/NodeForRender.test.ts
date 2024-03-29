@@ -10,9 +10,6 @@ describe("NodeForRender class tests", () => {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
       children,
     });
   }

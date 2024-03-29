@@ -559,9 +559,6 @@ export class UITree {
       is_task: false,
       is_checked: false,
       growth_exercise_id: "",
-      locked: false,
-      content: "",
-      notes: "",
       children: [],
     });
 
@@ -579,6 +576,7 @@ export class UITree {
           is_task: node.is_task,
           is_checked: node.is_checked,
           growth_exercise_id: node.growth_exercise_id,
+          children: [],
         });
       }
     });

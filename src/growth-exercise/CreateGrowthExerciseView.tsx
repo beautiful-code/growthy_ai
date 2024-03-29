@@ -8,7 +8,7 @@ import { CreateBlogArticleView } from "growth-exercise/components/blog-article/C
 type Props = {};
 
 export const CreateGrowthExerciseView: React.FC<Props> = () => {
-  const { id, type } = useParams();
+  const { type } = useParams();
 
   return (
     <Box>
