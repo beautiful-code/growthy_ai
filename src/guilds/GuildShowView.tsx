@@ -5,137 +5,61 @@ import {
   Grid,
   GridItem,
   Text,
-  Button,
-  Flex,
-  Box,
   HStack,
-  Stack,
+  VStack,
 } from "@chakra-ui/react";
 
 import { Sidebar } from "common/components/Sidebar";
+import { UserAvatar } from "common/components/menu/UserAvatar";
+import { useGetGuild, useGetExerciesForUserInGuild, useGetGuildExercises } from "guilds/hooks";
+import { MenuGrowthExercise } from "common/components/menu/MenuGrowthExercise";
+import { GuildAndUserPublications } from "common/components/GuildAndUserPublications";
 
-// @ts-expect-error: Svg import
-import StudyExerciseIcon from "assets/StudyExerciseIcon.svg?react";
-// @ts-expect-error: Svg import
-import BlogArticleIcon from "assets/BlogArticleIcon.svg?react";
-// @ts-expect-error: Svg import
-import TodayILearnedIcon from "assets/TodayILearnedIcon.svg?react";
-
-type Props = {};
+type Props = object;
 
 export const GuildShowView: React.FC<Props> = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [showGrowthExercises, setShowGrowthExercises] = useState(false);
-
-  const handleShowGrowthExercises = () => {
-    setShowGrowthExercises(!showGrowthExercises);
-  };
 
   const handleCreateGE = (type: "study" | "blog-article" | "til") => {
     navigate(`/guild/${id}/create-growth-exercise/${type}`);
   };
 
+  const { guild } = useGetGuild(id!);
+  const [exercisesOfUserLoading, setExercisesOfUserLoading] = useState(false);
+  const [guildExercisesLoading, setGuildExercisesLoading] = useState(false);
+  
+  const exercisesOfUser = useGetExerciesForUserInGuild(id!, setExercisesOfUserLoading);
+  const guildExercises = useGetGuildExercises(id!, setGuildExercisesLoading);
+  const title = guild?.name ? `${guild.name} Guild at BeautifulCode` : 'Guild at BeautifulCode'
   return (
-    <Grid templateColumns={"30% 70%"}>
-      <GridItem>
+    <Grid templateColumns={"20% 80%"}  height={"100vh"} overflowY={"auto"}>
+      <GridItem borderRight="1px solid" borderColor="black.300" backgroundColor={"gray.300"}>
         <Sidebar />
       </GridItem>
-      <GridItem>
-        <Flex mt="16px" align={"center"}>
-          <Text fontSize={"medium"}>Some Guild at Beautiful Code</Text>
-          <Button
-            size="xs"
-            ml="8px"
-            backgroundColor={"white"}
-            color={"primary.500"}
-            borderColor={"primary.500"}
-            border={"1px solid"}
-            onClick={handleShowGrowthExercises}
-          >
-            Add Growth Exercise
-          </Button>
-        </Flex>
-        <Box mt="8px">
-          {showGrowthExercises && (
-            <HStack spacing={8}>
-              <Stack
-                spacing={3}
-                p={6}
-                bg="white"
-                borderWidth="1px"
-                borderRadius="lg"
-                alignItems="center"
-                boxShadow="sm"
-                width="260px"
-                height="200px"
-                cursor={"pointer"}
-                _hover={{ boxShadow: "md" }}
-                onClick={() => handleCreateGE("study")}
-              >
-                <Flex align={"center"}>
-                  <StudyExerciseIcon w={12} h={12} />
-                  <Text ml="8px" fontSize="lg">
-                    Study Exercise
-                  </Text>
-                </Flex>
-                <Text>Learn by researching and doing</Text>
-                <Text fontSize="sm" color="#006400">
-                  Avg Time: 5 hrs
-                </Text>
-              </Stack>
-              <Stack
-                spacing={3}
-                p={6}
-                bg="white"
-                borderWidth="1px"
-                borderRadius="lg"
-                alignItems="center"
-                boxShadow="sm"
-                width="260px"
-                height="200px"
-                cursor={"pointer"}
-                _hover={{ boxShadow: "md" }}
-                onClick={() => handleCreateGE("blog-article")}
-              >
-                <Flex align={"center"}>
-                  <BlogArticleIcon w={12} h={12} />
-                  <Text ml="8px" fontSize="lg">
-                    Blog Article
-                  </Text>
-                </Flex>
-                <Text>Solidify your understanding by writing</Text>
-                <Text fontSize="sm" color="#006400">
-                  Avg Time: 1hr
-                </Text>
-              </Stack>
-              <Stack
-                spacing={3}
-                p={6}
-                bg="white"
-                borderWidth="1px"
-                borderRadius="lg"
-                alignItems="center"
-                boxShadow="sm"
-                width="260px"
-                height="200px"
-                cursor={"pointer"}
-                _hover={{ boxShadow: "md" }}
-              >
-                <Flex align={"center"}>
-                  <TodayILearnedIcon w={12} h={12} />
-                  <Text ml="8px" fontSize="lg">
-                    Today I Learned
-                  </Text>
-                </Flex>
-                <Text>Log your day to day learnings</Text>
-                <Text fontSize="sm" color="#006400">
-                  Avg Time: 15 mins
-                </Text>
-              </Stack>
-            </HStack>
-          )}
-        </Box>
+
+      <GridItem my={"20px"} mx={"5%"} ml={"7%"}>
+        <MenuGrowthExercise handleCreateGE={handleCreateGE} title={title} guild={guild}/>
+        <Grid templateColumns={"75% 25%"} mt={"5%"}>
+          <GridItem>
+            <GuildAndUserPublications exercisesOfUserLoading={exercisesOfUserLoading} publicationsLoading={guildExercisesLoading} exercisesOfUser={exercisesOfUser} Publications={guildExercises}/>
+          </GridItem>
+
+          <GridItem border={"1px solid"} borderColor={"gray.300"} backgroundColor={"gray.200"} height={"400px"}>
+            <VStack align={"start"} spacing={4} ml={"15px"}>
+              <Text fontSize="2xl" fontWeight={"normal"}>Members</Text>
+              <HStack spacing={4}>
+                {guild?.user && 
+                  <>
+                    <UserAvatar avatarUrl={guild.user.avatar_url} size="sm"/>
+                    <Text fontSize="larger" fontWeight={"normal"}> {guild.user.username} - Lead </Text>
+                  </>
+                }
+              </HStack>
+            </VStack>
+          </GridItem> 
+        </Grid>
+
       </GridItem>
     </Grid>
   );
