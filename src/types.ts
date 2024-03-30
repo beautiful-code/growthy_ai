@@ -73,6 +73,7 @@ export type SectionV2 = {
   title: string;
   tasks: TaskV2[];
 };
+
 export type TExercise = {
   id: string;
   title: string;
