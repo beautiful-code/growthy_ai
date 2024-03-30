@@ -29,6 +29,7 @@ export type TSuggestedGrowthExercise = {
 };
 
 export type Dictionary = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   [key: string]: any;
 };
 
@@ -72,3 +73,35 @@ export type SectionV2 = {
   title: string;
   tasks: TaskV2[];
 };
+export type TExercise = {
+  id: string;
+  title: string;
+  user_id?: string;
+  guild_id?: string;
+  type: "study-exercise" | "blog-article";
+}
+
+export type TExerciseWithUser = {
+  exercise: TExercise;
+  author: TUser;
+}
+
+export type TSelectedType = {
+    blogArticle: boolean;
+    studyExercise: boolean;
+    all: boolean;
+    til: boolean;
+};
+
+export type TGuild = {
+  id: string;
+  name: string;
+  led_by: string;
+}
+
+export type TGuildUser = {
+  id: string;
+  name: string;
+  led_by: string;
+  user?: TUser;
+}
