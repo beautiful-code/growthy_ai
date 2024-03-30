@@ -2,25 +2,23 @@ import React from "react";
 import { Grid, GridItem, Box } from "@chakra-ui/react";
 
 import { Sidebar } from "common/components/Sidebar";
-import { Menu } from "common/components/menu/Menu";
 import { ExercisesListView } from "./components";
+import { MenuWrapper } from "common/components/menu/MenuWrapper";
 
-export const Home: React.FC = () => {
+export const HomeView: React.FC = () => {
   return (
-    <Box>
-      <Menu title={""} />
+    <Grid templateColumns={"20% 80%"} height={"100vh"}>
+      <GridItem borderRight="1px solid" borderColor="black.300" backgroundColor={"gray.300"}>
+        <Sidebar />
+      </GridItem>
 
-      <Box>
-        <Grid templateColumns={"30% 70%"}>
-          <GridItem>
-            <Sidebar />
-          </GridItem>
-
-          <GridItem>
+      <GridItem>
+        <Box mx={"5%"} ml={"7%"}>
+          <MenuWrapper>
             <ExercisesListView />
-          </GridItem>
-        </Grid>
-      </Box>
-    </Box>
+          </MenuWrapper>
+        </Box>
+      </GridItem>
+    </Grid>
   );
 };

@@ -1,0 +1,51 @@
+export const usersTableScript: string = `
+insert into public.users (
+  id,
+  created_at,
+  email,
+  username
+)
+values
+(
+  gen_random_uuid(),
+  now(),
+  'user1@example.com',
+  'user1'
+),
+(
+  gen_random_uuid(),
+  now(),
+  'user2@example.com',
+  'user2'
+),
+(
+  gen_random_uuid(),
+  now(),
+  'user3@example.com',
+  'user3'
+),
+(
+  gen_random_uuid(),
+  now(),
+  'user4@example.com',
+  'user4'
+),
+(
+  gen_random_uuid(),
+  now(),
+  'user5@example.com',
+  'user5'
+),
+(
+  gen_random_uuid(),
+  now(),
+  'user6@example.com',
+  'user6'
+),
+(
+  gen_random_uuid(),
+  now(),
+  'user7@example.com',
+  'user7'
+);
+`;
