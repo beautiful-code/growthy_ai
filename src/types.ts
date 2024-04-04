@@ -62,3 +62,13 @@ export type TNode = {
   created_at?: string;
   updated_at?: string;
 };
+
+export type TaskV2 = {
+  text: string;
+  is_action_item: boolean;
+};
+
+export type SectionV2 = {
+  title: string;
+  tasks: TaskV2[];
+};
