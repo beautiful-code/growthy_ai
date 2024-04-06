@@ -1,0 +1,7 @@
+.task .actions {
+  display: none;
+}
+
+.task:hover .actions {
+  display: block;
+}

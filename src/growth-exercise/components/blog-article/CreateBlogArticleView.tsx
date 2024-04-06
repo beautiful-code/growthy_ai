@@ -23,7 +23,6 @@ import { UITree } from "domain/ui-tree/UITree";
 import { GetIdeasAssistence } from "growth-exercise/components/blog-article/GetIdeasAssistence";
 import { getSuggestedIdeas } from "growth-exercise/chains/getOutline";
 import { saveNodes } from "common/components/outline/outlineQueries";
-import { OutlineWrapper } from "common/components/outline/OutlineWrapper";
 import { saveGrowthExercise } from "growth-exercise/queries";
 
 type Props = {};
@@ -158,16 +157,6 @@ export const CreateBlogArticleView: React.FC<Props> = () => {
           <Box mt="16px">
             {allNodes?.length > 0 && (
               <Box>
-                <OutlineWrapper
-                  suggestedGrowthExercise={{
-                    id: "",
-                    title: generatedBlogTitle,
-                    summary: "",
-                    outline: allNodes,
-                  }}
-                  allNodes={allNodes}
-                  setAllNodes={setAllNodes}
-                />
                 <Box mt="16px" mb="8px">
                   <Button colorScheme="green" onClick={handleAddBlogArticle}>
                     Add Blog Article

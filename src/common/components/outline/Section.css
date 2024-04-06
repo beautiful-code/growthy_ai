@@ -1,0 +1,7 @@
+.section-btn .actions {
+  display: none;
+}
+
+.section-btn:hover .actions {
+  display: block;
+}
