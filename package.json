@@ -25,6 +25,7 @@
     "framer-motion": "^11.0.22",
     "growthy-prompts": "ravibhim/growthy-prompts",
     "jest": "^29.7.0",
+    "langsmith": "^0.1.14",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.0.1",
