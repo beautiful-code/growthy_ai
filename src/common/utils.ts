@@ -7,7 +7,12 @@ export const getCurrentUserId = async () => {
   return session?.user?.id;
 };
 
-export const domainUpdateAndCallback = (uiDomainObject: any,  method: string, args: any[] ,callbackMethod: (uiDomainObject: any) => void) => {  
+export const domainUpdateAndCallback = (
+  uiDomainObject: any,
+  method: string,
+  args: any[],
+  callbackMethod: (uiDomainObject: any) => void
+) => {
   // Call the method on the domain object with args
   uiDomainObject[method](...args);
   callbackMethod(uiDomainObject);
@@ -16,7 +21,7 @@ export const domainUpdateAndCallback = (uiDomainObject: any,  method: string, ar
   uiTask[method](...args);
   onUpdateTaskCallback(uiTask);
   */
-}
+};
 
 export const getChakraUIExtendedTheme = (isSmallFont: boolean) => {
   return {

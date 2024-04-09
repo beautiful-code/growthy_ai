@@ -15,7 +15,6 @@ import ResizeTextarea from "react-textarea-autosize";
 import { MdMoreVert, MdEdit } from "react-icons/md";
 import { UITask } from "domain/blog-article/UITask";
 
-
 type Props = {
   // taskIndex: number;
   uiTask: UITask;
@@ -43,7 +42,12 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
       e.preventDefault();
       e.stopPropagation();
 
-      domainUpdateAndCallback(uiTask, 'updateText', [taskText], onUpdateTaskCallback );
+      domainUpdateAndCallback(
+        uiTask,
+        "updateText",
+        [taskText],
+        onUpdateTaskCallback
+      );
       /*
       uiTask.updateText(taskText);
       onUpdateTaskCallback(uiTask);
@@ -67,11 +71,14 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
     */
 
     // TODO: Wrap in one call
-    domainUpdateAndCallback(uiTask, 'updateChecked', [e.target.checked], onUpdateTaskCallback );
+    domainUpdateAndCallback(
+      uiTask,
+      "updateChecked",
+      [e.target.checked],
+      onUpdateTaskCallback
+    );
     //updateTaskXML(taskIndex, uiTask._xml);
   };
-
-
 
   return (
     <Flex align={"center"} className="task">
@@ -105,7 +112,7 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
                 size="md"
                 isChecked={taskChecked}
                 onChange={(e) => {
-                  handleTaskCheck(e)
+                  handleTaskCheck(e);
                 }}
               />
               <Text ml={4}>{uiTask.getText()}</Text>

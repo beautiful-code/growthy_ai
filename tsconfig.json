@@ -21,6 +21,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "custom.d.ts", "global.d.ts", "src/fixtures/Outline.fixture.tsx", "src/fixtures/GrowthyConversation.fixture.tsx", "fixtures/App.fixture.tsx", "fixtures/FixtureWrapper.tsx"],
+  "include": ["src", "custom.d.ts","jest.d.ts", "global.d.ts", "src/fixtures/Outline.fixture.tsx", "src/fixtures/GrowthyConversation.fixture.tsx", "fixtures/App.fixture.tsx", "fixtures/FixtureWrapper.tsx"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -45,11 +45,6 @@ export type TGrowthExercise = {
   updated_at?: string;
 };
 
-export type BlogArticle = {
-  title: string;
-  sections: Section[];
-};
-
 // Database entry for Node
 export type TNode = {
   id: string;
@@ -61,14 +56,4 @@ export type TNode = {
   parent_id: string | null;
   created_at?: string;
   updated_at?: string;
-};
-
-export type TaskV2 = {
-  text: string;
-  is_action_item: boolean;
-};
-
-export type TSectionV2 = {
-  title: string;
-  tasks: TaskV2[];
 };
