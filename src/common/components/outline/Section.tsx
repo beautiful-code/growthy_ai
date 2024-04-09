@@ -12,6 +12,7 @@ import {
 import { Task } from "./Task";
 import { UISection } from "domain/blog-article/UISection";
 import { UITask } from "domain/blog-article/UITask";
+import { domainUpdateAndCallback } from "common/utils";
 
 type Props = {
   // sectionIndex: number;
@@ -28,9 +29,13 @@ export const Section: React.FC<Props> = ({
 
   // Factory function to create a callback function that updates a task at a given index
   const onUpdateTaskCallback = (taskIndex: number) => (uiTask: UITask) => {
+
     // Domain Object update and callback go hand in hand.
+    /* 
     uiSection.updateTask(taskIndex, uiTask);
     onUpdateSectionCallback(uiSection);
+    */
+    domainUpdateAndCallback(uiSection, 'updateTask', [taskIndex, uiTask], onUpdateSectionCallback );
     //updateSectionXML(sectionIndex, uiSection._xml);
   };
 
