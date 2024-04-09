@@ -2,62 +2,66 @@ import { FixtureWrapper } from "fixtures/FixtureWrapper";
 import { Box } from "@chakra-ui/react";
 import { Task } from "common/components/outline/Task";
 
+import { UISection } from "domain/blog-article/UISection";
+import { UITask } from "domain/blog-article/UITask";
+
 export default {
   "base case": () => {
+    const section = new UISection(
+      "<Section name='section1'><Task name='task1' /></Section>"
+    );
+
     return (
       <Box m={8}>
         <FixtureWrapper>
           <Task
-            defaultEditing={false}
-            sectionIndex={0}
-            taskIndex={1}
-            task={{
-              text: "Introduce Microservices Architecture",
-              is_action_item: true,
+            taskIndex={0}
+            uiTask={new UITask(section.getUITasks()[0]._xml)}
+            updateTaskXML={(taskIndex, taskXML) => {
+              section.updateTask(taskIndex, taskXML);
+              console.log(section._xml);
             }}
-            checkingDisabled={false}
-            setSections={() => {}}
           />
         </FixtureWrapper>
       </Box>
     );
   },
-  editing: () => {
-    return (
-      <Box m={8}>
-        <FixtureWrapper>
-          <Task
-            defaultEditing={true}
-            sectionIndex={0}
-            taskIndex={1}
-            task={{
-              text: "Introduce Microservices Architecture",
-              is_action_item: true,
-            }}
-            checkingDisabled={false}
-            setSections={() => {}}
-          />
-        </FixtureWrapper>
-      </Box>
-    );
-  },
-  disabled: () => {
-    return (
-      <Box m={8}>
-        <FixtureWrapper>
-          <Task
-            defaultEditing={false}
-            sectionIndex={0}
-            taskIndex={1}
-            task={{
-              text: "Introduce Microservices Architecture",
-              is_action_item: true,
-            }}
-            checkingDisabled={true}
-            setSections={() => {}}
-          />
-        </FixtureWrapper>
-      </Box>
-    );
-  },
+  // editing: () => {
+  //   return (
+  //     <Box m={8}>
+  //       <FixtureWrapper>
+  //         <Task
+  //           defaultEditing={true}
+  //           sectionIndex={0}
+  //           taskIndex={1}
+  //           task={{
+  //             text: "Introduce Microservices Architecture",
+  //             is_action_item: true,
+  //           }}
+  //           checkingDisabled={false}
+  //           setSections={() => {}}
+  //         />
+  //       </FixtureWrapper>
+  //     </Box>
+  //   );
+  // },
+  // disabled: () => {
+  //   return (
+  //     <Box m={8}>
+  //       <FixtureWrapper>
+  //         <Task
+  //           defaultEditing={false}
+  //           sectionIndex={0}
+  //           taskIndex={1}
+  //           task={{
+  //             text: "Introduce Microservices Architecture",
+  //             is_action_item: true,
+  //           }}
+  //           checkingDisabled={true}
+  //           setSections={() => {}}
+  //         />
+  //       </FixtureWrapper>
+  //     </Box>
+  //   );
+  // },
 };

@@ -68,7 +68,7 @@ export type TaskV2 = {
   is_action_item: boolean;
 };
 
-export type SectionV2 = {
+export type TSectionV2 = {
   title: string;
   tasks: TaskV2[];
 };
