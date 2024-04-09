@@ -14,14 +14,16 @@ import { MdMoreVert, MdEdit } from "react-icons/md";
 import { UITask } from "domain/blog-article/UITask";
 
 type Props = {
-  taskIndex: number;
+  // taskIndex: number;
   uiTask: UITask;
-  updateTaskXML: (taskIndex: number, taskXML: string) => void;
+  onUpdateTaskCallback: (uiTask: UITask) => void;
+  //updateTaskXML: (taskIndex: number, taskXML: string) => void;
 };
 
-export const Task: React.FC<Props> = ({ taskIndex, uiTask, updateTaskXML }) => {
+export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [taskText, setTaskText] = useState(uiTask.getText());
+  const [taskChecked, setTaskChecked] = useState(uiTask.getChecked());
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleEdit = (e: any) => {
@@ -39,16 +41,23 @@ export const Task: React.FC<Props> = ({ taskIndex, uiTask, updateTaskXML }) => {
       e.stopPropagation();
 
       uiTask.updateText(taskText);
-
-      updateTaskXML(taskIndex, uiTask._xml);
+      onUpdateTaskCallback(uiTask);
+      //updateTaskXML(taskIndex, uiTask._xml);
 
       setIsEditing(false);
     }
   };
 
   const handleTaskCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    uiTask.updateChecked(e.target.checked);
-    updateTaskXML(taskIndex, uiTask._xml);
+    e.preventDefault();
+    e.stopPropagation();
+
+    setTaskChecked(e.target.checked); // React state update to re-render the component
+
+    // Domain Object update and callback go hand in hand.
+    uiTask.updateChecked(e.target.checked); // Domain object update
+    onUpdateTaskCallback(uiTask); // Callback to update parent
+    //updateTaskXML(taskIndex, uiTask._xml);
   };
 
   return (
@@ -81,8 +90,10 @@ export const Task: React.FC<Props> = ({ taskIndex, uiTask, updateTaskXML }) => {
             <Flex>
               <Checkbox
                 size="md"
-                checked={uiTask.getChecked()}
-                onChange={handleTaskCheck}
+                isChecked={taskChecked}
+                onChange={(e) => {
+                  handleTaskCheck(e)
+                }}
               />
               <Text ml={4}>{uiTask.getText()}</Text>
             </Flex>

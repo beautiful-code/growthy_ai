@@ -14,10 +14,10 @@ export default {
       <Box m={8}>
         <FixtureWrapper>
           <Section
-            sectionIndex={0}
+           // sectionIndex={0}
             uiSection={new UISection(sectionXml)}
-            updateSectionXML={(_sectionIndex, sectionXML) => {
-              setSectionXml(sectionXML);
+            onUpdateSectionCallback={(uiSection) => {
+              setSectionXml(uiSection._xml);
             }}
           />
         </FixtureWrapper>

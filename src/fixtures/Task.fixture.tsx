@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { FixtureWrapper } from "fixtures/FixtureWrapper";
 import { Box } from "@chakra-ui/react";
 import { Task } from "common/components/outline/Task";
@@ -7,20 +9,27 @@ import { UITask } from "domain/blog-article/UITask";
 
 export default {
   "base case": () => {
-    const section = new UISection(
-      "<Section name='section1'><Task name='task1' /></Section>"
-    );
+    // const uiSection = new UISection( "<Section name='section1'><Task name='task1' checked='true' /></Section>");
+
+    const [taskXml, setTaskXml] = useState("<Task name='task1' checked='true' />");
 
     return (
       <Box m={8}>
         <FixtureWrapper>
           <Task
-            taskIndex={0}
-            uiTask={new UITask(section.getUITasks()[0]._xml)}
+            // taskIndex={0}
+            //uiTask={new UITask(section.getUITasks()[0]._xml)}
+            uiTask={new UITask(taskXml)}
+            onUpdateTaskCallback={(uiTask) => {
+              console.log("callback called");
+              setTaskXml(uiTask._xml);
+            }}
+            /*
             updateTaskXML={(taskIndex, taskXML) => {
               section.updateTask(taskIndex, taskXML);
               console.log(section._xml);
             }}
+            */
           />
         </FixtureWrapper>
       </Box>
