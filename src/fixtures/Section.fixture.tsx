@@ -17,6 +17,7 @@ export default {
            // sectionIndex={0}
             uiSection={new UISection(sectionXml)}
             onUpdateSectionCallback={(uiSection) => {
+              console.log("onUpdateSectionCallback called");
               setSectionXml(uiSection._xml);
             }}
           />
