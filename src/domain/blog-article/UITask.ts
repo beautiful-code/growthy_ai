@@ -1,7 +1,6 @@
 import { UIXMLInterfacer } from "domain/interfaces/UIXMLInterfacer";
 
 export class UITask extends UIXMLInterfacer {
-
   getText(): string {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");

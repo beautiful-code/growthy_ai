@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { v4 as uuidv4 } from "uuid";
 import ResizeTextarea from "react-textarea-autosize";
 import {
   Text,
@@ -15,30 +14,41 @@ import {
 } from "@chakra-ui/react";
 import { MdArrowBack } from "react-icons/md";
 
-import { TNode } from "types";
 import { UserAvatar } from "common/components/header/UserAvatar";
 import { NavMenu } from "common/components/header/NavMenu";
-import { Node } from "domain/node/Node";
-import { UITree } from "domain/ui-tree/UITree";
 import { GetIdeasAssistence } from "growth-exercise/components/blog-article/GetIdeasAssistence";
-import { getSuggestedIdeas } from "growth-exercise/chains/getOutline";
-import { saveNodes } from "common/components/outline/outlineQueries";
-import { saveGrowthExercise } from "growth-exercise/queries";
+import { getBlogArticleXMLSuggestion as defaultGetBlogArticleXMLSuggestion } from "growth-exercise/chains/getOutline";
+import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
+import { BlogArticle } from "./BlogArticle";
 
-type Props = {};
+type Props = {
+  getBlogArticleXMLSuggestion: (
+    blog_article_goal: string,
+    blog_article_points: string
+  ) => Promise<string>;
+};
 
-export const CreateBlogArticleView: React.FC<Props> = () => {
+export const CreateBlogArticleView: React.FC<Props> = ({
+  getBlogArticleXMLSuggestion = defaultGetBlogArticleXMLSuggestion,
+}) => {
   const navigate = useNavigate();
 
-  const [isGettingIdeas, setIsGettingIdeas] = useState(false);
+  const [showGrowthyConversation, setShowGrowthyConversation] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [blogTitle, setBlogTitle] = useState("");
-  const [blogPoints, setBlogPoints] = useState<string[]>([]);
-  const [allNodes, setAllNodes] = useState<Node[]>([]);
-  const [generatedBlogTitle, setGeneratedBlogTitle] = useState("");
+  const [blogInputs, setBlogInputs] = useState<{
+    blogTitle: string;
+    blogPoints: string[];
+  }>({
+    blogTitle: "",
+    blogPoints: [],
+  });
 
-  const handleGetIdeas = () => {
-    setIsGettingIdeas(!isGettingIdeas);
+  const [generatedBlogArticleXML, setGeneratedBlogArticleXML] = useState("");
+
+  const generatedBlogArticle = new UIBlogArticle(generatedBlogArticleXML);
+
+  const handleGrowthyConversation = () => {
+    setShowGrowthyConversation(!showGrowthyConversation);
   };
 
   const handleBack = () => {
@@ -47,47 +57,24 @@ export const CreateBlogArticleView: React.FC<Props> = () => {
 
   const handleGenerateOutline = async () => {
     setIsLoading(true);
-    const blogArticle = await getSuggestedIdeas(
-      blogTitle,
-      blogPoints?.join("\n")
+    const suggestedBlogArticleML = await getBlogArticleXMLSuggestion(
+      blogInputs.blogTitle,
+      blogInputs?.blogPoints?.join("\n")
     );
 
-    const uiTree = new UITree([], "");
-    uiTree.createNodesFromSections(blogArticle.sections);
-    const nodes = uiTree.nodes || [];
-    setAllNodes(nodes);
-
-    setGeneratedBlogTitle(blogArticle.title);
+    setGeneratedBlogArticleXML(suggestedBlogArticleML);
 
     setIsLoading(false);
   };
 
+  const onBlogArticleUpdate = () => {
+    setGeneratedBlogArticleXML(generatedBlogArticle._xml);
+  };
+
   const handleAddBlogArticle = () => {
-    const growthExerciseId = uuidv4();
-    saveGrowthExercise({
-      id: growthExerciseId,
-      title: generatedBlogTitle,
-      inputs: {
-        title: blogTitle,
-        about: blogPoints.join("\n"),
-      },
-      state: "created",
-      user_id: "",
-      type: "blog-article",
-    }).then(() => {
-      if (!growthExerciseId) {
-        return;
-      }
-      const outlineNodesWithGrowthExerciseId = allNodes
-        ?.map((node: Node) => {
-          node.growth_exercise_id = growthExerciseId;
-          return node;
-        })
-        .map((node: Node): TNode => node.toTNode());
-      saveNodes(outlineNodesWithGrowthExerciseId)?.then(() => {
-        navigate(`/${growthExerciseId}/execute`);
-      });
-    });
+    // Save to DB
+    const statelessBlogArticleXML = generatedBlogArticle.getUIStatelessXML();
+    console.log(statelessBlogArticleXML);
   };
 
   return (
@@ -112,10 +99,12 @@ export const CreateBlogArticleView: React.FC<Props> = () => {
           </Text>
           <Input
             backgroundColor={"white"}
-            value={blogTitle}
+            value={blogInputs.blogTitle}
             placeholder="What do you want to write about? (1-2 sentences)"
             mb={4}
-            onChange={(e) => setBlogTitle(e.target.value)}
+            onChange={(e) =>
+              setBlogInputs({ ...blogInputs, blogTitle: e.target.value })
+            }
           />
           <Flex justify={"space-between"}>
             <Text fontSize="lg" mb={2} mt={6}>
@@ -128,7 +117,7 @@ export const CreateBlogArticleView: React.FC<Props> = () => {
               backgroundColor="white"
               color="#0b870b"
               border="1px solid #0b870b"
-              onClick={handleGetIdeas}
+              onClick={handleGrowthyConversation}
             >
               Get Ideas
             </Button>
@@ -145,8 +134,13 @@ export const CreateBlogArticleView: React.FC<Props> = () => {
             py={0}
             as={ResizeTextarea}
             fontSize={"medium"}
-            value={blogPoints.join("\n")}
-            onChange={(e) => setBlogPoints(e.target.value.split("\n"))}
+            value={blogInputs.blogPoints.join("\n")}
+            onChange={(e) =>
+              setBlogInputs({
+                ...blogInputs,
+                blogPoints: e.target.value.split("\n"),
+              })
+            }
           />
           <Flex>
             <Button colorScheme="green" onClick={handleGenerateOutline}>
@@ -154,26 +148,25 @@ export const CreateBlogArticleView: React.FC<Props> = () => {
             </Button>
             {isLoading && <Spinner ml={4} />}
           </Flex>
-          <Box mt="16px">
-            {allNodes?.length > 0 && (
-              <Box>
-                <Box mt="16px" mb="8px">
-                  <Button colorScheme="green" onClick={handleAddBlogArticle}>
-                    Add Blog Article
-                  </Button>
-                </Box>
-              </Box>
+
+          <Box mt={4}>
+            {generatedBlogArticleXML && (
+              <BlogArticle
+                blogArticle={generatedBlogArticle}
+                onBlogArticleUpdate={onBlogArticleUpdate}
+                handleAddBlogArticle={handleAddBlogArticle}
+              />
             )}
           </Box>
         </Box>
       </GridItem>
       <GridItem colSpan={1}>
-        {isGettingIdeas && (
+        {showGrowthyConversation && (
           <GetIdeasAssistence
-            blogTitle={blogTitle}
-            blogPoints={blogPoints}
-            isAdditionalPrompt={blogPoints.length > 0}
-            onClose={handleGetIdeas}
+            blogTitle={blogInputs.blogTitle}
+            blogPoints={blogInputs.blogPoints}
+            isAdditionalPrompt={blogInputs.blogPoints.length > 0}
+            onClose={handleGrowthyConversation}
           />
         )}
       </GridItem>

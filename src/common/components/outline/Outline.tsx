@@ -1,48 +1,52 @@
-import React, { useState } from "react";
+import React from "react";
 import { Accordion, Box, Flex, Button } from "@chakra-ui/react";
 
-import { BlogArticle } from "domain/blog-article/BlogArticleV2";
-import { Section } from "common/components/outline/SectionDeprecated";
+import { UIOutline } from "domain/blog-article/UIOutline";
+import { UISection } from "domain/blog-article/UISection";
+import { Section } from "./Section";
+import { domainUpdateAndCallback } from "common/utils";
 
 type Props = {
-  checkingDisabled?: boolean;
-  blogArticleXML: string;
-  setBlogArticleXml: (xml: string) => void;
+  uiOutline: UIOutline;
+  onUpdateOutlineCallback: (uiOutline: UIOutline) => void;
 };
 
 export const Outline: React.FC<Props> = ({
-  checkingDisabled = false, // Remove it YAGNI
-  blogArticleXML,
-  setBlogArticleXml,
+  uiOutline,
+  onUpdateOutlineCallback,
 }) => {
-  const blogArticle = new BlogArticle(blogArticleXML);
-
-  const sections = blogArticle.getSections();
-
-  const [expandedSectionIndices, setExpandedSectionIndices] = useState<
-    number[]
-  >([]);
-
   const handleExpandAll = () => {
-    setExpandedSectionIndices(sections?.map((_, index) => index));
+    uiOutline.expandAllSections();
+    onUpdateOutlineCallback(uiOutline);
   };
 
   const handleCollapseAll = () => {
-    setExpandedSectionIndices([]);
+    uiOutline.collapseAllSections();
+    onUpdateOutlineCallback(uiOutline);
   };
+
+  const onUpdateSectionCallback =
+    (sectionIndex: number) => (uiSection: UISection) => {
+      domainUpdateAndCallback(
+        uiOutline,
+        "updateSection",
+        [sectionIndex, uiSection],
+        onUpdateOutlineCallback
+      );
+    };
 
   return (
     <Box>
-      <Accordion allowMultiple allowToggle index={expandedSectionIndices}>
-        {sections.map((section, sectionIndex) => (
+      <Accordion
+        allowMultiple
+        allowToggle
+        index={uiOutline.getExpandesSectionIndices()}
+      >
+        {uiOutline.getSections().map((section, sectionIndex) => (
           <Section
             key={sectionIndex}
-            sectionIndex={sectionIndex}
-            section={section}
-            blogArticle={blogArticle}
-            checkingDisabled={checkingDisabled}
-            setBlogArticleXml={setBlogArticleXml}
-            setExpandedSectionIndices={setExpandedSectionIndices}
+            uiSection={section}
+            onUpdateSectionCallback={onUpdateSectionCallback(sectionIndex)}
           />
         ))}
       </Accordion>

@@ -5,7 +5,6 @@ import { OpenAI } from "@langchain/openai";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunnableSequence } from "@langchain/core/runnables";
 
-import { BlogArticle } from "domain/blog-article/BlogArticle";
 import getGrowthyConfig from "growthy-prompts";
 
 const model = new OpenAI({
@@ -16,7 +15,7 @@ const model = new OpenAI({
 
 const parser = new StringOutputParser();
 
-export const getSuggestedIdeas = async (
+export const getBlogArticleXMLSuggestion = async (
   specialization = "",
   blog_article_goal = "",
   blog_article_points: string[] = []
@@ -35,7 +34,5 @@ export const getSuggestedIdeas = async (
     blog_article_points: blog_article_points.join("\n"),
   });
 
-  const blogArticle = BlogArticle.parseBlogArticle(response);
-
-  return blogArticle;
+  return response;
 };

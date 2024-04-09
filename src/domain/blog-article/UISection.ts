@@ -24,6 +24,32 @@ export class UISection extends UIXMLInterfacer {
     this._xml = new XMLSerializer().serializeToString(xmlDoc);
   }
 
+  getIsExpanded(): boolean {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(this._xml, "text/xml");
+    const section = xmlDoc.getElementsByTagName("Section");
+    const expanded = section[0].getAttribute("expanded");
+    return expanded === "true";
+  }
+
+  // Adds an attribute expanded=true if it is false or not present in section xml and updates xml
+  // if expanded is true, it sets it to false
+  expandSection(): void {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(this._xml, "text/xml");
+    const section = xmlDoc.getElementsByTagName("Section");
+    section[0].setAttribute("expanded", "true");
+    this._xml = new XMLSerializer().serializeToString(xmlDoc);
+  }
+
+  collapseSection(): void {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(this._xml, "text/xml");
+    const section = xmlDoc.getElementsByTagName("Section");
+    section[0].setAttribute("expanded", "false");
+    this._xml = new XMLSerializer().serializeToString(xmlDoc);
+  }
+
   getUITasks(): UITask[] {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
