@@ -40,8 +40,11 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
       e.preventDefault();
       e.stopPropagation();
 
+      domainUpdateAndCallback(uiTask, 'updateText', [taskText], onUpdateTaskCallback );
+      /*
       uiTask.updateText(taskText);
       onUpdateTaskCallback(uiTask);
+      */
       //updateTaskXML(taskIndex, uiTask._xml);
 
       setIsEditing(false);
@@ -54,11 +57,22 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
 
     setTaskChecked(e.target.checked); // React state update to re-render the component
 
+    /*
     // Domain Object update and callback go hand in hand.
     uiTask.updateChecked(e.target.checked); // Domain object update
     onUpdateTaskCallback(uiTask); // Callback to update parent
+    */
+
+    // TODO: Wrap in one call
+    domainUpdateAndCallback(uiTask, 'updateChecked', [e.target.checked], onUpdateTaskCallback );
     //updateTaskXML(taskIndex, uiTask._xml);
   };
+
+  const domainUpdateAndCallback = (uiTask: UITask,  method: string, args: any[] ,onUpdateTaskCallback: (uiTask: UITask) => void) => {  
+    // Call the method on the domain object with args
+    uiTask[method](...args);
+    onUpdateTaskCallback(uiTask);
+  }
 
   return (
     <Flex align={"center"} className="task">

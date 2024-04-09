@@ -21,7 +21,7 @@ export default {
             //uiTask={new UITask(section.getUITasks()[0]._xml)}
             uiTask={new UITask(taskXml)}
             onUpdateTaskCallback={(uiTask) => {
-              console.log("callback called");
+              console.log("onUpdateTaskCallback called");
               setTaskXml(uiTask._xml);
             }}
             /*
