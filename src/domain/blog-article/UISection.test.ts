@@ -38,4 +38,24 @@ describe("UISection", () => {
 <Task name="task2" /></Section>`
     );
   });
+
+  it("should expand section", () => {
+    const section = new UISection(`<Section name='section1'>
+            <Task name='task1' />
+            </Section>
+            `);
+
+    section.expandSection();
+    expect(section.getIsExpanded()).toBe(true);
+  });
+
+  it("should collapse section", () => {
+    const section = new UISection(`<Section name='section1'>
+              <Task name='task1' />
+              </Section>
+              `);
+
+    section.collapseSection();
+    expect(section.getIsExpanded()).toBe(false);
+  });
 });
