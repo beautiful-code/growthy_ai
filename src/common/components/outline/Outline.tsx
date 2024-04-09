@@ -1,29 +1,27 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Accordion, Box, Flex, Button } from "@chakra-ui/react";
 
-import { Section } from "common/components/outline/Section";
-import { SectionV2 as TSectionV2 } from "types";
+import { BlogArticle } from "domain/blog-article/BlogArticleV2";
+import { Section } from "common/components/outline/SectionDeprecated";
 
 type Props = {
-  defaultSections?: TSectionV2[];
-  defaultExpandedSectionIndices?: number[];
   checkingDisabled?: boolean;
+  blogArticleXML: string;
+  setBlogArticleXml: (xml: string) => void;
 };
 
 export const Outline: React.FC<Props> = ({
-  defaultSections = [],
-  defaultExpandedSectionIndices = [],
-  checkingDisabled = false,
+  checkingDisabled = false, // Remove it YAGNI
+  blogArticleXML,
+  setBlogArticleXml,
 }) => {
-  const [sections, setSections] = useState<TSectionV2[]>(defaultSections);
+  const blogArticle = new BlogArticle(blogArticleXML);
+
+  const sections = blogArticle.getSections();
 
   const [expandedSectionIndices, setExpandedSectionIndices] = useState<
     number[]
-  >(defaultExpandedSectionIndices);
-
-  useEffect(() => {
-    setSections(defaultSections);
-  }, [defaultSections]);
+  >([]);
 
   const handleExpandAll = () => {
     setExpandedSectionIndices(sections?.map((_, index) => index));
@@ -41,8 +39,9 @@ export const Outline: React.FC<Props> = ({
             key={sectionIndex}
             sectionIndex={sectionIndex}
             section={section}
+            blogArticle={blogArticle}
             checkingDisabled={checkingDisabled}
-            setSections={setSections}
+            setBlogArticleXml={setBlogArticleXml}
             setExpandedSectionIndices={setExpandedSectionIndices}
           />
         ))}

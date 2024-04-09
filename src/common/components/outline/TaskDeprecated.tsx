@@ -10,18 +10,32 @@ import {
   PopoverContent,
 } from "@chakra-ui/react";
 import ResizeTextarea from "react-textarea-autosize";
-import { MdMoreVert, MdEdit } from "react-icons/md";
-import { UITask } from "domain/blog-article/UITask";
+import { MdMoreVert, MdEdit, MdDelete } from "react-icons/md";
+
+import { BlogArticle } from "domain/blog-article/BlogArticleV2";
+import { TaskV2 as TTaskV2 } from "types";
+
+import "./Task.css";
 
 type Props = {
+  sectionIndex: number;
   taskIndex: number;
-  uiTask: UITask;
-  updateTaskXML: (taskIndex: number, taskXML: string) => void;
+  task: TTaskV2;
+  blogArticle: BlogArticle;
+  checkingDisabled: boolean;
+  setBlogArticleXml: (xml: string) => void;
 };
 
-export const Task: React.FC<Props> = ({ taskIndex, uiTask, updateTaskXML }) => {
+export const Task: React.FC<Props> = ({
+  sectionIndex,
+  taskIndex,
+  task,
+  blogArticle,
+  checkingDisabled,
+  setBlogArticleXml,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [taskText, setTaskText] = useState(uiTask.getText());
+  const [taskText, setTaskText] = useState(task.text);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleEdit = (e: any) => {
@@ -33,27 +47,37 @@ export const Task: React.FC<Props> = ({ taskIndex, uiTask, updateTaskXML }) => {
     }, 0);
   };
 
-  const handleEnterKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  const handleDelete = (e: any) => {
+    e.preventDefault();
+    e.stopPropagation();
+    blogArticle.deleteTask(sectionIndex, taskIndex);
+    setBlogArticleXml(blogArticle.blogArticleXml);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       e.stopPropagation();
-
-      uiTask.updateText(taskText);
-
-      updateTaskXML(taskIndex, uiTask._xml);
-
+      blogArticle.updateTask(sectionIndex, taskIndex, {
+        text: taskText,
+        is_action_item: task.is_action_item,
+      });
+      setBlogArticleXml(blogArticle.blogArticleXml);
       setIsEditing(false);
     }
   };
 
   const handleTaskCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    uiTask.updateChecked(e.target.checked);
-    updateTaskXML(taskIndex, uiTask._xml);
+    blogArticle.updateTask(sectionIndex, taskIndex, {
+      text: task.text,
+      is_action_item: e.target.checked,
+    });
+    setBlogArticleXml(blogArticle.blogArticleXml);
   };
 
   return (
     <Flex align={"center"} className="task">
-      <Flex grow={2} align="center">
+      <Flex grow={2} key={taskIndex} align="center">
         {isEditing ? (
           <Textarea
             ml={1}
@@ -74,18 +98,22 @@ export const Task: React.FC<Props> = ({ taskIndex, uiTask, updateTaskXML }) => {
               e.stopPropagation();
               setTaskText(e.target.value);
             }}
-            onKeyDown={handleEnterKey}
+            onKeyDown={handleKeyDown}
           />
         ) : (
           <Box>
-            <Flex>
-              <Checkbox
-                size="md"
-                checked={uiTask.getChecked()}
-                onChange={handleTaskCheck}
-              />
-              <Text ml={4}>{uiTask.getText()}</Text>
-            </Flex>
+            {task.is_action_item ? (
+              <Flex>
+                <Checkbox
+                  size="md"
+                  disabled={checkingDisabled}
+                  onChange={handleTaskCheck}
+                />
+                <Text ml={4}>{task.text}</Text>
+              </Flex>
+            ) : (
+              <Text>{task.text}</Text>
+            )}
           </Box>
         )}
       </Flex>
@@ -101,6 +129,14 @@ export const Task: React.FC<Props> = ({ taskIndex, uiTask, updateTaskXML }) => {
         <PopoverContent>
           <Flex align={"center"} p={1} cursor={"pointer"} onClick={handleEdit}>
             <MdEdit /> <Text ml="8px">Edit</Text>
+          </Flex>
+          <Flex
+            cursor={"pointer"}
+            align={"center"}
+            p={1}
+            onClick={handleDelete}
+          >
+            <MdDelete /> <Text ml="8px">Delete</Text>
           </Flex>
         </PopoverContent>
       </Popover>
