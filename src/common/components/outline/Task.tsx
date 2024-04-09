@@ -9,9 +9,12 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@chakra-ui/react";
+
+import { domainUpdateAndCallback } from "common/utils";
 import ResizeTextarea from "react-textarea-autosize";
 import { MdMoreVert, MdEdit } from "react-icons/md";
 import { UITask } from "domain/blog-article/UITask";
+
 
 type Props = {
   // taskIndex: number;
@@ -68,11 +71,7 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
     //updateTaskXML(taskIndex, uiTask._xml);
   };
 
-  const domainUpdateAndCallback = (uiTask: UITask,  method: string, args: any[] ,onUpdateTaskCallback: (uiTask: UITask) => void) => {  
-    // Call the method on the domain object with args
-    uiTask[method](...args);
-    onUpdateTaskCallback(uiTask);
-  }
+
 
   return (
     <Flex align={"center"} className="task">

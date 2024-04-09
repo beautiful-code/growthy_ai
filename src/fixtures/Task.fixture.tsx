@@ -4,7 +4,6 @@ import { FixtureWrapper } from "fixtures/FixtureWrapper";
 import { Box } from "@chakra-ui/react";
 import { Task } from "common/components/outline/Task";
 
-import { UISection } from "domain/blog-article/UISection";
 import { UITask } from "domain/blog-article/UITask";
 
 export default {
