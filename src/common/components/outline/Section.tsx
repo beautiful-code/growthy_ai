@@ -11,22 +11,35 @@ import {
 
 import { Task } from "./Task";
 import { UISection } from "domain/blog-article/UISection";
+import { UITask } from "domain/blog-article/UITask";
 
 type Props = {
-  sectionIndex: number;
+  // sectionIndex: number;
   uiSection: UISection;
-  updateSectionXML: (sectionIndex: number, sectionXML: string) => void;
+  onUpdateSectionCallback: (uiSection: UISection) => void;
+  //updateSectionXML: (sectionIndex: number, sectionXML: string) => void;
 };
 
 export const Section: React.FC<Props> = ({
-  sectionIndex,
+  //sectionIndex,
   uiSection,
-  updateSectionXML,
+  onUpdateSectionCallback,
 }) => {
+
+  // Factory function to create a callback function that updates a task at a given index
+  const onUpdateTaskCallback = (taskIndex: number) => (uiTask: UITask) => {
+    // Domain Object update and callback go hand in hand.
+    uiSection.updateTask(taskIndex, uiTask);
+    onUpdateSectionCallback(uiSection);
+    //updateSectionXML(sectionIndex, uiSection._xml);
+  };
+
+  /*
   const updateTaskXML = (taskIndex: number, taskXML: string) => {
     uiSection.updateTask(taskIndex, taskXML);
     updateSectionXML(sectionIndex, uiSection._xml);
   };
+  */
 
   return (
     <Accordion allowMultiple allowToggle>
@@ -57,9 +70,8 @@ export const Section: React.FC<Props> = ({
         <AccordionPanel pb={4} pl={10}>
           {uiSection?.getUITasks().map((task, taskIndex) => (
             <Task
-              taskIndex={taskIndex}
               uiTask={task}
-              updateTaskXML={updateTaskXML}
+              onUpdateTaskCallback={onUpdateTaskCallback(taskIndex)}
             />
           ))}
         </AccordionPanel>
