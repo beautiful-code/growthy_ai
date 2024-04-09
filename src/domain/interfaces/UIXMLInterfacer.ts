@@ -2,9 +2,11 @@ interface UIXMLInterface {
   _xml: string;
 
   // Serialize the object to XML
+  /*
   getXML(): string;
 
   setXML(xml: string): void;
+  */
 
   getUIStatelessXML(): string;
 
@@ -19,6 +21,7 @@ export class UIXMLInterfacer implements UIXMLInterface {
     this._xml = xml;
   }
 
+  /*
   // Serialize the object to XML
   getXML(): string {
     return this._xml;
@@ -27,6 +30,7 @@ export class UIXMLInterfacer implements UIXMLInterface {
   setXML(xml: string): void {
     this._xml = xml;
   }
+  */
 
   getUIStatelessXML(): string {
     throw new Error("getUIStatelessXML not implemented.");

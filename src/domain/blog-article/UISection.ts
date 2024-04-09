@@ -46,16 +46,16 @@ export class UISection extends UIXMLInterfacer {
     this._xml = new XMLSerializer().serializeToString(xmlDoc);
   }
 
-  updateTask(taskIndex: number, taskXML: string): void {
+  updateTask(taskIndex: number, uiTask: UITask): void {
     const tasks = this.getUITasks();
-    tasks[taskIndex]._xml = taskXML;
+    tasks[taskIndex] = uiTask;
 
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
     const section = xmlDoc.getElementsByTagName("Section");
-    const task = parser.parseFromString(taskXML, "text/xml");
+    const taskXML = parser.parseFromString(uiTask._xml, "text/xml");
     const taskNode = xmlDoc.importNode(
-      task.getElementsByTagName("Task")[0],
+      taskXML.getElementsByTagName("Task")[0],
       true
     );
     section[0].replaceChild(
