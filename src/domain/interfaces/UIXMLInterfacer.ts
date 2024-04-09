@@ -15,11 +15,15 @@ interface UIXMLInterface {
 }
 
 export class UIXMLInterfacer implements UIXMLInterface {
+  // Ask Pranav - What does this do exactly and what are the implications of this?
+  [key: string]: any;
+
   _xml: string;
 
   constructor(xml: string) {
     this._xml = xml;
   }
+
 
   /*
   // Serialize the object to XML
