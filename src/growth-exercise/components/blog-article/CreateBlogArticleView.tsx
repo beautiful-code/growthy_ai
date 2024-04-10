@@ -5,7 +5,6 @@ import {
   Text,
   Input,
   Textarea,
-  Button,
   Box,
   Flex,
   Grid,
@@ -13,6 +12,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { MdArrowBack } from "react-icons/md";
+import { GButton } from "common/components/GButton";
 
 import { UserAvatar } from "common/components/menu/UserAvatar";
 import { NavMenu } from "common/components/menu/NavMenu";
@@ -110,17 +110,15 @@ export const CreateBlogArticleView: React.FC<Props> = ({
             <Text fontSize="lg" mb={2} mt={6}>
               What should the article cover? (5-6 sentences)
             </Text>
-            <Button
+            <GButton
               size="sm"
               ml={2}
               mt={6}
-              backgroundColor="white"
-              color="#0b870b"
-              border="1px solid #0b870b"
+              type="secondary"
               onClick={handleGrowthyConversation}
             >
               Get Ideas
-            </Button>
+            </GButton>
           </Flex>
           <Textarea
             backgroundColor={"white"}
@@ -143,9 +141,9 @@ export const CreateBlogArticleView: React.FC<Props> = ({
             }
           />
           <Flex>
-            <Button colorScheme="green" onClick={handleGenerateOutline}>
+            <GButton type="primary" onClick={handleGenerateOutline}>
               Generate Outline
-            </Button>
+            </GButton>
             {isLoading && <Spinner ml={4} />}
           </Flex>
 

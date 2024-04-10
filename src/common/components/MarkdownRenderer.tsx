@@ -4,7 +4,8 @@ import rehypeRaw from "rehype-raw";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism";
 
-import { Box, Flex, Button } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
+import { GButton } from "common/components/GButton";
 
 type MarkdownRendererProps = {
   children: string;
@@ -30,7 +31,8 @@ export function MarkdownRenderer({
           return !inline && match ? (
             <Box>
               <Flex justify={"flex-end"}>
-                <Button
+                <GButton
+                  type="secondary"
                   ml="8px"
                   size={"xs"}
                   onClick={() => {
@@ -41,7 +43,7 @@ export function MarkdownRenderer({
                   }}
                 >
                   Insert Code
-                </Button>
+                </GButton>
               </Flex>
               <SyntaxHighlighter
                 style={dracula}

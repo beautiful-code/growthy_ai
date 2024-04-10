@@ -1,5 +1,6 @@
 import React from "react";
-import { Accordion, Box, Flex, Button } from "@chakra-ui/react";
+import { Accordion, Box, Flex } from "@chakra-ui/react";
+import { GButton } from "common/components/GButton";
 
 import { UIOutline } from "domain/blog-article/UIOutline";
 import { UISection } from "domain/blog-article/UISection";
@@ -52,25 +53,12 @@ export const Outline: React.FC<Props> = ({
       </Accordion>
 
       <Flex justify={"flex-end"}>
-        <Button
-          size="xs"
-          border="1px solid #E2E8F0"
-          backgroundColor={"white"}
-          color={"primary.500"}
-          onClick={handleExpandAll}
-        >
+        <GButton size="xs" type="secondary" onClick={handleExpandAll}>
           Expand all
-        </Button>
-        <Button
-          size="xs"
-          ml="8px"
-          border="1px solid #E2E8F0"
-          backgroundColor={"white"}
-          color={"primary.500"}
-          onClick={handleCollapseAll}
-        >
+        </GButton>
+        <GButton size="xs" type="secondary" onClick={handleCollapseAll}>
           Collapse all
-        </Button>
+        </GButton>
       </Flex>
     </Box>
   );

@@ -8,9 +8,9 @@ import {
   RadioGroup,
   Stack,
   Radio,
-  Button,
   VStack,
 } from "@chakra-ui/react";
+import { GButton } from "common/components/GButton";
 
 type Props = {
   learningObjective: string;
@@ -66,9 +66,9 @@ export const StudyExerciseForm: React.FC<Props> = ({
             </RadioGroup>
           </FormControl>
 
-          <Button colorScheme="blue" type="submit">
+          <GButton type="primary" htmlType="submit">
             Get Suggestions
-          </Button>
+          </GButton>
         </VStack>
       </form>
     </Box>
