@@ -1,31 +1,8 @@
-import { Node } from "domain/node/Node";
-
 export type TUser = {
   id: string;
   username: string;
   email: string;
   avatar_url: string;
-};
-
-export type Task = {
-  text: string;
-  is_task: boolean;
-  indentation_level: number;
-  locked?: boolean;
-  notes?: string;
-  content?: string;
-};
-
-export type Section = {
-  name: string;
-  tasks: Task[];
-};
-
-export type TSuggestedGrowthExercise = {
-  id: string;
-  summary: string;
-  title: string;
-  outline: Node[];
 };
 
 export type Dictionary = {

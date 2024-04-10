@@ -22,7 +22,7 @@ import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 import { BlogArticle } from "./BlogArticle";
 
 type Props = {
-  getBlogArticleXMLSuggestion: (
+  getBlogArticleXMLSuggestion?: (
     blog_article_goal: string,
     blog_article_points: string
   ) => Promise<string>;
