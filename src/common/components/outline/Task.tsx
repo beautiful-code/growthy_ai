@@ -13,7 +13,7 @@ import {
 import { domainUpdateAndCallback } from "common/utils";
 import ResizeTextarea from "react-textarea-autosize";
 import { MdMoreVert, MdEdit } from "react-icons/md";
-import { UITask } from "domain/blog-article/UITask";
+import { UITask } from "domain/common/UITask";
 
 type Props = {
   uiTask: UITask;

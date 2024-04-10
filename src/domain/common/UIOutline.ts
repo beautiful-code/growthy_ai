@@ -1,5 +1,5 @@
 import { UIXMLInterfacer } from "domain/interfaces/UIXMLInterfacer";
-import { UISection } from "./UISection";
+import { UISection } from "domain/common/UISection";
 
 /**
  * UIOutline class has a outline xml and it has the following structure:

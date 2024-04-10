@@ -10,8 +10,8 @@ import {
 } from "@chakra-ui/react";
 
 import { Task } from "./Task";
-import { UISection } from "domain/blog-article/UISection";
-import { UITask } from "domain/blog-article/UITask";
+import { UISection } from "domain/common/UISection";
+import { UITask } from "domain/common/UITask";
 import { domainUpdateAndCallback } from "common/utils";
 
 import "./Section.css";
@@ -20,7 +20,6 @@ type Props = {
   uiSection: UISection;
   onUpdateSectionCallback: (uiSection: UISection) => void;
 };
-
 
 export const Section: React.FC<Props> = ({
   uiSection,
@@ -35,7 +34,6 @@ export const Section: React.FC<Props> = ({
       onUpdateSectionCallback
     );
   };
-
 
   return (
     <Accordion allowMultiple allowToggle>

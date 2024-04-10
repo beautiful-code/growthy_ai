@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FixtureWrapper } from "fixtures/FixtureWrapper";
 import { Outline } from "common/components/outline/Outline";
-import { UIOutline } from "domain/blog-article/UIOutline";
+import { UIOutline } from "domain/common/UIOutline";
 
 export default {
   "base case": () => {
