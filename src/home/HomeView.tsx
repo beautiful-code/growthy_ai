@@ -3,7 +3,6 @@ import { Grid, GridItem, Box } from "@chakra-ui/react";
 
 import { Sidebar } from "common/components/Sidebar";
 import { Menu } from "common/components/menu/Menu";
-import { ExercisesListView } from "./components";
 
 export const Home: React.FC = () => {
   return (
@@ -16,9 +15,7 @@ export const Home: React.FC = () => {
             <Sidebar />
           </GridItem>
 
-          <GridItem>
-            <ExercisesListView />
-          </GridItem>
+          <GridItem></GridItem>
         </Grid>
       </Box>
     </Box>
