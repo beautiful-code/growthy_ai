@@ -90,13 +90,11 @@ export class UIOutline extends UIXMLInterfacer {
     }, [] as number[]);
   }
 
-  // TODO: Pranav - This is incorrect. You need to call the getUIStatelessXML method on each section
-  // Write a test first
   getUIStatelessXML(): string {
     const sections = this.getSections();
     let xmlString = `<Outline>`;
     sections.forEach((section) => {
-      xmlString += section._xml;
+      xmlString += section.getUIStatelessXML();
     });
     xmlString += `</Outline>`;
     return xmlString;
