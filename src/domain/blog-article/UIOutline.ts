@@ -2,7 +2,7 @@ import { UIXMLInterfacer } from "domain/interfaces/UIXMLInterfacer";
 import { UISection } from "./UISection";
 
 /**
- * UIOutline class has a outline xml that was generated from open ai and it has the following structure:
+ * UIOutline class has a outline xml and it has the following structure:
  *
   <Outline>
     <Section name="Introduction to My Sanskrit Journey">
@@ -90,6 +90,8 @@ export class UIOutline extends UIXMLInterfacer {
     }, [] as number[]);
   }
 
+  // TODO: Pranav - This is incorrect. You need to call the getUIStatelessXML method on each section
+  // Write a test first
   getUIStatelessXML(): string {
     const sections = this.getSections();
     let xmlString = `<Outline>`;
