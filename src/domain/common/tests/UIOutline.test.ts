@@ -1,4 +1,4 @@
-import { UIOutline } from "./UIOutline";
+import { UIOutline } from "domain/common/UIOutline";
 
 describe("UIOutline", () => {
   it("should construct a UIOutline", () => {

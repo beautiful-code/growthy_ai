@@ -1,5 +1,5 @@
 import { UIXMLInterfacer } from "domain/interfaces/UIXMLInterfacer";
-import { UITask } from "./UITask";
+import { UITask } from "domain/common/UITask";
 
 /**
  * UISection is a class that represents a section in a blog article.

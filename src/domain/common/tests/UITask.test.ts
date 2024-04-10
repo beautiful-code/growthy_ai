@@ -1,4 +1,4 @@
-import { UITask } from "./UITask";
+import { UITask } from "domain/common/UITask";
 
 describe("UITask", () => {
   it("should get constucted with a xml string", () => {

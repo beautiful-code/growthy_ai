@@ -2,7 +2,7 @@ import { useState } from "react";
 import { FixtureWrapper } from "fixtures/FixtureWrapper";
 import { Box } from "@chakra-ui/react";
 import { Section } from "common/components/outline/Section";
-import { UISection } from "domain/blog-article/UISection";
+import { UISection } from "domain/common/UISection";
 
 export default {
   "base case": () => {
