@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, Text, Button } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
+import { GButton } from "common/components/GButton";
 
 import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 import { Outline } from "common/components/outline/Outline";
@@ -28,9 +29,9 @@ export const BlogArticle: React.FC<Props> = ({
         uiOutline={blogArticle.getOutline()}
         onUpdateOutlineCallback={handleUpdateOutline}
       />
-      <Button colorScheme="green" onClick={handleAddBlogArticle}>
+      <GButton type="primary" onClick={handleAddBlogArticle}>
         Add Blog Article
-      </Button>
+      </GButton>
     </Box>
   );
 };
