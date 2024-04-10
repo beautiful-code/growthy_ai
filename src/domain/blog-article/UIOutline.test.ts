@@ -82,4 +82,23 @@ describe("UIOutline", () => {
     const expandedIndices = outline.getExpandesSectionIndices();
     expect(expandedIndices).toEqual([0]);
   });
+
+  it("should return stateless xml", () => {
+    const xml = `<Outline>
+            <Section name="Section 1" expanded='true'>
+                <Task name="Task 1" checked='true' />
+                <Task name="Task 2" />
+            </Section>
+        </Outline>`;
+
+    const statelessXML = `<Outline>
+            <Section name="Section 1">
+                <Task name="Task 1" />
+                <Task name="Task 2" />
+            </Section>
+        </Outline>`;
+
+    const outline = new UIOutline(xml);
+    expect(outline.getUIStatelessXML()).toEqualXml(statelessXML);
+  });
 });
