@@ -8,8 +8,6 @@ import { UITask } from "domain/blog-article/UITask";
 
 export default {
   "base case": () => {
-    // const uiSection = new UISection( "<Section name='section1'><Task name='task1' checked='true' /></Section>");
-
     const [taskXml, setTaskXml] = useState(
       "<Task name='task1' checked='true' />"
     );
