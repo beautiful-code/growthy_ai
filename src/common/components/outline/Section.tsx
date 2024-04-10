@@ -17,39 +17,25 @@ import { domainUpdateAndCallback } from "common/utils";
 import "./Section.css";
 
 type Props = {
-  // sectionIndex: number;
   uiSection: UISection;
   onUpdateSectionCallback: (uiSection: UISection) => void;
-  //updateSectionXML: (sectionIndex: number, sectionXML: string) => void;
 };
 
+
 export const Section: React.FC<Props> = ({
-  //sectionIndex,
   uiSection,
   onUpdateSectionCallback,
 }) => {
   // Factory function to create a callback function that updates a task at a given index
   const onUpdateTaskCallback = (taskIndex: number) => (uiTask: UITask) => {
-    // Domain Object update and callback go hand in hand.
-    /* 
-    uiSection.updateTask(taskIndex, uiTask);
-    onUpdateSectionCallback(uiSection);
-    */
     domainUpdateAndCallback(
       uiSection,
       "updateTask",
       [taskIndex, uiTask],
       onUpdateSectionCallback
     );
-    //updateSectionXML(sectionIndex, uiSection._xml);
   };
 
-  /*
-  const updateTaskXML = (taskIndex: number, taskXML: string) => {
-    uiSection.updateTask(taskIndex, taskXML);
-    updateSectionXML(sectionIndex, uiSection._xml);
-  };
-  */
 
   return (
     <Accordion allowMultiple allowToggle>
