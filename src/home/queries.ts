@@ -1,5 +1,6 @@
+import { getFilters } from "common/utils";
 import { supabaseClient } from "supabaseClient";
-import { TSelectedType } from "types";
+import { TExerciseFilter } from "types";
 
 export const getExercises = async () => {
   const { data, error } = await supabaseClient
@@ -12,29 +13,23 @@ export const getExercises = async () => {
     return;
   }
 
-  console.log("data", data);
-
   return data;
 };
 
-// Fetch all exercises based on selected type and with pagination
-export const getAllExercisesPaginated = async (lowerLimit: number, upperLimit: number, selectedType: TSelectedType) => {
+// Fetch exercises based on filters and with pagination
+export const getExercisesPaginated = async ({filters, lowerLimit, upperLimit}:{filters: TExerciseFilter, lowerLimit?: number, upperLimit?: number}) => {
   
-  const types =
-    (selectedType.blogArticle && selectedType.studyExercise) ||
-    selectedType.all
-      ? ["study-exercise", "blog-article"]
-      : selectedType.blogArticle
-      ? ["blog-article"]
-      : selectedType.studyExercise 
-      ? ["study-exercise"]
-      : [];
+  const filter = getFilters(filters);
 
-  const { data, error, count } = await supabaseClient
+  // TODO: Modify to only published in future
+  const state: string[] = ["published", "outlined", "created"]; 
+
+  const { data, error } = await supabaseClient
     .from("growth_exercise")
-    .select("id, type, title, user_id", { count: 'exact' })
-    .range(lowerLimit, upperLimit)
-    .in('type', types)
+    .select("id, type, title, user_id")
+    .range(lowerLimit!, upperLimit!)
+    .in('type', filter)
+    .in('state', state)
     .order("created_at", { ascending: false });
 
   if (error) {
@@ -42,5 +37,20 @@ export const getAllExercisesPaginated = async (lowerLimit: number, upperLimit: n
     return;
   }
 
-  return {exercises: data, count};
+  return {exercises: data};
+};
+
+export const getExerciseById = async (exerciseId: string) => {
+  const { data, error } = await supabaseClient
+    .from("growth_exercise")
+    .select("id, title, user_id, guild_id, type")
+    .eq("id", exerciseId)
+    .single()
+
+  if (error) {
+    console.log("error", error);
+    return;
+  }
+
+  return data;
 };

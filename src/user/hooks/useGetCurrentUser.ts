@@ -1,6 +1,6 @@
+import { getCurrentUserId, getUserById } from "common/utils"
 import { useEffect, useState } from "react"
 import { TUser } from "types"
-import { getCurrentUserId, getUserById } from "utils"
 
 export const useGetCurrentUser = () => {
     const [currentUser, setCurrentUser] = useState<TUser>({} as TUser)

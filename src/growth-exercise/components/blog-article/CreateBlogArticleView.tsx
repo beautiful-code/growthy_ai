@@ -16,8 +16,8 @@ import {
 import { MdArrowBack } from "react-icons/md";
 
 import { TNode } from "types";
-import { UserAvatar } from "common/components/menu/UserAvatar";
-import { NavMenu } from "common/components/menu/NavMenu";
+import { UserAvatar } from "common/components/header/UserAvatar";
+import { NavMenu } from "common/components/header/NavMenu";
 import { Node } from "domain/node/Node";
 import { UITree } from "domain/ui-tree/UITree";
 import { GetIdeasAssistence } from "growth-exercise/components/blog-article/GetIdeasAssistence";

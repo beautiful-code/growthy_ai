@@ -87,11 +87,10 @@ export type TExerciseWithUser = {
   author: TUser;
 }
 
-export type TSelectedType = {
-    blogArticle: boolean;
-    studyExercise: boolean;
-    all: boolean;
-    til: boolean;
+export type TExerciseFilter = {
+  blogArticle: boolean;
+  studyExercise: boolean;
+  til: boolean;
 };
 
 export type TGuild = {
@@ -106,3 +105,28 @@ export type TGuildUser = {
   led_by: string;
   user?: TUser;
 }
+
+export type TNodeResponseItems = {
+  id: string;
+  text: string;
+  parent_id?: string | null;
+  rel_order: number;
+  created_at?: string;
+  is_checked: boolean;
+  notes?: TNote[];
+  growth_exercise_id: string;
+  content?: string;
+  is_task: boolean;
+};
+
+export type TNote = {
+  text: string;
+  type: string;
+  id: string;
+  bullet_id: string;
+  order: number;
+  created_at?: string;
+  img_url?: string;
+  is_accepted?: boolean;
+  bash_note?: boolean;
+};

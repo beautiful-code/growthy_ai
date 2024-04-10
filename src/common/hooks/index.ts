@@ -1,3 +1,3 @@
-import { useGetExercises } from "./useGetExercises";
+import { useGetExercisesPaginated } from "./useGetExercisesPaginated";
 
-export { useGetExercises };
+export { useGetExercisesPaginated };

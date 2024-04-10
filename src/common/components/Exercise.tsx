@@ -13,7 +13,7 @@ type Props = {
   exercise: TExercise;
 };
 
-export const ExerciseView: React.FC<Props> = ({ exercise }) => {
+export const Exercise: React.FC<Props> = ({ exercise }) => {
   const navigate = useNavigate();
 
   const handleNavigateToPreviewScreen = () => {

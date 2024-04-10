@@ -1,6 +1,6 @@
+import { getCurrentUserId, getFilters, getUserById } from "common/utils";
 import { supabaseClient } from "supabaseClient";
-import { TExercise, TGuildUser } from "types";
-import { getCurrentUserId, getUserById } from "utils";
+import { TExerciseFilter, TGuildUser } from "types";
 
 export const getAllGuilds = async () => {
     const { data, error } = await supabaseClient
@@ -12,7 +12,7 @@ export const getAllGuilds = async () => {
       return;
     }
 
-    return data;
+    return {guilds: data};
 };
 
 export const getGuildById = async (guildId: string) => {
@@ -42,14 +42,21 @@ export const getGuildById = async (guildId: string) => {
     return guildUser;
 }
 
-export const getExercisesForUserInGuild = async (
-  guildId: string
-): Promise<TExercise[] | undefined> => {
+export const getUnpublishedExercisesInGuild = async (
+  {filters, guildId}:
+  {filters: TExerciseFilter,
+  guildId?: string,
+  lowerLimit?: number, upperLimit?: number}
+) => {
   const userId = await getCurrentUserId();
-  const { data, error } = await supabaseClient
+  const filter = getFilters(filters);
+
+  const { data, error} = await supabaseClient
     .from("growth_exercise")
-    .select("*")
+    .select("id, type, title, user_id")
     .match({ guild_id: guildId, user_id: userId })
+    .in('type', filter)
+    .in("state", ["created", "outlined"])
     .order("created_at", { ascending: false }); 
 
   if (error) {
@@ -57,22 +64,29 @@ export const getExercisesForUserInGuild = async (
     return;
   }
 
-  return data;
+  return {exercises: data};
 };
 
-export const getExercisesForGuild = async (
-  guildId: string
-): Promise<TExercise[] | undefined> => {
-  const { data: guildExercises, error } = await supabaseClient
+export const getPublishedExercisesInGuild = async (
+  {filters, guildId, lowerLimit, upperLimit}:
+  {filters: TExerciseFilter, guildId?: string, lowerLimit?: number, upperLimit?: number}
+) => {
+  const filter = getFilters(filters);
+
+  const { data, error} = await supabaseClient
     .from("growth_exercise")
-    .select("*")
-    .match({ guild_id: guildId})
+    .select("id, type, title, user_id")
+    .range(lowerLimit!, upperLimit!)
+    .match({ guild_id: guildId })
+    .in('type', filter)
+    .in("state", ["published", "created", "outlined"])
     .order("created_at", { ascending: false }); 
 
   if (error) {
     console.log("error", error);
     return;
   }
-
-  return guildExercises;
+  
+  return {exercises: data};
 };
+
