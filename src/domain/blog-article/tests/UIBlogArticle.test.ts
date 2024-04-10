@@ -1,5 +1,5 @@
-import { UIBlogArticle } from "./UIBlogArticle";
-import { UIOutline } from "./UIOutline";
+import { UIOutline } from "domain/common/UIOutline";
+import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 
 describe("UIBlogArticle", () => {
   it("should construct a UIBlogArticle", () => {

@@ -2,8 +2,8 @@ import React from "react";
 import { Accordion, Box, Flex } from "@chakra-ui/react";
 import { GButton } from "common/components/GButton";
 
-import { UIOutline } from "domain/blog-article/UIOutline";
-import { UISection } from "domain/blog-article/UISection";
+import { UIOutline } from "domain/common/UIOutline";
+import { UISection } from "domain/common/UISection";
 import { Section } from "./Section";
 import { domainUpdateAndCallback } from "common/utils";
 

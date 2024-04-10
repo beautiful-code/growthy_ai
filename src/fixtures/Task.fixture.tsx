@@ -4,7 +4,7 @@ import { FixtureWrapper } from "fixtures/FixtureWrapper";
 import { Box } from "@chakra-ui/react";
 import { Task } from "common/components/outline/Task";
 
-import { UITask } from "domain/blog-article/UITask";
+import { UITask } from "domain/common/UITask";
 
 export default {
   "base case": () => {

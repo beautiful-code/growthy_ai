@@ -1,5 +1,5 @@
 import { UIXMLInterfacer } from "domain/interfaces/UIXMLInterfacer";
-import { UIOutline } from "./UIOutline";
+import { UIOutline } from "domain/common/UIOutline";
 
 /**
  * UIBlogArticle class has a blog article xml that was generated from open ai and it has the following structure:

@@ -1,5 +1,5 @@
-import { UISection } from "./UISection";
-import { UITask } from "./UITask";
+import { UISection } from "domain/common/UISection";
+import { UITask } from "domain/common/UITask";
 
 describe("UISection", () => {
   it("should get constucted with a xml string", () => {

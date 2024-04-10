@@ -4,7 +4,7 @@ import { GButton } from "common/components/GButton";
 
 import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 import { Outline } from "common/components/outline/Outline";
-import { UIOutline } from "domain/blog-article/UIOutline";
+import { UIOutline } from "domain/common/UIOutline";
 
 type Props = {
   blogArticle: UIBlogArticle;
