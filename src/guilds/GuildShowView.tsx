@@ -5,12 +5,12 @@ import {
   Grid,
   GridItem,
   Text,
-  Button,
   Flex,
   Box,
   HStack,
   Stack,
 } from "@chakra-ui/react";
+import { GButton } from "common/components/GButton";
 
 import { Sidebar } from "common/components/Sidebar";
 
@@ -44,17 +44,14 @@ export const GuildShowView: React.FC<Props> = () => {
       <GridItem>
         <Flex mt="16px" align={"center"}>
           <Text fontSize={"medium"}>Some Guild at Beautiful Code</Text>
-          <Button
+          <GButton
             size="xs"
             ml="8px"
-            backgroundColor={"white"}
-            color={"primary.500"}
-            borderColor={"primary.500"}
-            border={"1px solid"}
+            type="secondary"
             onClick={handleShowGrowthExercises}
           >
             Add Growth Exercise
-          </Button>
+          </GButton>
         </Flex>
         <Box mt="8px">
           {showGrowthExercises && (

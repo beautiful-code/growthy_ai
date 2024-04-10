@@ -1,5 +1,6 @@
 import React from "react";
-import { Button, Center, VStack, Box, Heading } from "@chakra-ui/react";
+import { Center, VStack, Box, Heading } from "@chakra-ui/react";
+import { GButton } from "common/components/GButton";
 
 import { supabaseClient } from "supabaseClient";
 
@@ -34,15 +35,9 @@ export const LoginView: React.FC<Props> = () => {
           <Heading as="h1" size="xl">
             Growthy
           </Heading>
-          <Button
-            _hover={{ bg: "#0b870b82" }}
-            bg="#0b870b"
-            color="white"
-            size="lg"
-            onClick={signInWithGoogle}
-          >
+          <GButton type="primary" size="lg" onClick={signInWithGoogle}>
             Login with Google
-          </Button>
+          </GButton>
         </VStack>
       </Box>
     </Center>
