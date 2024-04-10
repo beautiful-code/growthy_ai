@@ -1,6 +1,6 @@
-import { getCurrentUserId, getFilters } from "common/utils";
+import { getCurrentUserId, getFilters, getUserById } from "common/utils";
 import { supabaseClient } from "supabaseClient";
-import { TExerciseFilter } from "types";
+import { TExerciseFilter, TUser } from "types";
 
 export const getUnpublishedExercisesForUser = async (
   {filters}:
@@ -14,7 +14,7 @@ export const getUnpublishedExercisesForUser = async (
     .select("id, type, title, user_id")
     .match({ user_id: userId })
     .in('type', filter)
-    .in("state", ["created", "outlined"])
+    .neq('state', "published")
     .order("created_at", { ascending: false }); 
 
   if (error) {
@@ -32,14 +32,13 @@ export const getPublishedExercisesForUser = async (
   const userId = await getCurrentUserId();
   const filter = getFilters(filters);
 
-  
   const { data, error} = await supabaseClient
     .from("growth_exercise")
     .select("id, type, title, user_id")
     .range(lowerLimit!, upperLimit!)
     .match({ user_id: userId })
     .in('type', filter)
-    .in("state", ["published", "created", "outlined"])
+    .in("state", ["published", "created", "outlined"]) //TODO: change to published only
     .order("created_at", { ascending: false }); 
 
   if (error) {
@@ -49,3 +48,9 @@ export const getPublishedExercisesForUser = async (
 
   return {exercises: data};
 };
+
+export const getCurrentUser = async () => {
+  const userId = await getCurrentUserId() || "";
+  const user = await getUserById(userId) as TUser
+  return user
+}

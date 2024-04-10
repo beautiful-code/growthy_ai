@@ -3,7 +3,12 @@ import { GuildIcon } from "common/components/GuildIcon";
 import { useNavigate } from "react-router-dom";
 import { TGuild } from "types";
 
-export const GuildBox: React.FC<{guild: TGuild, selectedGuildId?: string}> = ({guild, selectedGuildId}) => {
+type Props = {
+    guild: TGuild, 
+    selectedGuildId?: string
+}
+
+export const GuildBox: React.FC<Props> = ({guild, selectedGuildId}) => {
     const navigate = useNavigate();
     const handleNavigateGuild = (guildId: string) => {
       navigate(`/guild/${guildId}`);

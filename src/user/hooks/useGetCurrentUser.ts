@@ -1,17 +1,20 @@
-import { getCurrentUserId, getUserById } from "common/utils"
-import { useEffect, useState } from "react"
-import { TUser } from "types"
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { TUser } from 'types';
+import { getCurrentUser } from "user/queries";
 
 export const useGetCurrentUser = () => {
-    const [currentUser, setCurrentUser] = useState<TUser>({} as TUser)
+    const [currentUser, setCurrentUser] = useState<TUser>({} as TUser);
+    const {data, isLoading} = useQuery({
+        queryKey: ["user"], 
+        queryFn: () => getCurrentUser(),
+    });
+
     useEffect(() => {
-        (async () => {
-            const userId =  await getCurrentUserId()
-            if(userId) {
-                const user = await getUserById(userId)
-                user && setCurrentUser(user)
-            }
-        })();
-    }, [])
-    return currentUser
+        if(data) {
+            setCurrentUser(data as TUser)
+        }
+    }, [data])
+
+    return {currentUser,  isLoading};
 }

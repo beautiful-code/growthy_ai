@@ -17,6 +17,7 @@ import "App.css";
 import "main.css";
 import { UserView } from "user/UserView";
 import { PreviewView } from "preview/PreviewView";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 const router = createBrowserRouter([
   {
@@ -58,12 +59,16 @@ function App() {
 
   const extendedTheme = extendTheme(extendedThemeObj);
 
+  const queryClient = new QueryClient();
+
   return (
-    <AuthProvider>
-      <ChakraProvider theme={extendedTheme}>
-        <RouterProvider router={router} />
-      </ChakraProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <ChakraProvider theme={extendedTheme}>
+          <RouterProvider router={router} />
+        </ChakraProvider>
+      </AuthProvider>
+    </QueryClientProvider>
   );
 }
 

@@ -1,16 +1,23 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import React from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
-  ChakraProvider,
   HStack,
   IconButton,
   Select,
   Text,
 } from "@chakra-ui/react";
 
-const ButtonPagination = (props: any) => {
+type ButtonPaginationProps =  {
+  children: React.ReactNode;
+  index: number;
+  setPageIndex: (index: number) => void;
+  pageIndex: number;
+  colorScheme?: string;
+}
+
+const ButtonPagination: React.FC<ButtonPaginationProps> = (props) => {
   const {
     children,
     index,
@@ -22,183 +29,164 @@ const ButtonPagination = (props: any) => {
   return (
     <Button
       size="sm"
-      onClick={() => {
-        setPageIndex(index);
-      }}
+      onClick={() => setPageIndex(index)}
       colorScheme={colorScheme}
       variant={pageIndex === index ? "solid" : "link"}
+      key={`page-button-${index}`}
     >
       {children}
     </Button>
   );
 };
 
-/**
- *
- * Pagination of data for tables
- *
- * @component
- * @param {Number} pageSize The number of items to be displayed per page
- * @param {Function} setPageSize The setter of pageSize
- * @param {Number} pageIndex The index in which we are located within the table pagination
- * @param {Function} setPageIndex The setter of pageIndex
- * @param {Number} totalItemCount The length of the array of data to be displayed in the table
- * @param {Array.Number} pageSizeOptions The options of the number of items to be displayed per page. - Default = [10,25,50]
- * @param {String} colorScheme - The color scheme of the pagination - Default = "teal"
- * @param {Boolean} showOptions - Show options - Default = true
- * @param {String} labelOptions - Options label - Default = "Items displayed"
- * @param {Boolean} showQuantity - Show quantity - Default = false
- * @return {Component} Table pagination component.
- */
+type  PaginationTableProps = {
+  pageSize: number;
+  setPageSize: (size: number) => void;
+  pageIndex: number;
+  setPageIndex: (index: number) => void;
+  totalItemsCount: number;
+  pageSizeOptions?: number[];
+  colorScheme?: string;
+  showOptions?: boolean;
+  labelOptions?: string;
+  showQuantity?: boolean;
+}
 
-/** */
-const PaginationTable = (props: any) => {
-  const {
-    pageSize,
-    setPageSize,
-    pageIndex,
-    setPageIndex,
-    totalItemsCount,
-    pageSizeOptions = [10, 25, 50],
-    showOptions = true,
-    labelOptions = "Number of Rows",
-    colorScheme = "teal",
-    showQuantity = false,
-  } = props;
+const PaginationTable: React.FC<PaginationTableProps> = ({
+  pageSize,
+  setPageSize,
+  pageIndex,
+  setPageIndex,
+  totalItemsCount,
+  pageSizeOptions = [10, 25, 50],
+  colorScheme = "teal",
+  showOptions = true,
+  labelOptions = "Number of Rows",
+  showQuantity = false,
+}) => {
+  const TOTAL_INDEX = Math.ceil(totalItemsCount / pageSize);
 
   const showButtons = () => {
-    const buttons = [];
+    const buttons: JSX.Element[] = [];
 
-    const TOTAL_INDEX = Math.ceil(totalItemsCount / pageSize);
-    if (TOTAL_INDEX < 5) {
-      for (let index = 0; index < TOTAL_INDEX; index++) {
+    if (TOTAL_INDEX <= 5) {
+      for (let i = 0; i < TOTAL_INDEX; i++) {
         buttons.push(
           <ButtonPagination
+            key={`button-${i}`}
             colorScheme={colorScheme}
             setPageIndex={setPageIndex}
-            index={index}
+            index={i}
             pageIndex={pageIndex}
-                      >
-            {index + 1}
+          >
+            {i + 1}
           </ButtonPagination>
         );
       }
-    }
-
-    if (TOTAL_INDEX >= 5) {
+    } else {
+      // Logic for when there are more than 5 pages
       if (pageIndex < 3) {
-        for (let index = 0; index < 5; index++) {
+        for (let i = 0; i < 5; i++) {
           buttons.push(
             <ButtonPagination
+              key={`button-${i}`}
               colorScheme={colorScheme}
               setPageIndex={setPageIndex}
-              index={index}
+              index={i}
               pageIndex={pageIndex}
-                          >
-              {index + 1}
+            >
+              {i + 1}
             </ButtonPagination>
           );
         }
-      } else if (pageIndex >= TOTAL_INDEX - 2) {
-        for (let index = TOTAL_INDEX - 5; index < TOTAL_INDEX; index++) {
+      } else if (pageIndex >= TOTAL_INDEX - 3) {
+        for (let i = TOTAL_INDEX - 5; i < TOTAL_INDEX; i++) {
           buttons.push(
             <ButtonPagination
+              key={`button-${i}`}
               colorScheme={colorScheme}
               setPageIndex={setPageIndex}
-              index={index}
+              index={i}
               pageIndex={pageIndex}
-                          >
-              {index + 1}
+            >
+              {i + 1}
             </ButtonPagination>
           );
         }
       } else {
-        for (let index = pageIndex - 2; index < pageIndex + 3; index++) {
+        for (let i = pageIndex - 2; i <= pageIndex + 2; i++) {
           buttons.push(
             <ButtonPagination
+              key={`button-${i}`}
               colorScheme={colorScheme}
               setPageIndex={setPageIndex}
-              index={index}
+              index={i}
               pageIndex={pageIndex}
-                          >
-              {index + 1}
+            >
+              {i + 1}
             </ButtonPagination>
           );
         }
       }
     }
 
-    // If the index is greater than zero, show the button to go back
     buttons.unshift(
       <IconButton
+        key="prev-page"
         icon={<ArrowLeftIcon />}
         size="sm"
-        onClick={() => {
-          setPageIndex(pageIndex - 1);
-        } }
-        isDisabled={!(pageIndex > 0)}
+        onClick={() => setPageIndex(pageIndex - 1)}
+        isDisabled={pageIndex <= 0}
         colorScheme={colorScheme}
-        variant="link" 
-        aria-label={""}      
-      >
-        Back
-      </IconButton>
+        variant="link"
+        aria-label="Previous Page"
+      />
     );
 
     buttons.push(
       <IconButton
+        key="next-page"
         icon={<ArrowRightIcon />}
         size="sm"
-        onClick={() => {
-          setPageIndex(pageIndex + 1);
-        } }
-        isDisabled={!(pageIndex + 1 < TOTAL_INDEX)}
+        onClick={() => setPageIndex(pageIndex + 1)}
+        isDisabled={pageIndex + 1 >= TOTAL_INDEX}
         colorScheme={colorScheme}
-        variant="link" 
-        aria-label={""}      
-      >
-        Back
-      </IconButton>
+        variant="link"
+        aria-label="Next Page"
+      />
     );
 
     return buttons;
   };
 
   return (
-    <ChakraProvider>
-      <HStack w="100%" p={2}>
+    <HStack w="100%" p={2}>
+      {showOptions && (
         <HStack w="40%">
-          {showOptions && (
-            <>
-              <Text fontSize="sm"> {labelOptions}: </Text>
-              <Select 
-                w="auto"
-                size="sm"
-                variant="unstyled"
-                value={pageSize}
-                onChange={(e) => {
-                  setPageSize(e.target.value);
-                  setPageIndex(0);
-                }}
-              >
-                {pageSizeOptions.map((opt: any) => (
-                  <option key={opt.id} value={opt}>
-                    {opt}
-                  </option>
-                ))}
-              </Select>
-
-              {showQuantity && (
-                <Text fontSize="sm">Total: {totalItemsCount}</Text>
-              )}
-            </>
-          )}
+          <Text fontSize="sm">{labelOptions}: </Text>
+          <Select
+            w="auto"
+            size="sm"
+            variant="unstyled"
+            value={pageSize.toString()}
+            onChange={(e) => {
+              setPageSize(Number(e.target.value));
+              setPageIndex(0);
+            }}
+          >
+            {pageSizeOptions.map((size) => (
+              <option key={`option-${size}`} value={size}>
+                {size}
+              </option>
+            ))}
+          </Select>
+          {showQuantity && <Text fontSize="sm">Total: {totalItemsCount}</Text>}
         </HStack>
-        <Box w="60%" justifyContent="right" display="flex">
-          <HStack>{showButtons()}</HStack>
-        </Box>
-      </HStack>
-    </ChakraProvider>
+      )}
+      <Box w="60%" justifyContent="flex-end" display="flex">
+        <HStack spacing={4}>{showButtons()}</HStack>
+      </Box>
+    </HStack>
   );
 };
 

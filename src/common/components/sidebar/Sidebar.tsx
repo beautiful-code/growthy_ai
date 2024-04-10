@@ -74,7 +74,7 @@ export const Sidebar: React.FC<TSideBarProps> = ({selectedGuildId}) => {
                 onClick={handleNavigateUserView}
                 color={window.location.pathname.includes("/user") ? "blue" : ""}
               > 
-                {"My Growth"} 
+                My Growth
               </Link>
             </HStack>
           </VStack>

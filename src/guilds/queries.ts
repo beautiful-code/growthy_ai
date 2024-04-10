@@ -56,7 +56,7 @@ export const getUnpublishedExercisesInGuild = async (
     .select("id, type, title, user_id")
     .match({ guild_id: guildId, user_id: userId })
     .in('type', filter)
-    .in("state", ["created", "outlined"])
+    .neq('state', "published")
     .order("created_at", { ascending: false }); 
 
   if (error) {

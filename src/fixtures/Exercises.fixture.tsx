@@ -8,7 +8,6 @@ export default {
             <Exercises
                 title="Publications from the last"
                 defaultDuration={7}
-                setIsExercisesLoading={() => {}}
                 queryFunction={getExercisesPaginatedMock}
                 type={"published"}
             />

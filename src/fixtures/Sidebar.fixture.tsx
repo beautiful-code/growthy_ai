@@ -5,7 +5,6 @@ export default {
     "base case": (
         <FixtureWrapper>
             <Sidebar 
-                setIsGuildsLoading={() => {}}
                 selectedGuildId={""}
             />
         </FixtureWrapper>
