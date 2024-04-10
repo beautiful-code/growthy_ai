@@ -6,7 +6,17 @@ import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 export default {
   "base case": () => {
     const [generatedBlogArticleXML, setGeneratedBlogArticleXML] = useState(
-      "<BlogArticle><Title name='Blog Title' /><Outline><Section name='section1'><Task name='task1' /><Task name='task2' /></Section></Outline></BlogArticle>"
+      `
+      <BlogArticle>
+        <Title name='Blog Title' />
+        <Outline>
+          <Section name='section1'>
+            <Task name='task1' />
+            <Task name='task2' />
+          </Section>
+        </Outline>
+      </BlogArticle>
+      `
     );
 
     return (
