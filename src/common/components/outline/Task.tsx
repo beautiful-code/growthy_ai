@@ -16,10 +16,8 @@ import { MdMoreVert, MdEdit } from "react-icons/md";
 import { UITask } from "domain/blog-article/UITask";
 
 type Props = {
-  // taskIndex: number;
   uiTask: UITask;
   onUpdateTaskCallback: (uiTask: UITask) => void;
-  //updateTaskXML: (taskIndex: number, taskXML: string) => void;
 };
 
 export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
@@ -48,12 +46,6 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
         [taskText],
         onUpdateTaskCallback
       );
-      /*
-      uiTask.updateText(taskText);
-      onUpdateTaskCallback(uiTask);
-      */
-      //updateTaskXML(taskIndex, uiTask._xml);
-
       setIsEditing(false);
     }
   };
@@ -64,12 +56,6 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
 
     setTaskChecked(e.target.checked); // React state update to re-render the component
 
-    /*
-    // Domain Object update and callback go hand in hand.
-    uiTask.updateChecked(e.target.checked); // Domain object update
-    onUpdateTaskCallback(uiTask); // Callback to update parent
-    */
-
     // TODO: Wrap in one call
     domainUpdateAndCallback(
       uiTask,
@@ -77,7 +63,6 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
       [e.target.checked],
       onUpdateTaskCallback
     );
-    //updateTaskXML(taskIndex, uiTask._xml);
   };
 
   return (
