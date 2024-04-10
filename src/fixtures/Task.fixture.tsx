@@ -16,7 +16,12 @@ export default {
       <Box m={8}>
         <FixtureWrapper>
           <Task
-            uiTask={new UITask(taskXml)}
+            uiTask={
+              new UITask({
+                uuid: "1",
+                xml: taskXml,
+              })
+            }
             onUpdateTaskCallback={(uiTask) => {
               console.log("onUpdateTaskCallback called");
               setTaskXml(uiTask._xml);
