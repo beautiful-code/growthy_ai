@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 import { UIXMLInterfacer } from "domain/interfaces/UIXMLInterfacer";
 import { UITask } from "domain/common/UITask";
 
@@ -55,7 +57,11 @@ export class UISection extends UIXMLInterfacer {
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
     const tasks = xmlDoc.getElementsByTagName("Task");
     return Array.from(tasks).map(
-      (task) => new UITask(new XMLSerializer().serializeToString(task))
+      (task) =>
+        new UITask({
+          uuid: uuidv4(),
+          xml: new XMLSerializer().serializeToString(task),
+        })
     );
   }
 
