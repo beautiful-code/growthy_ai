@@ -6,6 +6,7 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunnableSequence } from "@langchain/core/runnables";
 
 import getGrowthyConfig from "growthy-prompts";
+import { getXMLStringFromMarkdown } from "./utils";
 
 const model = new OpenAI({
   openAIApiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -34,5 +35,5 @@ export const getBlogArticleXMLSuggestion = async (
     blog_article_points: blog_article_points.join("\n"),
   });
 
-  return response;
+  return getXMLStringFromMarkdown(response);
 };
