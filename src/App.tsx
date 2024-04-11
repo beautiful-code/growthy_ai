@@ -1,6 +1,7 @@
 import { Buffer } from "buffer";
 globalThis.Buffer = Buffer;
 import { ChakraProvider } from "@chakra-ui/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { extendTheme } from "@chakra-ui/react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -17,7 +18,6 @@ import "App.css";
 import "main.css";
 import { UserView } from "user/UserView";
 import { PreviewView } from "preview/PreviewView";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 const router = createBrowserRouter([
   {
@@ -50,6 +50,8 @@ const router = createBrowserRouter([
   },
 ]);
 
+const queryClient = new QueryClient();
+
 function App() {
   const [experienceSettings] = useExperienceSettingsState();
 
@@ -59,16 +61,14 @@ function App() {
 
   const extendedTheme = extendTheme(extendedThemeObj);
 
-  const queryClient = new QueryClient();
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
         <ChakraProvider theme={extendedTheme}>
           <RouterProvider router={router} />
         </ChakraProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
 
