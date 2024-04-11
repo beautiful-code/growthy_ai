@@ -16,8 +16,8 @@ import {
 import { MdArrowBack } from "react-icons/md";
 import { GButton } from "common/components/GButton";
 
-import { UserAvatar } from "common/components/menu/UserAvatar";
-import { NavMenu } from "common/components/menu/NavMenu";
+import { UserAvatar } from "common/components/header/UserAvatar";
+import { NavMenu } from "common/components/header/NavMenu";
 import { GetIdeasAssistence } from "growth-exercise/components/blog-article/GetIdeasAssistence";
 import { getBlogArticleXMLSuggestion as defaultGetBlogArticleXMLSuggestion } from "growth-exercise/chains/getOutline";
 import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";

@@ -5,7 +5,6 @@ import { AuthProvider } from "login/context/AuthContext";
 import { ChakraProvider } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 import { BrowserRouter } from "react-router-dom";
-
 import { getChakraUIExtendedTheme } from "common/utils";
 
 type Props = {
