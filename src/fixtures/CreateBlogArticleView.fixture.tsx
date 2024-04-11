@@ -6,23 +6,27 @@ import { TGrowthExercise } from "types";
 const mockSaveGrowthExercise = (
   growthExercise: TGrowthExercise
 ): Promise<{ data: TGrowthExercise; error: PostgrestError | null }> => {
-  // Pranav - This timeout block is not making sense. We should be returning data after 1 sec.
-  setTimeout(() => {
-    console.log("mockSaveGrowthExercise", growthExercise);
-  }, 1000);
-
-  return Promise.resolve({
-    data: growthExercise,
-    error: null,
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      console.log("mockSaveGrowthExercise", growthExercise);
+      resolve({
+        data: growthExercise,
+        error: null,
+      });
+    }, 1000);
   });
 };
 
-const mockGetArticleXMLSuggestion = (
-  _blog_article_goal: string,
-  _blog_article_points: string
-): Promise<string> => {
+const mockGetArticleXMLSuggestion = ({
+  blog_article_goal: _blog_article_goal,
+  blog_article_points: _blog_article_points,
+}: {
+  blog_article_goal: string;
+  blog_article_points: string;
+}): Promise<string> => {
   return new Promise<string>((resolve) => {
-    resolve(`
+    setTimeout(() => {
+      resolve(`
       <BlogArticle>
       <Title name='Blog Title' />
       <Outline>
@@ -33,15 +37,18 @@ const mockGetArticleXMLSuggestion = (
       </Outline>
       </BlogArticle>
     `);
+    }, 1000);
   });
-}
+};
 
-const onCreateGrowthExerciseCallback = (growthExercise: TGrowthExercise | null, _navigate: (path: string) => void) => {
+const onCreateGrowthExerciseCallback = (
+  growthExercise: TGrowthExercise | null,
+  _navigate: (path: string) => void
+) => {
   if (growthExercise) {
     console.log("onCreateGrowthExerciseCallback called with ", growthExercise);
   }
-}
-
+};
 
 export default {
   "base case": () => {

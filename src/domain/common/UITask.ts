@@ -10,7 +10,7 @@ export class UITask extends UIXMLInterfacer {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, "text/xml");
     const task = xmlDoc.getElementsByTagName("Task");
-    if (task[0].getAttribute("uuid") === null) {
+    if (task[0] && task[0]?.getAttribute("uuid") === null) {
       task[0].setAttribute("uuid", uuid);
     }
     super(new XMLSerializer().serializeToString(xmlDoc));
@@ -20,14 +20,14 @@ export class UITask extends UIXMLInterfacer {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
     const task = xmlDoc.getElementsByTagName("Task");
-    return task[0].getAttribute("name") || "";
+    return task[0]?.getAttribute("name") || "";
   }
 
   getUUID(): string {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
     const task = xmlDoc.getElementsByTagName("Task");
-    return task[0].getAttribute("uuid") || "";
+    return task[0]?.getAttribute("uuid") || "";
   }
 
   updateText(text: string): void {
@@ -42,7 +42,7 @@ export class UITask extends UIXMLInterfacer {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
     const task = xmlDoc.getElementsByTagName("Task");
-    return task[0].getAttribute("checked") === "true";
+    return task[0]?.getAttribute("checked") === "true";
   }
 
   updateChecked(checked: boolean): void {

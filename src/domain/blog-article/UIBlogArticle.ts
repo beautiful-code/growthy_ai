@@ -32,7 +32,8 @@ export class UIBlogArticle extends UIXMLInterfacer {
   getTitle(): string | null {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
-    const title = xmlDoc.getElementsByTagName("Title")[0].getAttribute("name");
+    const title =
+      xmlDoc.getElementsByTagName("Title")[0]?.getAttribute("name") || "";
     return title;
   }
 

@@ -16,11 +16,13 @@ const model = new OpenAI({
 
 const parser = new StringOutputParser();
 
-export const getBlogArticleXMLSuggestion = async (
-  specialization = "",
+export const getBlogArticleXMLSuggestion = async ({
   blog_article_goal = "",
-  blog_article_points: string[] = []
-) => {
+  blog_article_points = "",
+}: {
+  blog_article_goal: string;
+  blog_article_points: string;
+}) => {
   const config = getGrowthyConfig();
   const generateOutlineContentPrompt =
     config?.blog_article?.generate_outline?.prompt;
@@ -30,9 +32,9 @@ export const getBlogArticleXMLSuggestion = async (
   const chain = RunnableSequence.from([prompt, model, parser]);
 
   const response = await chain.invoke({
-    specialization,
+    specialization: "",
     blog_article_goal,
-    blog_article_points: blog_article_points.join("\n"),
+    blog_article_points: blog_article_points,
   });
 
   return getXMLStringFromMarkdown(response);

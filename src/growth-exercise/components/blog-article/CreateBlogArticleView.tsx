@@ -26,10 +26,13 @@ import { saveGrowthExercise as defaultSaveGrowthExercise } from "growth-exercise
 import { TGrowthExercise } from "types";
 
 type Props = {
-  getBlogArticleXMLSuggestion?: (
-    blog_article_goal: string,
-    blog_article_points: string
-  ) => Promise<string>;
+  getBlogArticleXMLSuggestion?: ({
+    blog_article_goal,
+    blog_article_points,
+  }: {
+    blog_article_goal: string;
+    blog_article_points: string;
+  }) => Promise<string>;
   saveGrowthExercise?: (
     data: TGrowthExercise
   ) => Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }>;
@@ -56,7 +59,6 @@ export const CreateBlogArticleView: React.FC<Props> = ({
   const navigate = useNavigate();
 
   const [showGrowthyConversation, setShowGrowthyConversation] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [blogInputs, setBlogInputs] = useState<{
     blogTitle: string;
     blogPoints: string[];
@@ -73,6 +75,15 @@ export const CreateBlogArticleView: React.FC<Props> = ({
     },
   });
 
+  const {
+    mutate: generateBlogArticleXML,
+    isPending: isGettingSuggestedBlogArticle,
+  } = useMutation({
+    mutationFn: getBlogArticleXMLSuggestion,
+    onSuccess: (data) => {
+      setGeneratedBlogArticleXML(data);
+    },
+  });
 
   const generatedBlogArticle = new UIBlogArticle(generatedBlogArticleXML);
 
@@ -84,24 +95,15 @@ export const CreateBlogArticleView: React.FC<Props> = ({
     navigate(-1);
   };
 
-  // Pranav - This pattern is not making sense. We should be using useQuery functions to fetch data and set loading
-  // We should not be using isLoading, setIsLoading as a state to manage loading
   const handleGenerateOutline = async () => {
-    setIsLoading(true);
-    const suggestedBlogArticleXML = await getBlogArticleXMLSuggestion(
-      blogInputs.blogTitle,
-      blogInputs?.blogPoints?.join("\n")
-    );
-
-    console.log({ suggestedBlogArticleXML });
-
-    setGeneratedBlogArticleXML(suggestedBlogArticleXML);
-
-    setIsLoading(false);
+    await generateBlogArticleXML({
+      blog_article_goal: blogInputs.blogTitle,
+      blog_article_points: blogInputs?.blogPoints?.join("\n"),
+    });
   };
 
-  const onBlogArticleUpdate = () => {
-    setGeneratedBlogArticleXML(generatedBlogArticle._xml);
+  const onBlogArticleUpdate = (blogArticle: UIBlogArticle) => {
+    setGeneratedBlogArticleXML(blogArticle._xml);
   };
 
   const handleAddBlogArticle = () => {
@@ -186,7 +188,7 @@ export const CreateBlogArticleView: React.FC<Props> = ({
             <GButton type="primary" onClick={handleGenerateOutline}>
               Generate Outline
             </GButton>
-            {isLoading && <Spinner ml={4} />}
+            {isGettingSuggestedBlogArticle && <Spinner ml={4} />}
           </Flex>
 
           <Box mt={4}>

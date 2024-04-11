@@ -15,7 +15,7 @@ export class UISection extends UIXMLInterfacer {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
     const section = xmlDoc.getElementsByTagName("Section");
-    return section[0].getAttribute("name") || "";
+    return section[0]?.getAttribute("name") || "";
   }
 
   updateSectionName(name: string): void {
@@ -30,7 +30,7 @@ export class UISection extends UIXMLInterfacer {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
     const section = xmlDoc.getElementsByTagName("Section");
-    const expanded = section[0].getAttribute("expanded");
+    const expanded = section[0]?.getAttribute("expanded");
     return expanded === "true";
   }
 
