@@ -33,7 +33,7 @@ type Props = {
   saveGrowthExercise?: (
     data: TGrowthExercise
   ) => Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }>;
-  onCreateGrowthExercise?: (
+  onCreateGrowthExerciseCallback?: (
     growthExercise: TGrowthExercise | null,
     navigate: (path: string) => void
   ) => void;
@@ -51,7 +51,7 @@ const defaultOnCreateGrowthExercise = (
 export const CreateBlogArticleView: React.FC<Props> = ({
   getBlogArticleXMLSuggestion = defaultGetBlogArticleXMLSuggestion,
   saveGrowthExercise = defaultSaveGrowthExercise,
-  onCreateGrowthExercise = defaultOnCreateGrowthExercise,
+  onCreateGrowthExerciseCallback = defaultOnCreateGrowthExercise,
 }) => {
   const navigate = useNavigate();
 
@@ -64,15 +64,15 @@ export const CreateBlogArticleView: React.FC<Props> = ({
     blogTitle: "",
     blogPoints: [],
   });
+  const [generatedBlogArticleXML, setGeneratedBlogArticleXML] = useState("");
 
   const { mutate: saveGrowthExerciseMutation, isPending } = useMutation({
     mutationFn: saveGrowthExercise,
     onSuccess: ({ data: growthExercise }) => {
-      onCreateGrowthExercise(growthExercise, navigate);
+      onCreateGrowthExerciseCallback(growthExercise, navigate);
     },
   });
 
-  const [generatedBlogArticleXML, setGeneratedBlogArticleXML] = useState("");
 
   const generatedBlogArticle = new UIBlogArticle(generatedBlogArticleXML);
 
@@ -84,16 +84,18 @@ export const CreateBlogArticleView: React.FC<Props> = ({
     navigate(-1);
   };
 
+  // Pranav - This pattern is not making sense. We should be using useQuery functions to fetch data and set loading
+  // We should not be using isLoading, setIsLoading as a state to manage loading
   const handleGenerateOutline = async () => {
     setIsLoading(true);
-    const suggestedBlogArticleML = await getBlogArticleXMLSuggestion(
+    const suggestedBlogArticleXML = await getBlogArticleXMLSuggestion(
       blogInputs.blogTitle,
       blogInputs?.blogPoints?.join("\n")
     );
 
-    console.log({ suggestedBlogArticleML });
+    console.log({ suggestedBlogArticleXML });
 
-    setGeneratedBlogArticleXML(suggestedBlogArticleML);
+    setGeneratedBlogArticleXML(suggestedBlogArticleXML);
 
     setIsLoading(false);
   };
