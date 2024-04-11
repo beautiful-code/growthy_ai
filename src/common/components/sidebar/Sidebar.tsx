@@ -19,8 +19,8 @@ export const Sidebar: React.FC<TSideBarProps> = ({selectedGuildId}) => {
     navigate(`/`);
   }
 
-  const handleNavigateUserView = () => {
-    navigate(`/user`);
+  const handleNavigateMyGrowthyView = () => {
+    navigate(`/my-growthy`);
   }
 
   const {guilds, isLoading} = useGetGuilds();
@@ -71,8 +71,8 @@ export const Sidebar: React.FC<TSideBarProps> = ({selectedGuildId}) => {
                 fontWeight={"bold"} 
                 fontSize={"xl"} 
                 _hover={{ textDecoration: "none" }}
-                onClick={handleNavigateUserView}
-                color={window.location.pathname.includes("/user") ? "blue" : ""}
+                onClick={handleNavigateMyGrowthyView}
+                color={window.location.pathname.includes("/my-growthy") ? "blue" : ""}
               > 
                 My Growth
               </Link>

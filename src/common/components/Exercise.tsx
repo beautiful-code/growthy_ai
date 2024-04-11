@@ -8,6 +8,7 @@ import BlogArticleIcon from "assets/BlogArticleIcon.svg?react";
 // @ts-expect-error: Svg import
 import TodayILearnedIcon from "assets/TodayILearnedIcon.svg?react";
 import { HStack, VStack, Flex, Box, Text } from "@chakra-ui/react";
+import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 
 type Props = {
   exercise: TExercise;
@@ -21,14 +22,14 @@ export const Exercise: React.FC<Props> = ({ exercise }) => {
   };
 
   const type: string = exercise.type;
-  const title: string = exercise.title;
-
+  const title: string = new UIBlogArticle(exercise.xml_text).getTitle() || "";
+  
   return (
     <HStack spacing={4} align="center">
       <Box as="span" color="green.500">
-        {type === "blog-article" ? <BlogArticleIcon /> : null}
-        {type === "study-exercise" ? <StudyExerciseIcon /> : null}
-        {type === "til" ? <TodayILearnedIcon /> : null}
+        {type === "blog-article" && <BlogArticleIcon />}
+        {type === "study-exercise" && <StudyExerciseIcon />}
+        {type === "til" && <TodayILearnedIcon />}
       </Box>
       <VStack align="start" spacing="0">
         <Flex align="center">

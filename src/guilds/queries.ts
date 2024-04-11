@@ -1,4 +1,5 @@
-import { getCurrentUserId, getFilters, getUserById } from "common/utils";
+import { getFilters } from "common/utils";
+import { getCurrentUserId, getUserById } from "common/queries";
 import { supabaseClient } from "supabaseClient";
 import { TExerciseFilter, TGuildUser } from "types";
 
@@ -53,7 +54,7 @@ export const getUnpublishedExercisesInGuild = async (
 
   const { data, error} = await supabaseClient
     .from("growth_exercise")
-    .select("id, type, title, user_id")
+    .select("id, type, user_id, xml_text")
     .match({ guild_id: guildId, user_id: userId })
     .in('type', filter)
     .neq('state', "published")
@@ -75,7 +76,7 @@ export const getPublishedExercisesInGuild = async (
 
   const { data, error} = await supabaseClient
     .from("growth_exercise")
-    .select("id, type, title, user_id")
+    .select("id, type, user_id, xml_text")
     .range(lowerLimit!, upperLimit!)
     .match({ guild_id: guildId })
     .in('type', filter)

@@ -2,12 +2,12 @@ import React from 'react';
 import { ArrowLeftIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import {
   Box,
-  Button,
   HStack,
   IconButton,
   Select,
   Text,
 } from "@chakra-ui/react";
+import { GButton } from './GButton';
 
 type ButtonPaginationProps =  {
   children: React.ReactNode;
@@ -23,19 +23,20 @@ const ButtonPagination: React.FC<ButtonPaginationProps> = (props) => {
     index,
     setPageIndex,
     pageIndex,
-    colorScheme = "teal",
+    colorScheme = "primary.500",
   } = props;
 
   return (
-    <Button
+    <GButton
       size="sm"
       onClick={() => setPageIndex(index)}
       colorScheme={colorScheme}
       variant={pageIndex === index ? "solid" : "link"}
       key={`page-button-${index}`}
+      type='secondary'
     >
       {children}
-    </Button>
+    </GButton>
   );
 };
 
@@ -59,7 +60,7 @@ const PaginationTable: React.FC<PaginationTableProps> = ({
   setPageIndex,
   totalItemsCount,
   pageSizeOptions = [10, 25, 50],
-  colorScheme = "teal",
+  colorScheme = "primary.500",
   showOptions = true,
   labelOptions = "Number of Rows",
   showQuantity = false,
@@ -160,7 +161,7 @@ const PaginationTable: React.FC<PaginationTableProps> = ({
   };
 
   return (
-    <HStack w="100%" p={2}>
+    <HStack w="100%" mt={"20px"}>
       {showOptions && (
         <HStack w="40%">
           <Text fontSize="sm">{labelOptions}: </Text>
@@ -183,7 +184,7 @@ const PaginationTable: React.FC<PaginationTableProps> = ({
           {showQuantity && <Text fontSize="sm">Total: {totalItemsCount}</Text>}
         </HStack>
       )}
-      <Box w="60%" justifyContent="flex-end" display="flex">
+      <Box w="60%" ml={"30%"}>
         <HStack spacing={4}>{showButtons()}</HStack>
       </Box>
     </HStack>

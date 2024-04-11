@@ -52,62 +52,79 @@ export const Exercises: React.FC<ExercisesProps> = ({ title, defaultDuration, ty
     });
   };
 
+  const loadingText = (
+    <Text as="span" fontSize="2xl" fontWeight={"normal"} ml={"20px"} visibility={isFetching ? "visible" : "hidden"}>
+      Loading...
+    </Text>
+  );
+
   return (
-    <Box mt={"3%"}>
-      <VStack align="start" spacing={4}>
-        <Text fontSize="2xl" fontWeight={"normal"} >{title} { (defaultDuration != 0 && defaultDuration) && (<Text as="span" color={"blue"}>{defaultDuration} days</Text>)} {(isFetching) && <Text as="span" fontSize="2xl" fontWeight={"normal"} ml={"20px"}> Loading... </Text>}</Text>
+    <Box mt={"3%"} width={"100%"}>
+      <VStack align="start" spacing={4} width="100%">
+        <Text fontSize="2xl" fontWeight={"normal"}>
+          {title}
+          {(defaultDuration != 0 && defaultDuration) && (
+            <Text as="span" color={"blue"}>{defaultDuration} days</Text>
+          )}
+          {loadingText}
+        </Text>
        
-        {(isTypePublished && !isLoading) && 
-        (<HStack spacing={4}>
-          <Checkbox
-            isChecked={filters["blogArticle"]}
-            onChange={() => {
-              handleChecked("blogArticle");
-            }}
-          >
-            <Flex align="center">
-              <BlogArticleIcon />
-              <Text ml="4px">Blog Articles</Text>
-            </Flex>
-          </Checkbox>
-          <Checkbox
-            isChecked={filters["studyExercise"]}
-            onChange={() => {
-              handleChecked("studyExercise");
-            }}
-          >
-            <Flex align="center">
-              <StudyExerciseIcon />
-              <Text ml="4px">Study Exercises</Text>
-            </Flex>
-          </Checkbox>
-          <Checkbox
-            isChecked={filters["til"]}
-            onChange={() => {
-              handleChecked("til");
-            }}
-          >
-            <Flex align="center">
-              <TodayILearnedIcon />
-              <Text ml="4px">Today I Learned</Text>
-            </Flex>
-          </Checkbox>
-        </HStack>)}
-        {!isLoading && <VStack align="start" spacing={2}>
-          {exercises.map((exercise) => (
-            <Exercise key={exercise.id} exercise={exercise} />
-          ))}
-        </VStack>}
+        {!isLoading &&
+          <>
+            {isTypePublished && 
+            (<HStack spacing={4}>
+              <Checkbox
+                isChecked={filters["blogArticle"]}
+                onChange={() => {
+                  handleChecked("blogArticle");
+                }}
+              >
+                <Flex align="center">
+                  <BlogArticleIcon />
+                  <Text ml="4px">Blog Articles</Text>
+                </Flex>
+              </Checkbox>
+              <Checkbox
+                isChecked={filters["studyExercise"]}
+                onChange={() => {
+                  handleChecked("studyExercise");
+                }}
+              >
+                <Flex align="center">
+                  <StudyExerciseIcon />
+                  <Text ml="4px">Study Exercises</Text>
+                </Flex>
+              </Checkbox>
+              <Checkbox
+                isChecked={filters["til"]}
+                onChange={() => {
+                  handleChecked("til");
+                }}
+              >
+                <Flex align="center">
+                  <TodayILearnedIcon />
+                  <Text ml="4px">Today I Learned</Text>
+                </Flex>
+              </Checkbox>
+            </HStack>)}
+            <VStack align="start" spacing={2}>
+              {exercises.map((exercise) => (
+                <Exercise key={exercise.id} exercise={exercise} />
+              ))}
+            </VStack>
+            {isTypePublished && 
+            (<PaginationTable
+              pageSize={pageSize}
+              setPageSize={setPageSize}
+              pageIndex={pageIndex}
+              setPageIndex={setPageIndex}
+              totalItemsCount={exercises.length}
+              pageSizeOptions={[10, 25, 50]}
+            />)}
+          </>
+        }
       </VStack>
 
-      {(isTypePublished && !isLoading) && (<PaginationTable
-        pageSize={pageSize}
-        setPageSize={setPageSize}
-        pageIndex={pageIndex}
-        setPageIndex={setPageIndex}
-        totalItemsCount={exercises.length}
-        pageSizeOptions={[10, 25, 50]}
-      />)}
     </Box>
   );
 };

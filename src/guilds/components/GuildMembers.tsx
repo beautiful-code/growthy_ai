@@ -1,5 +1,4 @@
-import { HStack, Text } from "@chakra-ui/react"
-import { UserAvatar } from "common/components/header/UserAvatar";
+import { Avatar, HStack, Text } from "@chakra-ui/react"
 import { TGuildUser } from "types";
 
 type Props = {
@@ -13,8 +12,13 @@ export const GuildMembers: React.FC<Props> = ({guildUser}) => {
             <HStack spacing={4}>
                 {guildUser?.user && 
                     <>
-                        <UserAvatar avatarUrl={guildUser.user.avatar_url} size="sm"/>
-                        <Text fontSize="larger" fontWeight={"normal"}> {guildUser.user.username} - Lead </Text>
+                        <Avatar
+                            size={"sm"}
+                            name={guildUser?.user?.username || ""}
+                            src={guildUser.user.avatar_url || ""}
+                            bgColor={"#D9D9D9"}
+                        />
+                        <Text fontSize="large" fontWeight={"normal"}> {guildUser.user.username} - Lead </Text>
                     </>
                 }
             </HStack>

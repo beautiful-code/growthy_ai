@@ -48,7 +48,6 @@ export const GuildShowView: React.FC = () => {
               </VStack>
             </GridItem> 
           </Grid>
-
         </GridItem>
       </Grid>
     </>

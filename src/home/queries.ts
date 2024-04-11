@@ -11,7 +11,7 @@ export const getExercisesPaginated = async ({filters, lowerLimit, upperLimit}:{f
 
   const { data, error } = await supabaseClient
     .from("growth_exercise")
-    .select("id, type, title, user_id")
+    .select("id, type, user_id, xml_text")
     .range(lowerLimit!, upperLimit!)
     .in('type', filter)
     .in('state', state)

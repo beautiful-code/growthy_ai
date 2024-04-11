@@ -1,4 +1,4 @@
-import { Box, Button, Flex, HStack, VStack, Text } from "@chakra-ui/react"
+import { Box, Flex, HStack, VStack, Text } from "@chakra-ui/react"
 // @ts-expect-error: Svg import
 import StudyExerciseIcon from "assets/StudyExerciseIcon.svg?react";
 // @ts-expect-error: Svg import
@@ -7,6 +7,7 @@ import BlogArticleIcon from "assets/BlogArticleIcon.svg?react";
 import TodayILearnedIcon from "assets/TodayILearnedIcon.svg?react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { GButton } from "common/components/GButton";
 
 type AddGrowthExerciseProps = {
     createParams: {
@@ -33,7 +34,7 @@ export const AddGrowthExercise: React.FC<AddGrowthExerciseProps> = ({createParam
 
     return(
         <Box mt={"20px"}>
-            <Button
+            <GButton
                 size="xs"
                 ml="8px"
                 backgroundColor={"white"}
@@ -41,9 +42,10 @@ export const AddGrowthExercise: React.FC<AddGrowthExerciseProps> = ({createParam
                 borderColor={"primary.500"}
                 border={"1px solid"}
                 onClick={handleShowGrowthExercises}
+                type="secondary"
             >
-                Add Growth Exercise, {type}
-            </Button>
+                Add Growth Exercise
+            </GButton>
 
             {showAddExercise && 
                 (<Box mt="15px" border="1px solid" borderColor="gray.300" backgroundColor="gray.200">
