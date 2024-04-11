@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { PostgrestError } from "@supabase/supabase-js";
 import ResizeTextarea from "react-textarea-autosize";
 import {
   Text,
@@ -20,16 +22,36 @@ import { GetIdeasAssistence } from "growth-exercise/components/blog-article/GetI
 import { getBlogArticleXMLSuggestion as defaultGetBlogArticleXMLSuggestion } from "growth-exercise/chains/getOutline";
 import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 import { BlogArticle } from "./BlogArticle";
+import { saveGrowthExercise as defaultSaveGrowthExercise } from "growth-exercise/queries";
+import { TGrowthExercise } from "types";
 
 type Props = {
   getBlogArticleXMLSuggestion?: (
     blog_article_goal: string,
     blog_article_points: string
   ) => Promise<string>;
+  saveGrowthExercise?: (
+    data: TGrowthExercise
+  ) => Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }>;
+  onCreateGrowthExercise?: (
+    growthExercise: TGrowthExercise | null,
+    navigate: (path: string) => void
+  ) => void;
+};
+
+const defaultOnCreateGrowthExercise = (
+  growthExercise: TGrowthExercise | null,
+  navigate: (path: string) => void
+) => {
+  if (growthExercise) {
+    navigate(`/${growthExercise.id}/execute`);
+  }
 };
 
 export const CreateBlogArticleView: React.FC<Props> = ({
   getBlogArticleXMLSuggestion = defaultGetBlogArticleXMLSuggestion,
+  saveGrowthExercise = defaultSaveGrowthExercise,
+  onCreateGrowthExercise = defaultOnCreateGrowthExercise,
 }) => {
   const navigate = useNavigate();
 
@@ -41,6 +63,13 @@ export const CreateBlogArticleView: React.FC<Props> = ({
   }>({
     blogTitle: "",
     blogPoints: [],
+  });
+
+  const { mutate: saveGrowthExerciseMutation, isPending } = useMutation({
+    mutationFn: saveGrowthExercise,
+    onSuccess: ({ data: growthExercise }) => {
+      onCreateGrowthExercise(growthExercise, navigate);
+    },
   });
 
   const [generatedBlogArticleXML, setGeneratedBlogArticleXML] = useState("");
@@ -62,6 +91,8 @@ export const CreateBlogArticleView: React.FC<Props> = ({
       blogInputs?.blogPoints?.join("\n")
     );
 
+    console.log({ suggestedBlogArticleML });
+
     setGeneratedBlogArticleXML(suggestedBlogArticleML);
 
     setIsLoading(false);
@@ -74,7 +105,16 @@ export const CreateBlogArticleView: React.FC<Props> = ({
   const handleAddBlogArticle = () => {
     // Save to DB
     const statelessBlogArticleXML = generatedBlogArticle.getUIStatelessXML();
-    console.log(statelessBlogArticleXML);
+
+    saveGrowthExerciseMutation({
+      xml_text: statelessBlogArticleXML,
+      inputs: {
+        title: blogInputs.blogTitle,
+        points: blogInputs.blogPoints,
+      },
+      state: "created",
+      type: "blog-article",
+    });
   };
 
   return (
@@ -150,6 +190,7 @@ export const CreateBlogArticleView: React.FC<Props> = ({
           <Box mt={4}>
             {generatedBlogArticleXML && (
               <BlogArticle
+                isAddingBlogArticle={isPending}
                 blogArticle={generatedBlogArticle}
                 onBlogArticleUpdate={onBlogArticleUpdate}
                 handleAddBlogArticle={handleAddBlogArticle}

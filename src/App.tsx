@@ -1,6 +1,7 @@
 import { Buffer } from "buffer";
 globalThis.Buffer = Buffer;
 import { ChakraProvider } from "@chakra-ui/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { extendTheme } from "@chakra-ui/react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -39,6 +40,8 @@ const router = createBrowserRouter([
   },
 ]);
 
+const queryClient = new QueryClient();
+
 function App() {
   const [experienceSettings] = useExperienceSettingsState();
 
@@ -50,9 +53,11 @@ function App() {
 
   return (
     <AuthProvider>
-      <ChakraProvider theme={extendedTheme}>
-        <RouterProvider router={router} />
-      </ChakraProvider>
+      <QueryClientProvider client={queryClient}>
+        <ChakraProvider theme={extendedTheme}>
+          <RouterProvider router={router} />
+        </ChakraProvider>
+      </QueryClientProvider>
     </AuthProvider>
   );
 }
