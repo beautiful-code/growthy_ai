@@ -38,11 +38,7 @@ export const Outline: React.FC<Props> = ({
 
   return (
     <Box>
-      <Accordion
-        allowMultiple
-        allowToggle
-        index={uiOutline.getExpandesSectionIndices()}
-      >
+      <Accordion allowMultiple index={uiOutline.getExpandesSectionIndices()}>
         {uiOutline.getSections().map((section, sectionIndex) => (
           <Section
             key={sectionIndex}

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { PostgrestError } from "@supabase/supabase-js";
 import ResizeTextarea from "react-textarea-autosize";
 import {
@@ -66,7 +66,35 @@ export const CreateBlogArticleView: React.FC<Props> = ({
     blogTitle: "",
     blogPoints: [],
   });
-  const [generatedBlogArticleXML, setGeneratedBlogArticleXML] = useState("");
+
+  const [suggestedBlogXML, setSuggestedBlogXML] = useState<string>("");
+  const {
+    data: suggestedBlogXMLData,
+    refetch,
+    isFetching: isFetchingSuggestedBlogXML,
+  } = useQuery({
+    queryKey: [
+      "getBlogArticleXMLSuggestion",
+      blogInputs.blogTitle,
+      blogInputs.blogPoints,
+    ],
+    queryFn: () =>
+      getBlogArticleXMLSuggestion({
+        blog_article_goal: blogInputs.blogTitle,
+        blog_article_points: blogInputs.blogPoints.join("\n"),
+      }),
+    enabled: false,
+  });
+  useEffect(() => {
+    if (suggestedBlogXMLData) {
+      setSuggestedBlogXML(suggestedBlogXMLData);
+    }
+  }, [suggestedBlogXMLData]);
+
+  const onBlogArticleUpdate = (blogArticle: UIBlogArticle) => {
+    console.log(blogArticle._xml);
+    setSuggestedBlogXML(blogArticle._xml);
+  };
 
   const { mutate: saveGrowthExerciseMutation, isPending } = useMutation({
     mutationFn: saveGrowthExercise,
@@ -75,17 +103,7 @@ export const CreateBlogArticleView: React.FC<Props> = ({
     },
   });
 
-  const {
-    mutate: generateBlogArticleXML,
-    isPending: isGettingSuggestedBlogArticle,
-  } = useMutation({
-    mutationFn: getBlogArticleXMLSuggestion,
-    onSuccess: (data) => {
-      setGeneratedBlogArticleXML(data);
-    },
-  });
-
-  const generatedBlogArticle = new UIBlogArticle(generatedBlogArticleXML);
+  const generatedBlogArticle = new UIBlogArticle(suggestedBlogXML || "");
 
   const handleGrowthyConversation = () => {
     setShowGrowthyConversation(!showGrowthyConversation);
@@ -96,14 +114,7 @@ export const CreateBlogArticleView: React.FC<Props> = ({
   };
 
   const handleGenerateOutline = async () => {
-    await generateBlogArticleXML({
-      blog_article_goal: blogInputs.blogTitle,
-      blog_article_points: blogInputs?.blogPoints?.join("\n"),
-    });
-  };
-
-  const onBlogArticleUpdate = (blogArticle: UIBlogArticle) => {
-    setGeneratedBlogArticleXML(blogArticle._xml);
+    refetch();
   };
 
   const handleAddBlogArticle = () => {
@@ -188,11 +199,11 @@ export const CreateBlogArticleView: React.FC<Props> = ({
             <GButton type="primary" onClick={handleGenerateOutline}>
               Generate Outline
             </GButton>
-            {isGettingSuggestedBlogArticle && <Spinner ml={4} />}
+            {isFetchingSuggestedBlogXML && <Spinner ml={4} />}
           </Flex>
 
           <Box mt={4}>
-            {generatedBlogArticleXML && (
+            {suggestedBlogXML && (
               <BlogArticle
                 isAddingBlogArticle={isPending}
                 blogArticle={generatedBlogArticle}

@@ -8,12 +8,15 @@ export const saveGrowthExercise = async (
   growthExercise: TGrowthExercise
 ): Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }> => {
   const userId = await getCurrentUserId();
-  const { data, error } = await supabaseClient.from("growth_exercise").upsert({
-    ...growthExercise,
-    user_id: userId,
-  });
+  const { data, error } = await supabaseClient
+    .from("growth_exercise")
+    .upsert({
+      ...growthExercise,
+      user_id: userId,
+    })
+    .select();
 
-  return { data, error };
+  return { data: data ? data[0] : null, error };
 };
 
 export const getMyGrowthExercises = async (
