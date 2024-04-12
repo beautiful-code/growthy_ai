@@ -3,7 +3,7 @@ import { Avatar } from "@chakra-ui/react";
 
 import { supabaseClient } from "supabaseClient";
 
-export function UserAvatar({ size = "md" }) {
+export function UserAvatar({ size = "md", avatarUrl = "" }) {
   const [userProfile, setUserProfile] = useState({
     name: "Loading...",
     avatarUrl: null,
@@ -18,13 +18,13 @@ export function UserAvatar({ size = "md" }) {
       if (user) {
         setUserProfile({
           name: user?.user_metadata?.full_name || "",
-          avatarUrl: user?.user_metadata?.avatar_url || "",
+          avatarUrl: avatarUrl != "" ? avatarUrl : user?.user_metadata?.avatar_url || "",
         });
       }
     };
 
     fetchUserProfile();
-  }, []);
+  }, [avatarUrl]);
 
   return (
     <Avatar

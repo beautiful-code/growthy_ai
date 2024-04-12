@@ -1,8 +1,8 @@
 import { PostgrestError } from "@supabase/supabase-js";
+import { getCurrentUserId } from "common/queries";
 import { supabaseClient } from "supabaseClient";
 
 import { TGrowthExercise } from "types";
-import { getCurrentUserId } from "common/utils";
 
 export const saveGrowthExercise = async (
   growthExercise: TGrowthExercise
