@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { Box, Flex, Text, Grid, GridItem, Spinner } from "@chakra-ui/react";
 import { MdArrowBack } from "react-icons/md";
 
-import { UserAvatar } from "common/components/menu/UserAvatar";
-import { NavMenu } from "common/components/menu/NavMenu";
+import { UserAvatar } from "common/components/header/UserAvatar";
+import { NavMenu } from "common/components/header/NavMenu";
 import { StudyExerciseForm } from "./StudyExerciseForm";
 
 export const CreateStudyExerciseView: React.FC = () => {

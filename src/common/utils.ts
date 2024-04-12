@@ -1,10 +1,19 @@
-import { supabaseClient } from "supabaseClient";
+import { TExerciseFilter } from "types";
 
-export const getCurrentUserId = async () => {
-  const {
-    data: { session },
-  } = await supabaseClient.auth.getSession();
-  return session?.user?.id;
+export const domainUpdateAndCallback = (
+  uiDomainObject: any,
+  method: string,
+  args: any[],
+  callbackMethod: (uiDomainObject: any) => void
+) => {
+  // Call the method on the domain object with args
+  uiDomainObject[method](...args);
+  callbackMethod(uiDomainObject);
+
+  /* Example
+  uiTask[method](...args);
+  onUpdateTaskCallback(uiTask);
+  */
 };
 
 export const domainUpdateAndCallback = (
@@ -83,3 +92,17 @@ export const getChakraUIExtendedTheme = (isSmallFont: boolean) => {
     },
   };
 };
+
+export const getFilters = (filters: TExerciseFilter) => {
+  const filter =
+    (filters.blogArticle && filters.studyExercise) ||
+    (!filters.blogArticle && !filters.studyExercise && !filters.til)
+      ? ["study-exercise", "blog-article"]
+      : filters.blogArticle
+      ? ["blog-article"]
+      : filters.studyExercise 
+      ? ["study-exercise"]
+      : [];  
+      
+  return filter
+}
