@@ -23,13 +23,13 @@ const callbacks: LangChainTracer[] = [
       apiUrl: "https://api.smith.langchain.com",
       apiKey: import.meta.env.VITE_LANGCHAIN_API_KEY,
     }),
-  } as TracerConfig),
+  }),
 ];
 
 const model = new ChatOpenAI({
   openAIApiKey: import.meta.env.VITE_OPENAI_API_KEY,
   modelName: "gpt-4-turbo-preview",
-  callbacks: callbacks
+  callbacks: callbacks,
 });
 
 const parser = new StringOutputParser();
