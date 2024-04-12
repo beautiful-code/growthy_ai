@@ -52,12 +52,6 @@ export const Exercises: React.FC<ExercisesProps> = ({ title, defaultDuration, ty
     });
   };
 
-  const loadingText = (
-    <Text as="span" fontSize="2xl" fontWeight={"normal"} ml={"20px"} visibility={isFetching ? "visible" : "hidden"}>
-      Loading...
-    </Text>
-  );
-
   return (
     <Box mt={"3%"} width={"100%"}>
       <VStack align="start" spacing={4} width="100%">
@@ -66,7 +60,9 @@ export const Exercises: React.FC<ExercisesProps> = ({ title, defaultDuration, ty
           {(defaultDuration != 0 && defaultDuration) && (
             <Text as="span" color={"blue"}>{defaultDuration} days</Text>
           )}
-          {loadingText}
+          <Text as="span" fontSize="2xl" fontWeight={"normal"} ml={"20px"} visibility={isFetching ? "visible" : "hidden"}>
+            Loading...
+          </Text>
         </Text>
        
         {!isLoading &&
