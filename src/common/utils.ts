@@ -91,7 +91,14 @@ export const getFilters = (filters: TExerciseFilter) => {
       ? ["blog-article"]
       : filters.studyExercise
       ? ["study-exercise"]
-      : [];
+      : [];  
+      
+  return filter
+}
 
-  return filter;
+// Function to transform multiline text into individually styled Markdown headers to ensure uniform styling across all lines.
+export const formatContentAsMarkdown = (content: string) => {
+  return content.split("\n").map((line) => (
+      `${"## " + line}`
+  )).join("\n\n");
 };
