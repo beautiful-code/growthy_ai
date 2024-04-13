@@ -10,6 +10,8 @@ export type Dictionary = {
   [key: string]: any;
 };
 
+export type TGrowthExerciseType = "study-exercise" | "blog-article";
+
 // Database entry for a growth exercise
 export type TGrowthExercise = {
   id?: string;
@@ -17,7 +19,7 @@ export type TGrowthExercise = {
   state: "created" | "outlined" | "published";
   user_id?: string;
   guild_id?: string;
-  type: "study-exercise" | "blog-article";
+  type: TGrowthExerciseType;
   xml_text: string;
   created_at?: string;
   updated_at?: string;
@@ -29,12 +31,12 @@ export type TExercise = {
   guild_id?: string;
   type: "study-exercise" | "blog-article";
   xml_text: string;
-}
+};
 
 export type TExerciseWithUser = {
   exercise: TExercise;
   author: TUser;
-}
+};
 
 export type TExerciseFilter = {
   blogArticle: boolean;
@@ -46,11 +48,19 @@ export type TGuild = {
   id: string;
   name: string;
   led_by: string;
-}
+};
 
 export type TGuildUser = {
   id: string;
   name: string;
   led_by: string;
   user?: TUser;
-}
+};
+
+export type TNote = {
+  id: string;
+  data: string;
+  task_id: string;
+  created_at?: string;
+  updated_at?: string;
+};

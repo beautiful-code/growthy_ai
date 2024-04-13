@@ -70,14 +70,10 @@ export const CreateBlogArticleView: React.FC<Props> = ({
   const [suggestedBlogXML, setSuggestedBlogXML] = useState<string>("");
   const {
     data: suggestedBlogXMLData,
-    refetch,
+    refetch: refetchSuggestedBlogXML,
     isFetching: isFetchingSuggestedBlogXML,
   } = useQuery({
-    queryKey: [
-      "getBlogArticleXMLSuggestion",
-      blogInputs.blogTitle,
-      blogInputs.blogPoints,
-    ],
+    queryKey: ["getBlogArticleXMLSuggestion"],
     queryFn: () =>
       getBlogArticleXMLSuggestion({
         blog_article_goal: blogInputs.blogTitle,
@@ -114,7 +110,7 @@ export const CreateBlogArticleView: React.FC<Props> = ({
   };
 
   const handleGenerateOutline = async () => {
-    refetch();
+    refetchSuggestedBlogXML();
   };
 
   const handleAddBlogArticle = () => {

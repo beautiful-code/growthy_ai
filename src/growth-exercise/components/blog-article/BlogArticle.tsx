@@ -7,14 +7,14 @@ import { Outline } from "common/components/outline/Outline";
 import { UIOutline } from "domain/common/UIOutline";
 
 type Props = {
-  isAddingBlogArticle: boolean;
+  isAddingBlogArticle?: boolean;
   blogArticle: UIBlogArticle;
   onBlogArticleUpdate: (blogArticle: UIBlogArticle) => void;
   handleAddBlogArticle: () => void;
 };
 
 export const BlogArticle: React.FC<Props> = ({
-  isAddingBlogArticle,
+  isAddingBlogArticle = false,
   blogArticle,
   onBlogArticleUpdate,
   handleAddBlogArticle,

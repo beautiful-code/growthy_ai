@@ -53,9 +53,35 @@ export class UITask extends UIXMLInterfacer {
     this._xml = new XMLSerializer().serializeToString(xmlDoc);
   }
 
+  getIsSelected(): boolean {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(this._xml, "text/xml");
+    const task = xmlDoc.getElementsByTagName("Task");
+    return task[0]?.getAttribute("selected") === "true";
+  }
+
+  selectTask(taskId: string): void {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(this._xml, "text/xml");
+    const task = xmlDoc.getElementsByTagName("Task");
+    if (task[0].getAttribute("uuid") === taskId) {
+      task[0].setAttribute("selected", "true");
+    }
+    this._xml = new XMLSerializer().serializeToString(xmlDoc);
+  }
+
+  deselectTask(): void {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(this._xml, "text/xml");
+    const task = xmlDoc.getElementsByTagName("Task");
+    task[0].removeAttribute("selected");
+    this._xml = new XMLSerializer().serializeToString(xmlDoc);
+  }
+
   getUIStatelessXML(): string {
     const text = this.getText();
     const uuid = this.getUUID();
-    return `<Task name="${text}" uuid="${uuid}" />`;
+    const checked = this.getChecked();
+    return `<Task name="${text}" uuid="${uuid}" checked="${checked}" />`;
   }
 }

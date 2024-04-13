@@ -7,8 +7,8 @@ describe("UIBlogArticle", () => {
         <Title name="Title" />
         <Outline>
         <Section name="section 1">
-            <Task name="Task 1" />
-            <Task name="Task 2" />
+            <Task name="Task 1" uuid="1" checked="false" />
+            <Task name="Task 2" uuid="2" checked="false" />
         </Section>
         </Outline>
         </BlogArticle>`;
@@ -22,8 +22,8 @@ describe("UIBlogArticle", () => {
         <Title name="Title" />
         <Outline>
         <Section name="section 1">
-            <Task name="Task 1" />
-            <Task name="Task 2" />
+            <Task name="Task 1" uuid="1" />
+            <Task name="Task 2" uuid="2" />
         </Section>
         </Outline>
         </BlogArticle>`;
@@ -36,8 +36,8 @@ describe("UIBlogArticle", () => {
         <Title name="Title" />
         <Outline>
         <Section name="section 1">
-            <Task name="Task 1" />
-            <Task name="Task 2" />
+            <Task name="Task 1" uuid="1" />
+            <Task name="Task 2" uuid="2" />
         </Section>
         </Outline>
         </BlogArticle>`;
@@ -51,8 +51,8 @@ describe("UIBlogArticle", () => {
         <Title name="Title" />
         <Outline>
         <Section name="section 1">
-            <Task name="Task 1" />
-            <Task name="Task 2" />
+            <Task name="Task 1" uuid="1" />
+            <Task name="Task 2" uuid="2" />
         </Section>
         </Outline>
         </BlogArticle>`;
@@ -61,8 +61,8 @@ describe("UIBlogArticle", () => {
 
     const newOutline = `<Outline>
         <Section name="section 2">
-            <Task name="Task 3" />
-            <Task name="Task 4" />
+            <Task name="Task 3" uuid="3" />
+            <Task name="Task 4" uuid="4" />
         </Section>
         </Outline>`;
     const outline = new UIOutline(newOutline);

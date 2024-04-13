@@ -4,8 +4,8 @@ describe("UIOutline", () => {
   it("should construct a UIOutline", () => {
     const xml = `<Outline>
             <Section name="Section 1">
-                <Task name="Task 1" />
-                <Task name="Task 2" />
+                <Task name="Task 1" uuid="1" checked="false" />
+                <Task name="Task 2" uuid="2" checked="false" />
             </Section>
         </Outline>`;
 
@@ -17,8 +17,8 @@ describe("UIOutline", () => {
   it("should get the sections of the outline", () => {
     const xml = `<Outline>
             <Section name="Section 1">
-                <Task name="Task 1" />
-                <Task name="Task 2" />
+                <Task name="Task 1" uuid="1" />
+                <Task name="Task 2" uuid="2" />
             </Section>
         </Outline>`;
 
@@ -33,12 +33,12 @@ describe("UIOutline", () => {
   it("should expand all sections", () => {
     const xml = `<Outline>
             <Section name="Section 1" expanded="false">
-                <Task name="Task 1" />
-                <Task name="Task 2" />
+                <Task name="Task 1" uuid="1" />
+                <Task name="Task 2" uuid="2" />
             </Section>
             <Section name="Section 2" expanded="false">
-                <Task name="Task 3" />
-                <Task name="Task 4" />
+                <Task name="Task 3" uuid="3" />
+                <Task name="Task 4" uuid="4" />
             </Section>
         </Outline>`;
 
@@ -86,19 +86,71 @@ describe("UIOutline", () => {
   it("should return stateless xml", () => {
     const xml = `<Outline>
             <Section name="Section 1" expanded='true'>
-                <Task name="Task 1" checked='true' />
-                <Task name="Task 2" />
+                <Task name="Task 1" uuid="1" checked='true' />
+                <Task name="Task 2" uuid="2" />
             </Section>
         </Outline>`;
 
     const statelessXML = `<Outline>
             <Section name="Section 1">
-                <Task name="Task 1" />
-                <Task name="Task 2" />
+                <Task name="Task 1" uuid="1" checked='true' />
+                <Task name="Task 2" uuid="2" checked='false' />
             </Section>
         </Outline>`;
 
     const outline = new UIOutline(xml);
     expect(outline.getUIStatelessXML()).toEqualXml(statelessXML);
+  });
+
+  it("should get a selected task id", () => {
+    const xml = `<Outline>
+            <Section name="Section 1">
+                <Task name="Task 1" uuid="1" checked='false' selected="true" />
+                <Task name="Task 2" uuid="2" checked='false' />
+            </Section>
+        </Outline>`;
+
+    const outline = new UIOutline(xml);
+    expect(outline.getSelectedTaskId()).toEqual("1");
+  });
+
+  it("should get selected task name", () => {
+    const xml = `<Outline>
+            <Section name="Section 1">
+                <Task name="Task 1" uuid="1" checked='false' selected="true" />
+                <Task name="Task 2" uuid="2" checked='false' />
+            </Section>
+        </Outline>`;
+
+    const outline = new UIOutline(xml);
+    expect(outline.getSelectedTaskName()).toEqual("Task 1");
+  });
+
+  it("should select a task when no task is selected", () => {
+    const xml = `<Outline>
+            <Section name="Section 1">
+                <Task name="Task 1" uuid="1" checked='false' />
+                <Task name="Task 2" uuid="2" checked='false' />
+            </Section>
+        </Outline>`;
+
+    const outline = new UIOutline(xml);
+    expect(outline.getSelectedTaskId()).toEqual("");
+    outline.selectTask("1");
+    expect(outline.getSelectedTaskId()).toEqual("1");
+  });
+
+  it("should select a task when another task is selected", () => {
+    const xml = `<Outline>
+            <Section name="Section 1">
+                <Task name="Task 1" uuid="1" checked='false' selected="true" />
+                <Task name="Task 2" uuid="2" checked='false' />
+            </Section>
+        </Outline>`;
+
+    const outline = new UIOutline(xml);
+    expect(outline.getSelectedTaskId()).toEqual("1");
+    outline.selectTask("2");
+    expect(outline.getSelectedTaskId()).toEqual("2");
   });
 });

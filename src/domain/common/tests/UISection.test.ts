@@ -21,7 +21,7 @@ describe("UISection", () => {
     section.updateSectionName("section2");
     expect(section.getSectionName()).toBe("section2");
     expect(section.getUIStatelessXML()).toBe(
-      `<Section name="section2"><Task name="task1" uuid="1" /></Section>`
+      `<Section name="section2"><Task name="task1" uuid="1" checked="false" /></Section>`
     );
   });
 
@@ -39,8 +39,8 @@ describe("UISection", () => {
     );
     expect(section.getUITasks()).toHaveLength(2);
     expect(section.getUIStatelessXML()).toBe(
-      `<Section name="section1"><Task name="task1" uuid="1" />
-<Task name="task2" uuid="1" /></Section>`
+      `<Section name="section1"><Task name="task1" uuid="1" checked="false" />
+<Task name="task2" uuid="1" checked="false" /></Section>`
     );
   });
 

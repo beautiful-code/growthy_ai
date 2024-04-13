@@ -90,6 +90,36 @@ export class UIOutline extends UIXMLInterfacer {
     }, [] as number[]);
   }
 
+  getSelectedTaskId(): string {
+    const sections = this.getSections();
+    for (let i = 0; i < sections.length; i++) {
+      const selectedTaskId = sections[i].getSelectedTaskId();
+      if (selectedTaskId) {
+        return selectedTaskId;
+      }
+    }
+    return "";
+  }
+
+  getSelectedTaskName(): string {
+    const sections = this.getSections();
+    for (let i = 0; i < sections.length; i++) {
+      const selectedTaskName = sections[i].getSelectedTaskName();
+      if (selectedTaskName) {
+        return selectedTaskName;
+      }
+    }
+    return "";
+  }
+
+  selectTask(taskId: string): void {
+    const sections = this.getSections();
+    for (let i = 0; i < sections.length; i++) {
+      sections[i].selectTask(taskId);
+      this.updateSection(i, sections[i]);
+    }
+  }
+
   getUIStatelessXML(): string {
     const sections = this.getSections();
     let xmlString = `<Outline>`;

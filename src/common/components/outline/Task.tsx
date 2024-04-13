@@ -17,10 +17,19 @@ import { UITask } from "domain/common/UITask";
 
 type Props = {
   uiTask: UITask;
+  checkingEnabled?: boolean;
+  taskSelectionEnabled?: boolean;
   onUpdateTaskCallback: (uiTask: UITask) => void;
+  handleSelectTask: (taskId: string) => void;
 };
 
-export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
+export const Task: React.FC<Props> = ({
+  uiTask,
+  checkingEnabled = false,
+  taskSelectionEnabled = false,
+  onUpdateTaskCallback,
+  handleSelectTask,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [taskText, setTaskText] = useState(uiTask.getText());
   const [taskChecked, setTaskChecked] = useState(uiTask.getChecked());
@@ -65,6 +74,8 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
     );
   };
 
+  const isSelected = taskSelectionEnabled && uiTask.getIsSelected();
+
   return (
     <Flex align={"center"} className="task">
       <Flex grow={2} align="center">
@@ -95,12 +106,22 @@ export const Task: React.FC<Props> = ({ uiTask, onUpdateTaskCallback }) => {
             <Flex>
               <Checkbox
                 size="md"
+                disabled={!checkingEnabled}
                 isChecked={taskChecked}
                 onChange={(e) => {
                   handleTaskCheck(e);
                 }}
               />
-              <Text ml={4}>{uiTask.getText()}</Text>
+              <Text
+                ml={4}
+                color={isSelected ? "blue.500" : ""}
+                cursor={taskSelectionEnabled ? "pointer" : "default"}
+                onClick={() => {
+                  handleSelectTask(uiTask.getUUID());
+                }}
+              >
+                {uiTask.getText()}
+              </Text>
             </Flex>
           </Box>
         )}

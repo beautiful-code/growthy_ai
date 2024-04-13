@@ -42,6 +42,11 @@ export const getChakraUIExtendedTheme = (isSmallFont: boolean) => {
         100: "#0B870B",
         500: "#0B870B",
       },
+      blue: {
+        50: "#718CEB",
+        100: "#718CEB",
+        500: "#718CEB",
+      },
       link: "#0D2C9C",
       secondary: "#D2D2D2",
       secondaryDark: "#7E7E7E",
@@ -84,9 +89,9 @@ export const getFilters = (filters: TExerciseFilter) => {
       ? ["study-exercise", "blog-article"]
       : filters.blogArticle
       ? ["blog-article"]
-      : filters.studyExercise 
+      : filters.studyExercise
       ? ["study-exercise"]
-      : [];  
-      
-  return filter
-}
+      : [];
+
+  return filter;
+};

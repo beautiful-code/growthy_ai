@@ -9,11 +9,15 @@ import { domainUpdateAndCallback } from "common/utils";
 
 type Props = {
   uiOutline: UIOutline;
+  checkingEnabled?: boolean;
+  taskSelectionEnabled?: boolean;
   onUpdateOutlineCallback: (uiOutline: UIOutline) => void;
 };
 
 export const Outline: React.FC<Props> = ({
   uiOutline,
+  checkingEnabled = false,
+  taskSelectionEnabled = false,
   onUpdateOutlineCallback,
 }) => {
   const handleExpandAll = () => {
@@ -36,6 +40,15 @@ export const Outline: React.FC<Props> = ({
       );
     };
 
+  const handleSelectTask = (taskId: string) => {
+    domainUpdateAndCallback(
+      uiOutline,
+      "selectTask",
+      [taskId],
+      onUpdateOutlineCallback
+    );
+  };
+
   return (
     <Box>
       <Accordion allowMultiple index={uiOutline.getExpandesSectionIndices()}>
@@ -43,7 +56,10 @@ export const Outline: React.FC<Props> = ({
           <Section
             key={sectionIndex}
             uiSection={section}
+            checkingEnabled={checkingEnabled}
+            taskSelectionEnabled={taskSelectionEnabled}
             onUpdateSectionCallback={onUpdateSectionCallback(sectionIndex)}
+            handleSelectTask={handleSelectTask}
           />
         ))}
       </Accordion>

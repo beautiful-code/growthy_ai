@@ -18,13 +18,17 @@ const mockSaveGrowthExercise = (
 };
 
 const mockGetArticleXMLSuggestion = ({
-  blog_article_goal: _blog_article_goal,
-  blog_article_points: _blog_article_points,
+  blog_article_goal,
+  blog_article_points,
 }: {
   blog_article_goal: string;
   blog_article_points: string;
 }): Promise<string> => {
   return new Promise<string>((resolve) => {
+    console.log({
+      blog_article_goal,
+      blog_article_points,
+    });
     setTimeout(() => {
       resolve(`
       <BlogArticle>

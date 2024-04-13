@@ -17,12 +17,18 @@ import "./Section.css";
 
 type Props = {
   uiSection: UISection;
+  checkingEnabled?: boolean;
+  taskSelectionEnabled?: boolean;
   onUpdateSectionCallback: (uiSection: UISection) => void;
+  handleSelectTask: (taskId: string) => void;
 };
 
 export const Section: React.FC<Props> = ({
   uiSection,
+  checkingEnabled = false,
+  taskSelectionEnabled = false,
   onUpdateSectionCallback,
+  handleSelectTask,
 }) => {
   // Factory function to create a callback function that updates a task at a given index
   const onUpdateTaskCallback = (taskIndex: number) => (uiTask: UITask) => {
@@ -73,7 +79,10 @@ export const Section: React.FC<Props> = ({
         {uiSection?.getUITasks().map((task, taskIndex) => (
           <Task
             uiTask={task}
+            checkingEnabled={checkingEnabled}
+            taskSelectionEnabled={taskSelectionEnabled}
             onUpdateTaskCallback={onUpdateTaskCallback(taskIndex)}
+            handleSelectTask={handleSelectTask}
           />
         ))}
       </AccordionPanel>

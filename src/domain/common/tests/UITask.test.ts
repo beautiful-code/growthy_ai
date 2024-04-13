@@ -19,7 +19,9 @@ describe("UITask", () => {
     });
     task.updateText("task2");
     expect(task.getText()).toBe("task2");
-    expect(task.getUIStatelessXML()).toBe('<Task name="task2" uuid="1" />');
+    expect(task.getUIStatelessXML()).toBe(
+      '<Task name="task2" uuid="1" checked="false" />'
+    );
     expect(task._xml).toBe('<Task name="task2" uuid="1"/>');
   });
 
@@ -41,7 +43,9 @@ describe("UITask", () => {
       });
       task.updateChecked(true);
       expect(task._xml).toBe('<Task name="task1" uuid="1" checked="true"/>');
-      expect(task.getUIStatelessXML()).toBe('<Task name="task1" uuid="1" />');
+      expect(task.getUIStatelessXML()).toBe(
+        '<Task name="task1" uuid="1" checked="true" />'
+      );
     });
   });
 });

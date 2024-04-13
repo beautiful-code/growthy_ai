@@ -65,6 +65,46 @@ export class UISection extends UIXMLInterfacer {
     );
   }
 
+  getSelectedTaskId(): string {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(this._xml, "text/xml");
+    const tasks = xmlDoc.getElementsByTagName("Task");
+    return (
+      Array.from(tasks)
+        .find((task) => task.getAttribute("selected") === "true")
+        ?.getAttribute("uuid") || ""
+    );
+  }
+
+  getSelectedTaskName(): string {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(this._xml, "text/xml");
+    const tasks = xmlDoc.getElementsByTagName("Task");
+    return (
+      Array.from(tasks)
+        .find((task) => task.getAttribute("selected") === "true")
+        ?.getAttribute("name") || ""
+    );
+  }
+
+  selectTask(taskId: string): void {
+    const tasks = this.getUITasks();
+    tasks.forEach((task) => {
+      if (task.getUUID() === taskId) {
+        task.selectTask(taskId);
+      } else {
+        task.deselectTask();
+      }
+    });
+
+    let updatedXML = `<Section name="${this.getSectionName()}" expanded="${this.getIsExpanded()}">`;
+    tasks.forEach((task) => {
+      updatedXML += task._xml;
+    });
+    updatedXML += `</Section>`;
+    this._xml = updatedXML;
+  }
+
   addTask(task: UITask): void {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
