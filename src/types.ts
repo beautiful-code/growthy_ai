@@ -64,3 +64,13 @@ export type TNote = {
   created_at?: string;
   updated_at?: string;
 };
+
+export type PublicationSection = {
+  sectionTitle: string,
+  content: string[]
+}
+
+export type ExercisePublication = {
+  publicationTitle: string,
+  publicationSections: PublicationSection[]
+}
