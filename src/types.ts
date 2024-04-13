@@ -54,3 +54,13 @@ export type TGuildUser = {
   led_by: string;
   user?: TUser;
 }
+
+export type PublicationSection = {
+  sectionTitle: string,
+  content: string[]
+}
+
+export type ExercisePublication = {
+  publicationTitle: string,
+  publicationSections: PublicationSection[]
+}
