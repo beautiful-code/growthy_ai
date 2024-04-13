@@ -60,9 +60,9 @@ export const Exercises: React.FC<ExercisesProps> = ({ title, defaultDuration, ty
           {(defaultDuration != 0 && defaultDuration) && (
             <Text as="span" color={"blue"}>{defaultDuration} days</Text>
           )}
-          <Text as="span" fontSize="2xl" fontWeight={"normal"} ml={"20px"} visibility={isFetching ? "visible" : "hidden"}>
+          {isFetching && <Text as="span" fontSize="2xl" fontWeight={"normal"} ml={"20px"} >
             Loading...
-          </Text>
+          </Text>}
         </Text>
        
         {!isLoading &&
@@ -108,7 +108,7 @@ export const Exercises: React.FC<ExercisesProps> = ({ title, defaultDuration, ty
                 <Exercise key={exercise.id} exercise={exercise} />
               ))}
             </VStack>
-            {isTypePublished && 
+            {(isTypePublished && exercises.length > 0) &&
             (<PaginationTable
               pageSize={pageSize}
               setPageSize={setPageSize}
