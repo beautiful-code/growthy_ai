@@ -9,8 +9,8 @@ import {
 import { useNavigate, useParams } from "react-router";
 import { FaHome } from "react-icons/fa";
 import { useGetExercisePublication } from "./hooks";
-import { Sections } from "./components/Sections";
-import { RenderSection } from "./components/RenderSection";
+import { Sections } from "./components/SectionList";
+import { RenderSection } from "./components/Sections";
 import { SkeletonScreen } from "common/components/SkeletonScreen";
 
 export const PreviewView: React.FC = () => {

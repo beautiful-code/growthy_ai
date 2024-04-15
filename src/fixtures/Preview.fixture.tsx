@@ -1,7 +1,7 @@
-import { RenderSection } from "preview/components/RenderSection"
+import { Sections } from "preview/components/Sections"
 import { PublicationSection } from "types"
 import { FixtureWrapper } from "./FixtureWrapper"
-import { Sections } from "preview/components/Sections"
+import { SectionList } from "preview/components/SectionList"
 import { Box, Flex, Grid, GridItem, Text } from "@chakra-ui/react"
 import { Header } from "common/components/header/Header"
 import { FaHome } from "react-icons/fa"
@@ -9,27 +9,19 @@ import { FaHome } from "react-icons/fa"
 const publicationSections: PublicationSection[] = [
     {
         "sectionTitle": "Introduction to My Sanskrit Journey",
-        "content": [
-            "Dummy content 5"
-        ]
+        "sectionContent": "Dummy content 5"
     },
     {
         "sectionTitle": "Discovering The Sanskrit Channel",
-        "content": [
-            "Dummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4"
-        ]
+        "sectionContent": "Dummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4\nDummy content 4"
     },
     {
         "sectionTitle": "My Daily Sanskrit Learning Routine",
-        "content": [
-            "Dummy content 3"
-        ]
+        "sectionContent": "Dummy content 3"
     },
     {
         "sectionTitle": "Reflections and Impressions",
-        "content": [
-            "Dummy content 1\nDummy content 2"
-        ]
+        "sectionContent": "Dummy content 1\nDummy content 2"
     }
 ]
 
@@ -46,7 +38,7 @@ export default {
             </Header>
             <Grid templateColumns={"30% 70%"} mt={"3%"}>
                 <GridItem>
-                    <Sections publicationSections={publicationSections}/>
+                    <SectionList publicationSections={publicationSections}/>
                 </GridItem>
                 <GridItem
                     css={{
@@ -54,9 +46,7 @@ export default {
                         overflowY: "auto",
                     }}
                 >
-                    {publicationSections.map((publicationSection, index) => (
-                        <RenderSection publicationSection={publicationSection} sectionIndex={String(index)} key={index}/>
-                    ))}
+                        <Sections publicationSections={publicationSections} selectedSectionIndex={0} />
                 </GridItem>
             </Grid>
         </FixtureWrapper>

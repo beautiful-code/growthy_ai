@@ -67,7 +67,7 @@ export type TNote = {
 
 export type PublicationSection = {
   sectionTitle: string,
-  content: string[]
+  sectionContent: string
 }
 
 export type ExercisePublication = {
