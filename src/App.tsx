@@ -16,8 +16,8 @@ import { getChakraUIExtendedTheme } from "common/utils";
 
 import "App.css";
 import "main.css";
-import { PreviewView } from "preview/PreviewView";
 import { MyGrowthyView } from "my-growthy/MyGrowthyView";
+import { PublicationView } from "publication/PublicationView";
 
 const router = createBrowserRouter([
   {
@@ -46,7 +46,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/preview/:id",
-    element: <PreviewView />,
+    element: <PublicationView />,
   },
 ]);
 
