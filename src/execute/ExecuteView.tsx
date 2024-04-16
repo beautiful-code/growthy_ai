@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useMutation } from "@tanstack/react-query";
-import { Flex, Text, Box, Skeleton, Button, Stack } from "@chakra-ui/react";
+import { Flex, Text, Box, Button } from "@chakra-ui/react";
 import { useParams as useDefaultUseParams } from "react-router-dom";
 import { FaHome, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
@@ -16,6 +16,7 @@ import { getExercise as defaultGetExercise } from "execute/queries";
 import { saveGrowthExercise as defaultSaveGrowthExercise } from "growth-exercise/queries";
 
 import "./ExecuteView.css";
+import { SkeletonScreen } from "common/components/SkeletonScreen";
 
 type Props = {
   useParams: () => { growthExerciseId: string };
@@ -118,11 +119,7 @@ export const ExecuteView: React.FC<Props> = ({
 
   if (isLoading || !exerciseXML) {
     return (
-      <Stack m={4}>
-        {Array.from({ length: 10 }).map((_, index) => (
-          <Skeleton key={index} height="20px" />
-        ))}
-      </Stack>
+      <SkeletonScreen />
     );
   }
 
