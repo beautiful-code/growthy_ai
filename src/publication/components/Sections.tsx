@@ -15,6 +15,8 @@ export const Sections: React.FC<Props> = ({
   selectedSectionIndex,
   onTopSectionChange,
 }) => {
+
+  // Hemanth - Next time we pair, explain to me the logic of this React component.
   const sectionRefs = useRef<(HTMLDivElement | null)[]>(
     new Array(publicationSections.length).fill(null)
   );
@@ -67,6 +69,8 @@ export const Sections: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Hemanth - Do we need useCallback?
+  // One issue with useCallback is that we miss the name of the function.
   const setRef = useCallback((node: HTMLDivElement | null, index: number) => {
     sectionRefs.current[index] = node;
   }, []);

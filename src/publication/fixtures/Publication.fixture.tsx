@@ -27,6 +27,8 @@ const publicationSections: PublicationSection[] = [
   },
 ];
 
+// Hemanth - Rename this file to PublicationView.fixture.tsx to be consistent with fixture
+// file naming convention.
 export default {
   Basecase: () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
@@ -35,6 +37,7 @@ export default {
       setSelectedSectionIndex(id);
     };
     return (
+      // Hemanth - Why are you not using the PublicationView component here?
       <FixtureWrapper>
         <Header>
           <Flex width="100%" align="center" justifyContent="center">

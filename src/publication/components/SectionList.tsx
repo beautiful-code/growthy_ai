@@ -3,6 +3,8 @@ import { PublicationSection } from "types";
 
 type Props = {
   publicationSections: PublicationSection[];
+  // Hemanth - We should not make this callback optional.
+  // b/c there is no usecase where we are not going to send the callback.
   onSelectionCallback?: (id: number) => void;
   selectedSectionIndex: number;
 };
