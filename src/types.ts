@@ -66,11 +66,11 @@ export type TNote = {
 };
 
 export type PublicationSection = {
-  sectionTitle: string,
-  sectionContent: string
+  title: string,
+  content: string
 }
 
 export type ExercisePublication = {
-  publicationTitle: string,
-  publicationSections: PublicationSection[]
+  title: string,
+  sections: PublicationSection[]
 }

@@ -1,5 +1,3 @@
 import { useGetExercisePublication } from "./useGetExercisePublication";
 
-export {
-    useGetExercisePublication
-}
+export { useGetExercisePublication };
