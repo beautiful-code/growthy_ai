@@ -1,5 +1,5 @@
 import { SectionList } from "publication/components/SectionList";
-import { FixtureWrapper } from "../../fixtures/FixtureWrapper";
+import { FixtureWrapper } from "../fixtures/FixtureWrapper";
 import { PublicationSection } from "types";
 import { useState } from "react";
 
@@ -23,15 +23,6 @@ const publicationSections: PublicationSection[] = [
 ];
 
 export default {
-  "Without Callback": (
-    <FixtureWrapper>
-      <SectionList
-        publicationSections={publicationSections}
-        selectedSectionIndex={0}
-      />
-    </FixtureWrapper>
-  ),
-
   "With Callback": () => {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const [selectedSectionIndex, setSelectedSectionIndex] = useState<number>(0);

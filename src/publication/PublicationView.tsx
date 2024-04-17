@@ -1,20 +1,31 @@
 import { Header } from "common/components/header/Header";
 import { Text, Box, Flex, Grid, GridItem } from "@chakra-ui/react";
-import { useNavigate, useParams } from "react-router";
+import { useParams as useDefaultUseParams } from "react-router";
 import { FaHome } from "react-icons/fa";
-import { useGetExercisePublication } from "./hooks";
+import { useGetExercisePublication as defaultGetExercisePublication } from "./hooks";
 import { SkeletonScreen } from "common/components/SkeletonScreen";
-import { Sections } from "./components/Sections";
 import { SectionList } from "./components/SectionList";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { Sections } from "./components/Sections";
+import { ExercisePublication } from "types";
 
-export const PublicationView: React.FC = () => {
-  const navigate = useNavigate();
+type Props = {
+  useGetExercisePublication?: (exerciseId: string) => {data: ExercisePublication | undefined, isLoading: boolean};
+  useParams?: () => { id: string };
+}
+
+export const PublicationView: React.FC<Props> = ({
+  useGetExercisePublication = defaultGetExercisePublication,
+  useParams = useDefaultUseParams,
+}) => {
+  // const navigate = useNavigate();
   const handleNavigateHome = () => {
-    navigate(`/`);
+    // navigate(`/`);
+    console.log("handleNavigateHome called");
   };
 
   const [selectedSectionIndex, setSelectedSectionIndex] = useState<number>(0);
+  const hasUserSelectedSectionRef = useRef(false);
 
   const { id: exerciseId } = useParams<string>();
   const { data: exercisePublication, isLoading } = useGetExercisePublication(
@@ -26,6 +37,11 @@ export const PublicationView: React.FC = () => {
   }
 
   const onSelectionCallback = (sectionIndex: number) => {
+    setSelectedSectionIndex(sectionIndex);
+    hasUserSelectedSectionRef.current = true;
+  };
+
+  const onTopSectionChangeCallback = (sectionIndex: number) => {
     setSelectedSectionIndex(sectionIndex);
   };
 
@@ -57,7 +73,8 @@ export const PublicationView: React.FC = () => {
           <Sections
             publicationSections={publicationSections}
             selectedSectionIndex={selectedSectionIndex}
-            onTopSectionChange={onSelectionCallback}
+            onTopSectionChangeCallback={onTopSectionChangeCallback}
+            hasUserSelectedSectionRef={hasUserSelectedSectionRef}
           />
         </GridItem>
       </Grid>

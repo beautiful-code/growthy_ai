@@ -1,7 +1,8 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { PublicationSection } from "types";
-import { FixtureWrapper } from "../../fixtures/FixtureWrapper";
+import { FixtureWrapper } from "../fixtures/FixtureWrapper";
 import { Sections } from "publication/components/Sections";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const publicationSections: PublicationSection[] = [
   {
@@ -42,17 +43,40 @@ const publicationSections: PublicationSection[] = [
 
 export default {
   "Base Case": () => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [selectedSectionIndex, setSelectedSectionIndex] = useState<number>(0);
-    const onSelectionCallback = (id: number) => {
-      setSelectedSectionIndex(id);
+    const hasUserSelectedSectionRef = useRef(true);
+
+    const onTopSectionChangeCallback = (sectionIndex: number) => {
+      setSelectedSectionIndex(sectionIndex);
     };
+
     return (
       <FixtureWrapper>
         <Sections
           publicationSections={publicationSections}
           selectedSectionIndex={selectedSectionIndex}
-          onTopSectionChange={onSelectionCallback}
+          onTopSectionChangeCallback={onTopSectionChangeCallback}
+          hasUserSelectedSectionRef={hasUserSelectedSectionRef}
+        />
+      </FixtureWrapper>
+    );
+  },
+  
+  "Last Section Selected": () => {
+    const [selectedSectionIndex, setSelectedSectionIndex] = useState<number>(publicationSections.length - 1);
+    const hasUserSelectedSectionRef = useRef(true);
+
+    const onTopSectionChangeCallback = (sectionIndex: number) => {
+      setSelectedSectionIndex(sectionIndex);
+    };
+
+    return (
+      <FixtureWrapper>
+        <Sections
+          publicationSections={publicationSections}
+          selectedSectionIndex={selectedSectionIndex}
+          onTopSectionChangeCallback={onTopSectionChangeCallback} 
+          hasUserSelectedSectionRef={hasUserSelectedSectionRef}        
         />
       </FixtureWrapper>
     );

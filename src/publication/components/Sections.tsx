@@ -1,47 +1,43 @@
 import { Box, Text } from "@chakra-ui/react";
 import { MarkdownRenderer } from "common/components/MarkdownRenderer";
 import { formatContentAsMarkdown } from "common/utils";
-import { useCallback, useEffect, useRef } from "react";
+import { MutableRefObject, useEffect, useRef } from "react";
 import { PublicationSection } from "types";
 
 type Props = {
   publicationSections: PublicationSection[];
   selectedSectionIndex: number;
-  onTopSectionChange?: (id: number) => void;
+  onTopSectionChangeCallback: (id: number) => void;
+  hasUserSelectedSectionRef: MutableRefObject<boolean>;
 };
 
 export const Sections: React.FC<Props> = ({
   publicationSections,
   selectedSectionIndex,
-  onTopSectionChange,
+  onTopSectionChangeCallback,
+  hasUserSelectedSectionRef,
 }) => {
-
-  // Hemanth - Next time we pair, explain to me the logic of this React component.
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>(
+  const visibleSectionRefs = useRef<(HTMLDivElement | null)[]>(
     new Array(publicationSections.length).fill(null)
   );
-  const sections = useRef<HTMLDivElement | null>(null);
+  const sectionsRef = useRef<HTMLDivElement | null>(null);
 
-  const isUserClickScroll = useRef(false);
-
-  // Sync selected section (React) to scrollIntoView (External browser Api)
-  useEffect(() => {
+  if (hasUserSelectedSectionRef.current) {
     const element = document.getElementById(String(selectedSectionIndex));
     if (element) {
-      isUserClickScroll.current = true;
       element.scrollIntoView({
         behavior: "instant",
         block: "start",
         inline: "start",
       });
-      setTimeout(() => (isUserClickScroll.current = false), 100); // Assuming the scroll takes less than 100ms
+      setTimeout(() => (hasUserSelectedSectionRef.current = false), 0);
     }
-  }, [selectedSectionIndex]);
+  }
 
   const handleScroll = () => {
-    if (isUserClickScroll.current) return;
+    if (hasUserSelectedSectionRef.current) return;
 
-    const sectionIndexes = sectionRefs.current
+    const sectionIndexes = visibleSectionRefs.current
       .filter((ref) => ref !== null)
       .map((ref, index) => {
         const { top } = ref!.getBoundingClientRect();
@@ -51,15 +47,13 @@ export const Sections: React.FC<Props> = ({
 
     if (sectionIndexes.length > 0) {
       const topSection = sectionIndexes[0];
-      if (onTopSectionChange) {
-        onTopSectionChange(topSection.index);
-      }
+      onTopSectionChangeCallback(topSection.index);
     }
   };
 
   // Sync browser scroll operations (External browser Api) to handleScroll (React)
   useEffect(() => {
-    const scrollableElement = sections.current;
+    const scrollableElement = sectionsRef.current;
     if (scrollableElement) {
       scrollableElement.addEventListener("scroll", handleScroll);
       return () => {
@@ -69,16 +63,15 @@ export const Sections: React.FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Hemanth - Do we need useCallback?
-  // One issue with useCallback is that we miss the name of the function.
-  const setRef = useCallback((node: HTMLDivElement | null, index: number) => {
-    sectionRefs.current[index] = node;
-  }, []);
+  const setSectionRef = (node: HTMLDivElement | null, index: number) => {
+    visibleSectionRefs.current[index] = node;
+  };
 
   return (
     <Box
-      ref={sections}
+      ref={sectionsRef}
       css={{
+        // Max height calculation is hacky
         maxHeight: "calc(100vh - 140px)",
         overflowY: "auto",
       }}
@@ -87,7 +80,7 @@ export const Sections: React.FC<Props> = ({
         <Box
           key={index}
           mb={10}
-          ref={(node) => setRef(node, index)}
+          ref={(node) => setSectionRef(node, index)}
           id={index.toString()}
         >
           <Box mb={4}>
