@@ -32,6 +32,7 @@ export const Sections: React.FC<Props> = ({
         inline: "start",
       });
       setTimeout(() => {
+        // Assumes the next line runs after the invocation of handleScroll
         hasUserSelectedSectionRef.current = false
       }, 0);
     }
@@ -63,7 +64,6 @@ export const Sections: React.FC<Props> = ({
         scrollableElement.removeEventListener("scroll", handleScroll);
       };
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setSectionRef = (node: HTMLDivElement | null, index: number) => {
