@@ -1,5 +1,5 @@
 import { PostgrestError } from "@supabase/supabase-js";
-import { FixtureWrapper } from "fixtures/FixtureWrapper";
+import { FixtureWrapper } from "FixtureWrapper";
 import { CreateBlogArticleView } from "growth-exercise/components/blog-article/CreateBlogArticleView";
 import { TGrowthExercise } from "types";
 

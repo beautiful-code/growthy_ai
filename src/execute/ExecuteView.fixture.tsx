@@ -1,6 +1,6 @@
 import { PostgrestError } from "@supabase/supabase-js";
+import { FixtureWrapper } from "FixtureWrapper";
 
-import { FixtureWrapper } from "./FixtureWrapper";
 import { ExecuteView } from "execute/ExecuteView";
 import { TGrowthExercise } from "types";
 

@@ -1,7 +1,7 @@
-import { FixtureWrapper } from "./FixtureWrapper";
 import { Notes } from "notes/Notes";
 import { PostgrestError } from "@supabase/supabase-js";
 import { TNote } from "types";
+import { FixtureWrapper } from "FixtureWrapper";
 
 const mockGetNoteByTaskId = async (
   taskId: string

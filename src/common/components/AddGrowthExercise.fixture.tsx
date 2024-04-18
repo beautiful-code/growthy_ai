@@ -1,5 +1,5 @@
+import { FixtureWrapper } from "FixtureWrapper";
 import { AddGrowthExercise } from "common/components/AddGrowthExercise";
-import { FixtureWrapper } from "./FixtureWrapper";
 
 export default {
     "base case": (
