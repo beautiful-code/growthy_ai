@@ -19,11 +19,11 @@ import "./ExecuteView.css";
 import { SkeletonScreen } from "common/components/SkeletonScreen";
 
 type Props = {
-  useParams: () => { growthExerciseId: string };
-  getExercise: (
+  useParams?: () => { growthExerciseId: string };
+  getExercise?: (
     id: string
   ) => Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }>;
-  saveGrowthExercise: (
+  saveGrowthExercise?: (
     data: TGrowthExercise
   ) => Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }>;
 };

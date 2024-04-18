@@ -1,7 +1,7 @@
 import { SectionList } from "publication/components/SectionList";
-import { FixtureWrapper } from "../fixtures/FixtureWrapper";
 import { PublicationSection } from "types";
 import { useState } from "react";
+import { FixtureWrapper } from "FixtureWrapper";
 
 const publicationSections: PublicationSection[] = [
   {

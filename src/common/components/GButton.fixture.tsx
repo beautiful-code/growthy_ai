@@ -1,5 +1,5 @@
-import { FixtureWrapper } from "fixtures/FixtureWrapper";
-import { GButton } from "common/components/GButton";
+import { FixtureWrapper } from "FixtureWrapper";
+import { GButton } from "./GButton";
 
 export default {
   primary: (

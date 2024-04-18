@@ -8,6 +8,7 @@ import { SectionList } from "./components/SectionList";
 import { useRef, useState } from "react";
 import { Sections } from "./components/Sections";
 import { ExercisePublication } from "types";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   useGetExercisePublication?: (exerciseId: string) => {data: ExercisePublication | undefined, isLoading: boolean};
@@ -18,19 +19,19 @@ export const PublicationView: React.FC<Props> = ({
   useGetExercisePublication = defaultGetExercisePublication,
   useParams = useDefaultUseParams,
 }) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const handleNavigateHome = () => {
-    // navigate(`/`);
-    console.log("handleNavigateHome called");
+    navigate(`/`);
   };
 
   const [selectedSectionIndex, setSelectedSectionIndex] = useState<number>(0);
-  const hasUserSelectedSectionRef = useRef(false);
+  const hasUserSelectedSectionRef = useRef<boolean>(false);
 
   const { id: exerciseId } = useParams<string>();
   const { data: exercisePublication, isLoading } = useGetExercisePublication(
     exerciseId!
   );
+  
   const publicationSections = exercisePublication?.sections || [];
   if (isLoading) {
     return <SkeletonScreen />;

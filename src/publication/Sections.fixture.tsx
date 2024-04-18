@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { PublicationSection } from "types";
-import { FixtureWrapper } from "../fixtures/FixtureWrapper";
 import { Sections } from "publication/components/Sections";
 import { useRef, useState } from "react";
+import { FixtureWrapper } from "FixtureWrapper";
 
 const publicationSections: PublicationSection[] = [
   {
@@ -61,7 +61,7 @@ export default {
       </FixtureWrapper>
     );
   },
-  
+
   "Last Section Selected": () => {
     const [selectedSectionIndex, setSelectedSectionIndex] = useState<number>(publicationSections.length - 1);
     const hasUserSelectedSectionRef = useRef(true);

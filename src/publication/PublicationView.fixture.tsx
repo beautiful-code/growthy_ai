@@ -1,6 +1,6 @@
 import { ExercisePublication, PublicationSection } from "types";
-import { FixtureWrapper } from "../fixtures/FixtureWrapper";
 import { PublicationView } from "./PublicationView";
+import { FixtureWrapper } from "FixtureWrapper";
 
 const publicationSections: PublicationSection[] = [
   {
@@ -23,12 +23,12 @@ const publicationSections: PublicationSection[] = [
 ];
 
 const exercisePublication: ExercisePublication = {
-  title: "Dummy Exercise",
+  title: "Embarking on the Journey of Sanskrit: A Personal Odyssey",
   sections: publicationSections,
 }
 
 export default {
-  Basecase: () => {
+  "Base Case": () => (
     <FixtureWrapper>
       <PublicationView 
         useGetExercisePublication={(exerciseId: string) => {
@@ -38,5 +38,5 @@ export default {
         useParams={() => ({ id: "123" })}
       />
     </FixtureWrapper>    
-  },
+  ),
 };

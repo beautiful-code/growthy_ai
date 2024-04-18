@@ -1,4 +1,4 @@
 // This is a dummy fixture to make cosmos work
-import { FixtureWrapper } from "fixtures/FixtureWrapper";
+import { FixtureWrapper } from "FixtureWrapper";
 
 export default <FixtureWrapper>.</FixtureWrapper>;

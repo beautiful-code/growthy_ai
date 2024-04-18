@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { FixtureWrapper } from "fixtures/FixtureWrapper";
 import { Box, Accordion } from "@chakra-ui/react";
 import { Section } from "common/components/outline/Section";
 import { UISection } from "domain/common/UISection";
+import { FixtureWrapper } from "FixtureWrapper";
 
 export default {
   "base case": () => {

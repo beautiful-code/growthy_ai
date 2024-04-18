@@ -1,5 +1,5 @@
-import { FixtureWrapper } from "fixtures/FixtureWrapper";
-import { getExercisesPaginatedMock } from "../mocks/getExercisesPaginatedMock";
+import { FixtureWrapper } from "FixtureWrapper";
+import { getExercisesPaginatedMock } from "../../mocks/getExercisesPaginatedMock";
 import { Exercises } from "common/components/Exercises";
 
 export default {

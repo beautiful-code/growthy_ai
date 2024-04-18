@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { FixtureWrapper } from "fixtures/FixtureWrapper";
 import { BlogArticle } from "growth-exercise/components/blog-article/BlogArticle";
 import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
+import { FixtureWrapper } from "FixtureWrapper";
 
 export default {
   "base case": () => {

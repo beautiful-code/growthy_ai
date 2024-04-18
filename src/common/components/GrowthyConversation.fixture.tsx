@@ -1,4 +1,4 @@
-import { FixtureWrapper } from "fixtures/FixtureWrapper";
+import { FixtureWrapper } from "FixtureWrapper";
 import { GrowthyConversation } from "common/components/GrowthyConversation";
 
 const mockGetGuidance = async () => {

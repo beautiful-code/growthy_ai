@@ -22,17 +22,20 @@ export const Sections: React.FC<Props> = ({
   );
   const sectionsRef = useRef<HTMLDivElement | null>(null);
 
-  if (hasUserSelectedSectionRef.current) {
+  // Sync selected section (React) to scrollIntoView (External browser Api)
+  useEffect(() => {
     const element = document.getElementById(String(selectedSectionIndex));
-    if (element) {
+    if (element && hasUserSelectedSectionRef.current) {
       element.scrollIntoView({
         behavior: "instant",
         block: "start",
         inline: "start",
       });
-      setTimeout(() => (hasUserSelectedSectionRef.current = false), 0);
+      setTimeout(() => {
+        hasUserSelectedSectionRef.current = false
+      }, 0);
     }
-  }
+  });
 
   const handleScroll = () => {
     if (hasUserSelectedSectionRef.current) return;
@@ -73,7 +76,7 @@ export const Sections: React.FC<Props> = ({
       css={{
         // Max height calculation is hacky
         maxHeight: "calc(100vh - 140px)",
-        overflowY: "auto",
+        overflowY: "scroll",
       }}
     >
       {publicationSections.map((publicationSection, index) => (
