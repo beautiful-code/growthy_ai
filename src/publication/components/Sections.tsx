@@ -75,7 +75,7 @@ export const Sections: React.FC<Props> = ({
       ref={sectionsRef}
       css={{
         // Max height calculation is hacky
-        maxHeight: "calc(100vh - 140px)",
+        maxHeight: "calc(101vh - 135px)",
         overflowY: "scroll",
       }}
     >
