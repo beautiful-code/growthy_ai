@@ -1,6 +1,5 @@
 import { Box, Text } from "@chakra-ui/react";
 import { MarkdownRenderer } from "common/components/MarkdownRenderer";
-import { formatContentAsMarkdown } from "common/utils";
 import { MutableRefObject, useEffect, useRef } from "react";
 import { PublicationSection } from "types";
 
@@ -98,7 +97,7 @@ export const Sections: React.FC<Props> = ({
           {publicationSection.content != "" && publicationSection.content ? (
             <Box>
               <MarkdownRenderer>
-                {formatContentAsMarkdown(publicationSection.content)}
+                {publicationSection.content}
               </MarkdownRenderer>
             </Box>
           ) : (

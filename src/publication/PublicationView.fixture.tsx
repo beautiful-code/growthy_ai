@@ -5,7 +5,24 @@ import { FixtureWrapper } from "FixtureWrapper";
 const publicationSections: PublicationSection[] = [
   {
     title: "Introduction to My Sanskrit Journey",
-    content: "Dummy content 5",
+    content:  
+    '### Understanding Rails Environment Mechanics\n' +
+    'Rails environments are crucial for the proper functioning and management of a Rails application. They ensure that the application behaves appropriately under different conditions, such as development, testing, and production. One of the core functionalities that Rails provides is the ability to query the current environment and adjust the applications behavior accordingly. This is achieved through a combination of environment variables and Ruby classes designed to make working with environments intuitive and straightforward.\n' + 
+    '#### How Rails Determines the Current Environment\n' + 
+    '```ruby\n' +
+    '# railties/lib/rails.rb\n' +
+    'module Rails\n' +
+    '  class << self\n' +
+    '    def env\n' +
+    '      @_env ||= ActiveSupport::EnvironmentInquirer.new(\n' +
+    '        ENV["RAILS_ENV"].presence || \n' +
+    '        ENV["RACK_ENV"].presence || \n' +
+    '        "development"\n' +
+    '      )\n' +
+    '    end\n' +
+    '  end\n' +
+    'end\n' +
+    '```\n',
   },
   {
     title: "Discovering The Sanskrit Channel",
