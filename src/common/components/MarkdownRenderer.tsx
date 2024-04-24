@@ -16,18 +16,13 @@ export function MarkdownRenderer({
   children: markdown,
   handlePasteCode,
 }: MarkdownRendererProps) {
-  const preprocessedMarkdown = markdown.replace(
-    /^```markdown\n([\s\S]*)/,
-    "$1"
-  );
-
   return (
     <Markdown
       remarkPlugins={[remarkGfm]}
       rehypePlugins={[rehypeRaw]}
       components={{
         h1: ({ children, ...props }) => <Text as="h1" fontSize="2xl" fontWeight={"bold"} {...props}>{children}</Text>,        
-        h2: ({ children, ...props }) => <Text as="h2" fontSize="large" {...props}>{children}</Text>,        
+        p: ({ children, ...props }) => <Text as="p" whiteSpace={"pre-wrap"}  {...props}>{children}</Text>,
         code({ node, inline, className, children, ...props }: any) {
           const match = /language-(\w+)/.exec(className || "");
           return !inline && match ? (
@@ -64,7 +59,7 @@ export function MarkdownRenderer({
         },
       }}
     >
-      {preprocessedMarkdown}
+      {markdown}
     </Markdown>
   );
 }
