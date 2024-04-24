@@ -11,22 +11,26 @@ export default {
   GoLang: (
     <FixtureWrapper>
       <GrowthyConversation
-        blogTitle="GoLang"
-        blogPoints={[""]}
-        isAdditionalPrompt={false}
+        inputs={{
+          blog_title: "GoLang",
+          blog_points: [""],
+          isAdditionalPrompt: false,
+        }}
         onClose={() => {}}
-        getGuidance={mockGetGuidance}
+        getConversation={mockGetGuidance}
       />
     </FixtureWrapper>
   ),
   Python: (
     <FixtureWrapper>
       <GrowthyConversation
-        blogTitle="Python"
-        blogPoints={[""]}
-        isAdditionalPrompt={false}
+        inputs={{
+          blog_title: "Python",
+          blog_points: [""],
+          isAdditionalPrompt: false,
+        }}
         onClose={() => {}}
-        getGuidance={mockGetGuidance}
+        getConversation={mockGetGuidance}
       />
     </FixtureWrapper>
   ),

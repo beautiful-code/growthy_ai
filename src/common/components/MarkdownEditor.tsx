@@ -43,7 +43,7 @@ import { storeImage } from "notes/queries";
 import "./MarkdownEditor.css";
 
 type Props = {
-  enableAskGrowthy: boolean;
+  enableAskGrowthy?: boolean;
   showToolbar?: boolean;
   markdown: string;
   onChange?: (markdown: string) => void;

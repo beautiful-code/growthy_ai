@@ -11,6 +11,7 @@ import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 import { UIOutline } from "domain/common/UIOutline";
 import { Outline } from "common/components/outline/Outline";
 import { Notes } from "notes/Notes";
+import { GrowthyAIPanel } from "execute/growthy-ai-panel/GrowthyAIPanel";
 import { useGetExercise } from "./hooks/useGetExercise";
 import { getExercise as defaultGetExercise } from "execute/queries";
 import { saveGrowthExercise as defaultSaveGrowthExercise } from "growth-exercise/queries";
@@ -38,6 +39,9 @@ export const ExecuteView: React.FC<Props> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [exerciseXML, setExerciseXML] = useState("");
+  const [growthyAIDrawerType, setGrowthyAIDrawerType] = useState<
+    "growthy-conversation" | "generate-content" | ""
+  >("");
 
   const { exercise, isLoading } = useGetExercise(
     growthExerciseId || "",
@@ -59,12 +63,34 @@ export const ExecuteView: React.FC<Props> = ({
 
   const toggleFirstColumn = () => {
     if (isFirstColumnExpanded) {
-      setColumnWidths([0, 100, columnWidths[2]]);
+      setColumnWidths([
+        0,
+        100 - (growthyAIDrawerType ? columnWidths[2] : 0),
+        columnWidths[2],
+      ]);
     } else {
-      setColumnWidths([20, 80, columnWidths[2]]);
+      setColumnWidths([
+        20,
+        80 - (growthyAIDrawerType ? columnWidths[2] : 0),
+        columnWidths[2],
+      ]);
     }
 
     setIsFirstColumnExpanded(!isFirstColumnExpanded);
+  };
+
+  const handleGrowthyAIDrawerType = (
+    type: "growthy-conversation" | "generate-content" | ""
+  ) => {
+    const firstColumnWidth = columnWidths[0];
+    const availableWidth = 100 - firstColumnWidth;
+    setColumnWidths(
+      type
+        ? [firstColumnWidth, availableWidth / 2, availableWidth / 2]
+        : [firstColumnWidth, availableWidth, 0]
+    );
+
+    setGrowthyAIDrawerType(type);
   };
 
   const handleDrag = (index: number, clientX: number) => {
@@ -78,15 +104,14 @@ export const ExecuteView: React.FC<Props> = ({
       const totalWidth = containerRect.right - containerRect.left;
       const dxPercentage = (dx / totalWidth) * 100;
 
-      const helperType = "";
       if (index === 0) {
         const newWidthLeft = Math.max(10, startWidths[0] + dxPercentage);
         const newWidthMiddle = Math.max(10, startWidths[1] - dxPercentage);
-        if (helperType || index === 0) {
+        if (growthyAIDrawerType || index === 0) {
           // Adjusting for when helperType is not set
           setColumnWidths([newWidthLeft, newWidthMiddle, startWidths[2]]);
         }
-      } else if (index === 1 && helperType) {
+      } else if (index === 1 && growthyAIDrawerType) {
         // Adjust only if helper is present
         const newWidthMiddle = Math.max(10, startWidths[1] + dxPercentage);
         const newWidthRight = Math.max(10, startWidths[2] - dxPercentage);
@@ -118,9 +143,7 @@ export const ExecuteView: React.FC<Props> = ({
   };
 
   if (isLoading || !exerciseXML) {
-    return (
-      <SkeletonScreen />
-    );
+    return <SkeletonScreen />;
   }
 
   const blogArticle = new UIBlogArticle(exerciseXML || "");
@@ -153,7 +176,7 @@ export const ExecuteView: React.FC<Props> = ({
             size="sm"
             style={{
               position: "absolute",
-              left: false
+              left: growthyAIDrawerType
                 ? `calc(${columnWidths[0]}%)` // Adjust based on the presence of the right-most panel and to align with the right side of the divider
                 : columnWidths[0] > 0
                 ? `calc(${columnWidths[0]}% - 18px)` // Slightly different adjustment when the right-most panel is not expanded
@@ -180,8 +203,21 @@ export const ExecuteView: React.FC<Props> = ({
           <Text ml="40px" mt="8px" fontSize="larger">
             {blogArticle?.getOutline()?.getSelectedTaskName()}
           </Text>
-          <Notes taskId={blogArticle?.getOutline()?.getSelectedTaskId()} />
+          <Notes
+            taskId={blogArticle?.getOutline()?.getSelectedTaskId() || ""}
+          />
         </Box>
+
+        <GrowthyAIPanel
+          width={columnWidths[2]}
+          blogArticleInputs={{
+            blog_article_goal: blogArticle?.getTitle() || "",
+            blog_article_xml: blogArticle?._xml,
+          }}
+          growthyAIDrawerType={growthyAIDrawerType}
+          handleGrowthyAIDrawerType={handleGrowthyAIDrawerType}
+          handleDrag={handleDrag}
+        />
       </div>
     </div>
   );

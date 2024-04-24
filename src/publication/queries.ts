@@ -18,7 +18,7 @@ export const getExercisePublication = async (exerciseId: string) => {
   const xmlText: string = data.xml_text;
   const blogArticle: UIBlogArticle = new UIBlogArticle(xmlText);
   const publicationTitle = blogArticle.getTitle() || "";
-  const sections: UISection[] = blogArticle.getOutline().getSections();
+  const sections: UISection[] = blogArticle?.getOutline()?.getSections() || [];
 
   const allTaskIds = sections.flatMap((section) =>
     section.getUITasks().map((task) => task.getUUID())

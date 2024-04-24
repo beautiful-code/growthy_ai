@@ -45,10 +45,13 @@ export class UIBlogArticle extends UIXMLInterfacer {
     this._xml = new XMLSerializer().serializeToString(xmlDoc);
   }
 
-  getOutline(): UIOutline {
+  getOutline(): UIOutline | null {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(this._xml, "text/xml");
     const outline = xmlDoc.getElementsByTagName("Outline")[0];
+    if (!outline) {
+      return null;
+    }
     return new UIOutline(new XMLSerializer().serializeToString(outline));
   }
 
@@ -71,7 +74,7 @@ export class UIBlogArticle extends UIXMLInterfacer {
 
     let xmlString = `<BlogArticle>
                       <Title name="${title}" />`;
-    xmlString += outline.getUIStatelessXML();
+    xmlString += outline?.getUIStatelessXML() || "";
     xmlString += `</BlogArticle>`;
     return xmlString;
   }

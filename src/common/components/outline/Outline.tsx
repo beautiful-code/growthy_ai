@@ -8,7 +8,7 @@ import { Section } from "./Section";
 import { domainUpdateAndCallback } from "common/utils";
 
 type Props = {
-  uiOutline: UIOutline;
+  uiOutline: UIOutline | null;
   checkingEnabled?: boolean;
   taskSelectionEnabled?: boolean;
   onUpdateOutlineCallback: (uiOutline: UIOutline) => void;
@@ -20,6 +20,10 @@ export const Outline: React.FC<Props> = ({
   taskSelectionEnabled = false,
   onUpdateOutlineCallback,
 }) => {
+  if (!uiOutline) {
+    return null;
+  }
+
   const handleExpandAll = () => {
     uiOutline.expandAllSections();
     onUpdateOutlineCallback(uiOutline);

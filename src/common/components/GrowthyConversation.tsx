@@ -37,19 +37,17 @@ type TConvo = {
 };
 
 type Props = {
-  blogTitle: string;
-  blogPoints: string[];
-  isAdditionalPrompt: boolean;
+  height?: string;
+  inputs: any;
   onClose: () => void;
-  getGuidance: any;
+  getConversation: any;
 };
 
 export const GrowthyConversation: React.FC<Props> = ({
-  blogTitle,
-  blogPoints,
-  isAdditionalPrompt,
+  height = "100vh",
+  inputs,
   onClose,
-  getGuidance,
+  getConversation,
 }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -78,11 +76,9 @@ export const GrowthyConversation: React.FC<Props> = ({
 
     setConversation(updatedConversation);
 
-    const stream = await getGuidance({
-      blog_article_goal: blogTitle,
-      blog_article_points: blogPoints,
+    const stream = await getConversation({
+      ...inputs,
       context: content,
-      isAdditionalPrompt,
       isInitialPrompt,
       conversation: updatedConversation,
     });
@@ -117,7 +113,7 @@ export const GrowthyConversation: React.FC<Props> = ({
   return (
     <Box
       p="8px"
-      height={"100vh"} // This sets the height of the entire container
+      height={height} // This sets the height of the entire container
       // height={"100vh"} // This sets the height of the entire container
       display="flex"
       flexDirection="column"
