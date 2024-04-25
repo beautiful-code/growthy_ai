@@ -13,6 +13,7 @@ import {
 import { MdClose } from "react-icons/md";
 import { FaEllipsisVertical } from "react-icons/fa6";
 
+import { getContent as defaultGetContent } from "execute/chains/generateContent";
 import { MarkdownEditor } from "common/components/MarkdownEditor";
 import { useGenerateContent } from "execute/hooks/useGenerateContent";
 
@@ -21,25 +22,24 @@ type Props = {
     blog_article_goal: string;
     blog_article_xml: string;
   };
-  growthyAIDrawerType: "growthy-conversation" | "generate-content" | "";
-  handleGrowthyAIDrawerType: (
-    type: "growthy-conversation" | "generate-content" | ""
-  ) => void;
+  onClose: () => void;
+  generateContent?: (inputs: {
+    blog_article_goal: string;
+    blog_article_xml: string;
+  }) => Promise<any>;
 };
 
 export const AIGenerateContent: React.FC<Props> = ({
   blogArticleInputs,
-  growthyAIDrawerType,
-  handleGrowthyAIDrawerType,
+  onClose,
+  generateContent = defaultGetContent,
 }) => {
   const { isOpen, onOpen, onClose: onDisclosureClose } = useDisclosure();
 
-  const { uiBlogArticle, isFetching, refetch } =
-    useGenerateContent(blogArticleInputs);
-
-  const onClose = () => {
-    handleGrowthyAIDrawerType("");
-  };
+  const { uiBlogArticle, isFetching, refetch } = useGenerateContent({
+    ...blogArticleInputs,
+    generateContent,
+  });
 
   console.log(uiBlogArticle);
 
@@ -60,33 +60,28 @@ export const AIGenerateContent: React.FC<Props> = ({
         height={"calc(100vh - 50px)" || "100vh"}
         overflowX={"hidden"}
         overflowY={"auto"}
-        backgroundColor={
-          growthyAIDrawerType === "growthy-conversation"
-            ? "#F0FAF0B2"
-            : "#F5F5F5"
-        }
+        backgroundColor={"#F5F5F5"}
       >
         <Flex mt="16px" mr="8px" justify={"flex-end"}>
-          {growthyAIDrawerType === "generate-content" && (
-            <Menu isOpen={isOpen} onClose={onClose} onOpen={onOpen}>
-              <MenuButton>
-                <FaEllipsisVertical />
-              </MenuButton>
-              <MenuList p={4}>
-                <Stack spacing={1}>
-                  <Text cursor={"pointer"} onClick={handlreGenerate}>
-                    Regenarate Content
-                  </Text>
-                  <Text
-                    cursor={"pointer"}
-                    // onClick={handleClearContent}
-                  >
-                    Clear Content
-                  </Text>
-                </Stack>
-              </MenuList>
-            </Menu>
-          )}
+          <Menu isOpen={isOpen} onClose={onClose} onOpen={onOpen}>
+            <MenuButton>
+              <FaEllipsisVertical />
+            </MenuButton>
+            <MenuList p={4}>
+              <Stack spacing={1}>
+                <Text cursor={"pointer"} onClick={handlreGenerate}>
+                  Regenarate Content
+                </Text>
+                <Text
+                  cursor={"pointer"}
+                  // onClick={handleClearContent}
+                >
+                  Clear Content
+                </Text>
+              </Stack>
+            </MenuList>
+          </Menu>
+
           <MdClose cursor={"pointer"} onClick={onClose} />
         </Flex>
         {isFetching ? (

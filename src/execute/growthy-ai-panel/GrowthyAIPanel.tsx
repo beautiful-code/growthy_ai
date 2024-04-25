@@ -28,6 +28,10 @@ export const GrowthyAIPanel: React.FC<Props> = ({
   handleDrag,
   handleGrowthyAIDrawerType,
 }) => {
+  const onClose = () => {
+    handleGrowthyAIDrawerType("");
+  };
+
   return (
     <>
       {growthyAIDrawerType ? (
@@ -40,8 +44,7 @@ export const GrowthyAIPanel: React.FC<Props> = ({
             {growthyAIDrawerType === "generate-content" && (
               <AIGenerateContent
                 blogArticleInputs={blogArticleInputs}
-                growthyAIDrawerType={growthyAIDrawerType}
-                handleGrowthyAIDrawerType={handleGrowthyAIDrawerType}
+                onClose={onClose}
               />
             )}
             {growthyAIDrawerType === "growthy-conversation" && (
@@ -52,9 +55,7 @@ export const GrowthyAIPanel: React.FC<Props> = ({
                   blog_article_xml: "",
                   blog_article_task: "",
                 }}
-                onClose={() => {
-                  handleGrowthyAIDrawerType("");
-                }}
+                onClose={onClose}
                 getConversation={() => {}}
               />
             )}

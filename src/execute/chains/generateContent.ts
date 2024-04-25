@@ -14,7 +14,6 @@ const parser = new StringOutputParser();
 
 type TGetContent = {
   blog_article_goal: string;
-  exercise: string;
   blog_article_xml: string;
 };
 
