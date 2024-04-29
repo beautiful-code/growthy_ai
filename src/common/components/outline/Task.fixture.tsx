@@ -26,6 +26,9 @@ export default {
               console.log("onUpdateTaskCallback called");
               setTaskXml(uiTask._xml);
             }}
+            handleSelectTask={() => {
+              console.log("handleSelectTask called");
+            }}
           />
         </FixtureWrapper>
       </Box>

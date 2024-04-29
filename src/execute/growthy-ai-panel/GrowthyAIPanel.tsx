@@ -55,6 +55,7 @@ export const GrowthyAIPanel: React.FC<Props> = ({
                   blog_article_xml: "",
                   blog_article_task: "",
                 }}
+                resourceId=""
                 onCloseCallback={onClose}
                 getConversation={() => {}}
               />

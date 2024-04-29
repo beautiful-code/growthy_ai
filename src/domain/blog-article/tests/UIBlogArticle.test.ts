@@ -68,7 +68,7 @@ describe("UIBlogArticle", () => {
     const outline = new UIOutline(newOutline);
     blogArticle.updateOutline(outline);
 
-    expect(blogArticle.getOutline()._xml).toEqualXml(
+    expect(blogArticle?.getOutline()?._xml).toEqualXml(
       new UIOutline(newOutline)._xml
     );
   });

@@ -122,8 +122,7 @@ export default {
           </Outline>
         </BlogArticle>`,
         }}
-        growthyAIDrawerType="generate-content"
-        handleGrowthyAIDrawerType={() => {}}
+        onClose={() => console.log("onClose")}
         generateContent={mockGenerateContent}
       />
     </FixtureWrapper>
