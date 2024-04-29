@@ -32,7 +32,7 @@ export const Sidebar: React.FC<TSideBarProps> = ({selectedGuildId}) => {
           <VStack align="start" spacing={4} mx={"10%"} mr={"20%"}>
             <HStack spacing={4}>
               <FaHome size={20} cursor="pointer" onClick={handleNavigateHome}> </FaHome>  
-              <Heading size={"md"} fontWeight={"normal"}> Home </Heading>
+              <Heading size={"md"} fontWeight={"normal"} onClick={handleNavigateHome} cursor={"pointer"}> Home </Heading>
             </HStack>
             <span
               style={{

@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { TExercise } from "types";
 // @ts-expect-error: Svg import
 import StudyExerciseIcon from "assets/StudyExerciseIcon.svg?react";
@@ -15,10 +14,8 @@ type Props = {
 };
 
 export const Exercise: React.FC<Props> = ({ exercise }) => {
-  const navigate = useNavigate();
-
   const handleNavigateToPreviewScreen = () => {
-    navigate(`/preview/${exercise.id}`);
+    window.open(`/preview/${exercise.id}`, "_blank", "noopener,noreferrer");
   };
 
   const type: string = exercise.type;
