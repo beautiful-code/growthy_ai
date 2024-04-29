@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { PostgrestError } from "@supabase/supabase-js";
 import ResizeTextarea from "react-textarea-autosize";
@@ -57,6 +57,7 @@ export const CreateBlogArticleView: React.FC<Props> = ({
   onCreateGrowthExerciseCallback = defaultOnCreateGrowthExercise,
 }) => {
   const navigate = useNavigate();
+  const { guildId } = useParams();
 
   const [showGrowthyConversation, setShowGrowthyConversation] = useState(false);
   const [blogInputs, setBlogInputs] = useState<{
@@ -123,6 +124,7 @@ export const CreateBlogArticleView: React.FC<Props> = ({
         title: blogInputs.blogTitle,
         points: blogInputs.blogPoints,
       },
+      guild_id: guildId,
       state: "created",
       type: "blog-article",
     });

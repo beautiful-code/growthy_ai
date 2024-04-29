@@ -63,4 +63,14 @@ describe("UISection", () => {
     section.collapseSection();
     expect(section.getIsExpanded()).toBe(false);
   });
+
+  it("should give the completion progress", () => {
+    const section = new UISection(`<Section name='section1'>
+                <Task name='task1' checked="true" />
+                <Task name='task2' checked="false" />
+                </Section>
+                `);
+
+    expect(section.getCompletionProgress()).toBe(50);
+  });
 });

@@ -33,14 +33,22 @@ const router = createBrowserRouter([
     element: <GuildShowView />,
   },
   {
+    path: "/guild/:guildId/create-growth-exercise/:type",
+    element: <CreateGrowthExerciseView />,
+  },
+  {
+    path: "/user/create-growth-exercise/:type",
+    element: <CreateGrowthExerciseView />,
+  },
+  {
     path: "/guild/:id/create-growth-exercise/:type",
     element: <CreateGrowthExerciseView />,
   },
   {
-    path: "/:growthExerciseId/execute",
+    path: "/execute/:growthExerciseId",
     element: <ExecuteView />,
   },
-  {  
+  {
     path: "/my-growthy",
     element: <MyGrowthyView />,
   },

@@ -15,10 +15,14 @@ export default {
         <FixtureWrapper>
           <Accordion allowToggle allowMultiple>
             <Section
+              checkingEnabled={true}
               uiSection={new UISection(sectionXml)}
               onUpdateSectionCallback={(uiSection) => {
                 console.log("onUpdateSectionCallback called");
                 setSectionXml(uiSection._xml);
+              }}
+              handleSelectTask={(taskId) => {
+                console.log("handleSelectTask called", taskId);
               }}
             />
           </Accordion>

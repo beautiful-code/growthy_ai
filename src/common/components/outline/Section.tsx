@@ -6,6 +6,7 @@ import {
   Box,
   Text,
   Flex,
+  CircularProgress,
 } from "@chakra-ui/react";
 
 import { Task } from "./Task";
@@ -63,11 +64,22 @@ export const Section: React.FC<Props> = ({
         >
           <Flex width={"100%"} grow={2} align="center">
             <Flex grow={2} align="center">
-              <Box as="span" marginRight="4" fontSize="lg" fontWeight="bold">
+              <Box as="span" marginRight="2px" fontSize="lg" fontWeight="bold">
                 &bull;
               </Box>
 
-              <Text as="span" fontSize="lg" fontWeight="semibold">
+              <CircularProgress
+                mr="4px"
+                size="24px"
+                value={uiSection.getCompletionProgress()}
+              />
+
+              <Text
+                as="span"
+                fontSize="lg"
+                fontWeight="semibold"
+                textAlign={"left"}
+              >
                 {uiSection.getSectionName()}
               </Text>
             </Flex>

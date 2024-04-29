@@ -2,7 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { PostgrestError } from "@supabase/supabase-js";
 import { useMutation } from "@tanstack/react-query";
 import { Flex, Text, Box, Button } from "@chakra-ui/react";
-import { useParams as useDefaultUseParams } from "react-router-dom";
+import {
+  useParams as useDefaultUseParams,
+  useNavigate,
+} from "react-router-dom";
 import { FaHome, FaArrowLeft, FaArrowRight } from "react-icons/fa";
 
 import { TGrowthExercise } from "types";
@@ -49,6 +52,7 @@ export const ExecuteView: React.FC<Props> = ({
   saveGrowthExercise = defaultSaveGrowthExercise,
 }) => {
   const { growthExerciseId } = useParams<{ growthExerciseId: string }>();
+  const navigate = useNavigate();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -142,6 +146,10 @@ export const ExecuteView: React.FC<Props> = ({
     document.addEventListener("mouseup", handleMouseUp);
   };
 
+  const handleNavigateToHome = () => {
+    navigate("/");
+  };
+
   const handleOutlineUpdate = (uiOutline: UIOutline) => {
     blogArticle.updateOutline(uiOutline);
     setExerciseXML(blogArticle._xml);
@@ -167,7 +175,7 @@ export const ExecuteView: React.FC<Props> = ({
       <Box p="4px" borderBottom={"1px solid #e3e3e3"}>
         <Header>
           <Flex ml={"24px"} align={"center"}>
-            <FaHome />
+            <FaHome cursor={"pointer"} onClick={handleNavigateToHome} />
             <Text ml="8px">{blogArticle?.getTitle()}</Text>
           </Flex>
         </Header>
@@ -240,18 +248,21 @@ export const ExecuteView: React.FC<Props> = ({
                   onClose={() => handleGrowthyAIDrawerType("")}
                 />
               )}
-              {growthyAIDrawerType === "growthy-conversation" && (
-                <GrowthyConversation
-                  height="calc(100vh - 65px)"
-                  inputs={{
-                    blog_article_goal: "",
-                    blog_article_xml: "",
-                    blog_article_task: "",
-                  }}
-                  getConversation={getGuidance}
-                  onCloseCallback={() => handleGrowthyAIDrawerType("")}
-                />
-              )}
+              {growthyAIDrawerType === "growthy-conversation" &&
+                growthExerciseId && (
+                  <GrowthyConversation
+                    height="calc(100vh - 65px)"
+                    resourceId={growthExerciseId}
+                    inputs={{
+                      blog_article_goal: blogArticle?.getTitle() || "",
+                      blog_article_xml: exerciseXML,
+                      blog_article_task:
+                        blogArticle?.getOutline()?.getSelectedTaskName() || "",
+                    }}
+                    getConversation={getGuidance}
+                    onCloseCallback={() => handleGrowthyAIDrawerType("")}
+                  />
+                )}
             </Box>
           </>
         )}

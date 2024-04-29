@@ -137,6 +137,12 @@ export class UISection extends UIXMLInterfacer {
     this._xml = new XMLSerializer().serializeToString(xmlDoc);
   }
 
+  getCompletionProgress(): number {
+    const tasks = this.getUITasks();
+    const completedTasks = tasks.filter((task) => task.getChecked());
+    return (completedTasks.length / tasks.length) * 100;
+  }
+
   getUIStatelessXML(): string {
     const name = this.getSectionName();
     const tasks = this.getUITasks()

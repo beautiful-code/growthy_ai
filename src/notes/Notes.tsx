@@ -85,7 +85,6 @@ export const Notes: React.FC<Props> = ({
               </Box>
 
               <MarkdownEditor
-                enableAskGrowthy={true}
                 markdown={notes || ""}
                 onChange={handleContentChange}
                 handlePasteCode={handlePasteCode}

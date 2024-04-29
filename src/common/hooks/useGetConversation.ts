@@ -1,56 +1,60 @@
 import { useState, useEffect } from "react";
+import { TConvo } from "types";
 
 type TUseGetConversation = {
-  inputs: any;
-  context: string;
+  latestConvoMsg: TConvo | null;
   isInitialPrompt: boolean;
+  enabled: boolean;
   conversation: { type: string; text: string }[];
   getConversation: any;
-  enabled?: boolean;
   onGetChunk?: (chunk: string) => void;
+  onConversationEnd?: (receivedMarkdownText: string) => void;
 };
 
 type TUseGetConversationResponse = {
   data: string;
   error: Error | null;
-  isActive: boolean;
-  refetch: (context: string) => void;
+  isGettingChunks: boolean;
 };
 
 export const useGetConversation = ({
-  inputs,
-  context: defaultContext, // last item in conversation, latestConvoMsg
+  latestConvoMsg,
   isInitialPrompt,
+  enabled,
   conversation,
-  getConversation, // if we are getting this as input why do we need inputs
-  enabled = true,
+  getConversation,
   onGetChunk,
+  onConversationEnd,
 }: TUseGetConversation): TUseGetConversationResponse => {
   const [data, setData] = useState<string>("");
   const [error, setError] = useState<Error | null>(null);
-  const [isActive, setIsActive] = useState(true); // isGettingChunks
-  const [context, setContext] = useState<string>(defaultContext);
+  const [isGettingChunks, setIsGettingChunks] = useState(true);
+
+  const latestConvoMsgType = latestConvoMsg?.type;
 
   useEffect(() => {
-    if (!enabled) return;
-    setIsActive(true);
+    console.log({ enabled, latestConvoMsgType });
+    if (!enabled || latestConvoMsgType === "chatbot") return;
+
+    // Only if the latesConvoMsg?.type is user or if the convo is emoty, we will start fetching the conversation
+    setIsGettingChunks(true);
 
     const fetchData = async () => {
       try {
         const stream = await getConversation(
-          inputs,
-          context,
+          latestConvoMsg?.markdownText,
           isInitialPrompt,
           conversation
         );
+        let resp = "";
         for await (const chunk of stream) {
-          if (isActive) {
-            setData(data + chunk);
-            onGetChunk && onGetChunk(chunk);
-          }
+          setData(data + chunk);
+          resp += chunk;
+          onGetChunk && onGetChunk(chunk);
         }
+        onConversationEnd && onConversationEnd(resp);
       } catch (err) {
-        if (isActive) {
+        if (isGettingChunks) {
           setError(err as Error);
         }
       }
@@ -59,20 +63,13 @@ export const useGetConversation = ({
     fetchData();
 
     return () => {
-      setIsActive(false);
+      setIsGettingChunks(false);
     };
-  }, [enabled, context]);
-
-  const refetch = (context: string) => {
-    setContext(context);
-    setData("");
-    setError(null);
-  };
+  }, [enabled, latestConvoMsgType]);
 
   return {
-    isActive,
+    isGettingChunks,
     data,
     error,
-    refetch,
   };
 };

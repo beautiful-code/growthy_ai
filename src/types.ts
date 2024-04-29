@@ -66,11 +66,25 @@ export type TNote = {
 };
 
 export type PublicationSection = {
-  title: string,
-  content: string
-}
+  title: string;
+  content: string;
+};
 
 export type ExercisePublication = {
-  title: string,
-  sections: PublicationSection[]
-}
+  title: string;
+  sections: PublicationSection[];
+};
+
+export type TGrowthyConversation = {
+  id: string;
+  type: string;
+  markdownText: string;
+  resourceId: string;
+  resourceType: string;
+  created_at?: string;
+};
+
+export type TConvo = {
+  type: string;
+  markdownText: string;
+};

@@ -48,4 +48,12 @@ describe("UITask", () => {
       );
     });
   });
+
+  it("should return if it is checked or not", () => {
+    const task = new UITask({
+      uuid: "1",
+      xml: "<Task name='task1' checked='true' />",
+    });
+    expect(task.getChecked()).toBe(true);
+  });
 });
