@@ -34,6 +34,12 @@ const mockGetExercise = (
   });
 };
 
+const mockGetGuidance = async () => {
+  return (async function* () {
+    yield "Mocked response";
+  })();
+};
+
 export default {
   ExecuteView: () => {
     return (
@@ -45,6 +51,7 @@ export default {
             data: mockExercise,
             error: null,
           })}
+          getGuidance={mockGetGuidance}
         />
       </FixtureWrapper>
     );

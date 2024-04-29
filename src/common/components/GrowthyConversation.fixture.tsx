@@ -8,28 +8,15 @@ const mockGetGuidance = async () => {
 };
 
 export default {
-  GoLang: (
+  "Growthy Coversation with GoRoutines blog article": (
     <FixtureWrapper>
       <GrowthyConversation
         inputs={{
-          blog_title: "GoLang",
-          blog_points: [""],
-          isAdditionalPrompt: false,
+          blog_article_goal: "",
+          blog_article_xml: "",
+          blog_article_task: "",
         }}
-        onClose={() => {}}
-        getConversation={mockGetGuidance}
-      />
-    </FixtureWrapper>
-  ),
-  Python: (
-    <FixtureWrapper>
-      <GrowthyConversation
-        inputs={{
-          blog_title: "Python",
-          blog_points: [""],
-          isAdditionalPrompt: false,
-        }}
-        onClose={() => {}}
+        onCloseCallback={() => {}}
         getConversation={mockGetGuidance}
       />
     </FixtureWrapper>

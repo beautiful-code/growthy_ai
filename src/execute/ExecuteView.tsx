@@ -11,10 +11,13 @@ import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 import { UIOutline } from "domain/common/UIOutline";
 import { Outline } from "common/components/outline/Outline";
 import { Notes } from "notes/Notes";
-import { GrowthyAIPanel } from "execute/growthy-ai-panel/GrowthyAIPanel";
+import { Actions } from "execute/Actions";
 import { useGetExercise } from "./hooks/useGetExercise";
 import { getExercise as defaultGetExercise } from "execute/queries";
 import { saveGrowthExercise as defaultSaveGrowthExercise } from "growth-exercise/queries";
+import { getGuidance as defaultGetGuidance } from "execute/chains/getGuidance";
+import { AIGenerateContent } from "execute/growthy-ai-panel/AIGenerateContent";
+import { GrowthyConversation } from "common/components/GrowthyConversation";
 
 import "./ExecuteView.css";
 import { SkeletonScreen } from "common/components/SkeletonScreen";
@@ -27,11 +30,22 @@ type Props = {
   saveGrowthExercise?: (
     data: TGrowthExercise
   ) => Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }>;
+  getGuidance?: (
+    inputs: {
+      blog_article_goal: string;
+      blog_article_xml: string;
+      blog_article_task: string;
+    },
+    context: string,
+    isInitialPrompt: boolean,
+    conversation: { type: string; text: string }[]
+  ) => void;
 };
 
 export const ExecuteView: React.FC<Props> = ({
   useParams = useDefaultUseParams,
   getExercise = defaultGetExercise,
+  getGuidance = defaultGetGuidance,
   saveGrowthExercise = defaultSaveGrowthExercise,
 }) => {
   const { growthExerciseId } = useParams<{ growthExerciseId: string }>();
@@ -208,16 +222,39 @@ export const ExecuteView: React.FC<Props> = ({
           />
         </Box>
 
-        <GrowthyAIPanel
-          width={columnWidths[2]}
-          blogArticleInputs={{
-            blog_article_goal: blogArticle?.getTitle() || "",
-            blog_article_xml: blogArticle?._xml,
-          }}
-          growthyAIDrawerType={growthyAIDrawerType}
-          handleGrowthyAIDrawerType={handleGrowthyAIDrawerType}
-          handleDrag={handleDrag}
-        />
+        {growthyAIDrawerType === "" ? (
+          <Actions handleGrowthyAIDrawerType={handleGrowthyAIDrawerType} />
+        ) : (
+          <>
+            <div
+              className="resizer"
+              onMouseDown={(e) => handleDrag(1, e.clientX)}
+            />
+            <Box className="panel" style={{ width: `${columnWidths[2]}%` }}>
+              {growthyAIDrawerType === "generate-content" && (
+                <AIGenerateContent
+                  blogArticleInputs={{
+                    blog_article_goal: blogArticle?.getTitle() || "",
+                    blog_article_xml: blogArticle?._xml,
+                  }}
+                  onClose={() => handleGrowthyAIDrawerType("")}
+                />
+              )}
+              {growthyAIDrawerType === "growthy-conversation" && (
+                <GrowthyConversation
+                  height="calc(100vh - 65px)"
+                  inputs={{
+                    blog_article_goal: "",
+                    blog_article_xml: "",
+                    blog_article_task: "",
+                  }}
+                  getConversation={getGuidance}
+                  onCloseCallback={() => handleGrowthyAIDrawerType("")}
+                />
+              )}
+            </Box>
+          </>
+        )}
       </div>
     </div>
   );

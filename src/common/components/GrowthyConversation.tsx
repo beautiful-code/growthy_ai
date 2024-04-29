@@ -3,9 +3,8 @@ import { Box, Text, Flex, Textarea } from "@chakra-ui/react";
 import { MdClose } from "react-icons/md";
 import ResizeTextarea from "react-textarea-autosize";
 
+import { useGetConversation } from "common/hooks/useGetConversation";
 import { MarkdownRenderer } from "common/components/MarkdownRenderer";
-// import { getGuidance } from "growth-exercise/chains/getIdeasChain";
-
 // @ts-expect-error: Svg import
 import GrowthyOval from "assets/GrowthyOval.svg?react";
 
@@ -32,99 +31,96 @@ const Message: React.FC<{ item: TConvo }> = ({ item }) => {
 };
 
 type TConvo = {
-  type: string;
-  text: string;
+  type: string; // make this chatbot | user
+  text: string; // make this markdowmnText
 };
 
 type Props = {
   height?: string;
   inputs: any;
-  onClose: () => void;
+  askGrowthySelectedText?: any;
+  onCloseCallback: () => void;
   getConversation: any;
 };
 
 export const GrowthyConversation: React.FC<Props> = ({
   height = "100vh",
   inputs,
-  onClose,
   getConversation,
+  onCloseCallback,
 }) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const resultRef = useRef("");
-  const [result, setResult] = useState("");
-
-  const [newContent, setNewContent] = useState("");
+  const [userInput, setUserInput] = useState("");
   const [conversation, setConversation] = useState<TConvo[]>([]);
 
-  useEffect(() => {
-    inputRef.current?.focus();
-    console.log(1);
-    handleRespond("", true);
-  }, []);
+  const { refetch } = useGetConversation({
+    inputs,
+    context: "",
+    isInitialPrompt: true,
+    conversation: [],
+    getConversation,
+    onGetChunk: (chunk) => {
+      setConversation((currentConvo) => {
+        if (currentConvo.length === 0)
+          return (currentConvo = [{ type: "chatbot", text: chunk }]);
 
-  const resultRefCurrent = resultRef.current;
+        const lastConvo = currentConvo[currentConvo.length - 1];
+
+        if (lastConvo && lastConvo.type === "chatbot") {
+          return [
+            ...currentConvo.slice(0, currentConvo.length - 1),
+            { type: "chatbot", text: lastConvo.text + chunk },
+          ];
+        } else {
+          return [...currentConvo, { type: "chatbot", text: chunk }];
+        }
+      });
+    },
+  });
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
-  }, [conversation, result, resultRefCurrent]);
-
-  const handleRespond = async (content: string, isInitialPrompt = false) => {
-    const updatedConversation = [
-      ...conversation,
-      { type: "user", text: content },
-    ];
-
-    setConversation(updatedConversation);
-
-    const stream = await getConversation({
-      ...inputs,
-      context: content,
-      isInitialPrompt,
-      conversation: updatedConversation,
-    });
-    setNewContent("");
-    let chatbotResponse = "";
-    for await (const chunk of stream) {
-      resultRef.current = resultRef.current + chunk;
-      chatbotResponse = chatbotResponse + chunk;
-      setResult((rst) => rst + chunk);
-    }
-
-    setConversation((conv) => [
-      ...conv,
-      {
-        type: "chatbot",
-        text: chatbotResponse,
-      },
-    ]);
-
-    resultRef.current = "";
-    setResult("");
-  };
+  }, [conversation]);
 
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
     if (event.key === "Enter") {
-      handleRespond(newContent);
+      event.preventDefault();
+      const updatedConversation = [
+        ...conversation,
+        { type: "user", text: userInput },
+      ];
+
+      setConversation(updatedConversation);
+
+      setUserInput("");
+
+      refetch({
+        ...inputs,
+        context: userInput,
+        isInitialPrompt: true,
+        conversation: updatedConversation,
+      });
     }
   };
 
   return (
     <Box
       p="8px"
-      height={height} // This sets the height of the entire container
-      // height={"100vh"} // This sets the height of the entire container
+      height={height}
       display="flex"
       flexDirection="column"
-      justifyContent="space-between" // Ensures the input is pushed to the bottom
+      justifyContent="space-between"
       backgroundColor={"#F0FAF0B2"}
     >
       <Flex justify={"end"}>
         <Box style={{ cursor: "pointer" }}>
-          <MdClose onClick={onClose} />
+          <MdClose onClick={onCloseCallback} />
         </Box>
       </Flex>
+
       <Box overflowY="auto" overflowX="hidden" flex="1">
         <Box ml="20px">
           <Box>
@@ -132,12 +128,6 @@ export const GrowthyConversation: React.FC<Props> = ({
               return <Message item={item} />;
             })}
           </Box>
-          {result && (
-            <Box mt="8px">
-              <MessageHeader item={{ type: "chatbot", text: "" }} />
-              <MarkdownRenderer>{result}</MarkdownRenderer>
-            </Box>
-          )}
 
           <div ref={messagesEndRef} />
         </Box>
@@ -158,9 +148,9 @@ export const GrowthyConversation: React.FC<Props> = ({
           className="deepee-text-area"
           fontSize={"medium"}
           placeholder="I am thinking..."
-          value={newContent}
+          value={userInput}
           onChange={(event) => {
-            setNewContent(event.target.value);
+            setUserInput(event.target.value);
           }}
           onKeyDown={handleKeyDown}
         />

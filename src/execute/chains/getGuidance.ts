@@ -5,8 +5,8 @@ import {
 import { HumanMessage, AIMessage } from "@langchain/core/messages";
 import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunnableSequence } from "@langchain/core/runnables";
-import getGrowthyConfig from "growthy-prompts";
 
+import getGrowthyConfig from "growthy-prompts";
 import { openAIModel } from "openAIClient";
 
 export const getAnswerGenerationChainPrompt = (prompt: string) =>
@@ -24,42 +24,33 @@ const getConversationalRetrievalChain = (prompt: string) =>
     parser,
   ]);
 
-export const getGuidance = async ({
-  blog_article_goal = "",
-  blog_article_points = [],
+export const getGuidance = async (
+  inputs: {
+    blog_article_goal: string;
+    blog_article_xml: string;
+    blog_article_task: string;
+  },
   context = "",
-  isAdditionalPrompt = false,
   isInitialPrompt = false,
-  conversation = [],
-}: {
-  blog_article_goal: string;
-  blog_article_points: string[];
-  context: string;
-  isAdditionalPrompt: boolean;
-  isInitialPrompt: boolean;
-  conversation: { type: string; text: string }[];
-}) => {
+  conversation: { type: string; text: string }[] = []
+) => {
   const config = getGrowthyConfig();
-  const suggestedPointsPrompt =
-    config?.blog_article?.suggest_points_for_goal?.prompt;
-  const suggestedPointsConvoPrompt = `Given this context and histroy, please respond to the user {context}`;
-  const suggestAdditionalPointsPrompt =
-    config?.blog_article?.suggest_additional_points_for_goal?.prompt;
-  const suggestAdditionalPointsConvoPrompt = `Given this context and histroy, please respond to the user {context}`;
+  const getGuidanceForTaskExecutionPrompt =
+    config?.blog_article?.get_guidance_for_task_execution_no_notes?.prompt;
+
+  const askGrowthyForSelectionPrompt =
+    config?.blog_article?.ask_growthy_for_selection?.prompt;
 
   const conversationPrompt = getConversationalRetrievalChain(
     isInitialPrompt
-      ? isAdditionalPrompt
-        ? suggestAdditionalPointsPrompt
-        : suggestedPointsPrompt
-      : isAdditionalPrompt
-      ? suggestAdditionalPointsConvoPrompt
-      : suggestedPointsConvoPrompt
+      ? getGuidanceForTaskExecutionPrompt
+      : askGrowthyForSelectionPrompt
   );
+
   const response = await conversationPrompt.stream({
     specialization: "",
-    blog_article_goal,
-    current_points: JSON.stringify(blog_article_points),
+    ...inputs,
+    ask_growthy_selection: context,
     context,
     format_instructions: parser.getFormatInstructions(),
     history: conversation.map((message) => {
