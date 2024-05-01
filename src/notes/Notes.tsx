@@ -30,6 +30,7 @@ export const Notes: React.FC<Props> = ({
   } = useQuery({
     queryKey: ["notes", taskId],
     queryFn: () => getNoteByTaskId(taskId),
+    gcTime: 0,
   });
   const notes = noteData?.note?.data || "";
   const defaultId = useRef(uuidv4());

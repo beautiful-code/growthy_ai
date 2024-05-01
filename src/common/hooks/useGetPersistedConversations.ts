@@ -21,6 +21,7 @@ export const useGetPersistedConversations = (
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["growthy_conversation", id],
     queryFn: () => getPersistedConversation(id),
+    gcTime: 0,
   });
 
   return { persistedConversations: data?.data || [], isLoading, refetch };
