@@ -5,7 +5,7 @@ type TUseGetConversation = {
   latestConvoMsg: TConvo | null;
   isInitialPrompt: boolean;
   enabled: boolean;
-  conversation: { type: string; text: string }[];
+  conversation: TConvo[];
   getConversation: any;
   onGetChunk?: (chunk: string) => void;
   onConversationEnd?: (receivedMarkdownText: string) => void;
@@ -31,9 +31,9 @@ export const useGetConversation = ({
   const [isGettingChunks, setIsGettingChunks] = useState(true);
 
   const latestConvoMsgType = latestConvoMsg?.type;
+  const latesConvoMsgTxt = latestConvoMsg?.markdownText;
 
   useEffect(() => {
-    console.log({ enabled, latestConvoMsgType });
     if (!enabled || latestConvoMsgType === "chatbot") return;
 
     // Only if the latesConvoMsg?.type is user or if the convo is emoty, we will start fetching the conversation
@@ -65,7 +65,7 @@ export const useGetConversation = ({
     return () => {
       setIsGettingChunks(false);
     };
-  }, [enabled, latestConvoMsgType]);
+  }, [enabled, latestConvoMsgType, latesConvoMsgTxt]);
 
   return {
     isGettingChunks,

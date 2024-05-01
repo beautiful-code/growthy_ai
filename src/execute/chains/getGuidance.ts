@@ -8,6 +8,7 @@ import { RunnableSequence } from "@langchain/core/runnables";
 
 import getGrowthyConfig from "growthy-prompts";
 import { openAIModel } from "openAIClient";
+import { TConvo } from "types";
 
 export const getAnswerGenerationChainPrompt = (prompt: string) =>
   ChatPromptTemplate.fromMessages([
@@ -32,7 +33,7 @@ export const getGuidance = async (
   },
   context = "",
   isInitialPrompt = false,
-  conversation: { type: string; text: string }[] = []
+  conversation: TConvo[] = []
 ) => {
   const config = getGrowthyConfig();
   const getGuidanceForTaskExecutionPrompt =
@@ -55,9 +56,9 @@ export const getGuidance = async (
     format_instructions: parser.getFormatInstructions(),
     history: conversation.map((message) => {
       if (message.type === "user") {
-        return new HumanMessage(message.text);
+        return new HumanMessage(message.markdownText);
       } else {
-        return new AIMessage(message.text);
+        return new AIMessage(message.markdownText);
       }
     }),
   });

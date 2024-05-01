@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { Box, Text, Spinner } from "@chakra-ui/react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 
@@ -31,15 +32,17 @@ export const Notes: React.FC<Props> = ({
     queryFn: () => getNoteByTaskId(taskId),
   });
   const notes = noteData?.note?.data || "";
+  const defaultId = useRef(uuidv4());
 
   const { mutate: saveNoteMutation, isPending: isSavingNotes } = useMutation({
     mutationFn: saveNote,
   });
 
   const handleContentChange = (newNotes: string) => {
-    if (noteData?.note?.id) {
+    if (taskId) {
+      console.log(noteData);
       saveNoteMutation({
-        id: noteData?.note?.id,
+        id: noteData?.note?.id || defaultId.current,
         task_id: taskId,
         data: newNotes,
       });
@@ -47,9 +50,9 @@ export const Notes: React.FC<Props> = ({
   };
 
   const handlePasteCode = (code: string) => {
-    if (noteData?.note?.id) {
+    if (taskId) {
       saveNote({
-        id: noteData?.note?.id,
+        id: noteData?.note?.id || defaultId.current,
         task_id: taskId,
         data: notes + `\n \`\`\`go\n${code}\`\`\`\n`,
       }).then(() => {
@@ -69,7 +72,7 @@ export const Notes: React.FC<Props> = ({
       m="24px"
       ml="40px"
       mt="32px"
-      height={"calc(100vh - 50px - 48px - 32px)"}
+      height={"calc(100vh - 65px - 62px - 32px)"}
       overflowY={"auto"}
     >
       {isLoading ? (

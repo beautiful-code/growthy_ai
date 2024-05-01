@@ -88,7 +88,7 @@ export const GrowthyConversation: React.FC<Props> = ({
         ? null
         : conversation[conversation.length - 1],
     isInitialPrompt: true,
-    conversation: [],
+    conversation,
     getConversation: (
       context: string,
       isInitialPrompt: boolean,
@@ -124,6 +124,10 @@ export const GrowthyConversation: React.FC<Props> = ({
       inputRef.current?.focus();
     },
   });
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "auto" });

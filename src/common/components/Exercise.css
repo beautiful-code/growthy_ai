@@ -1,0 +1,7 @@
+.exercise-actions {
+  display: none;
+}
+
+.exercise:hover .exercise-actions {
+  display: block;
+}

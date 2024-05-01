@@ -3,7 +3,6 @@ import {
   AccordionItem,
   AccordionButton,
   AccordionPanel,
-  Box,
   Text,
   Flex,
   CircularProgress,
@@ -60,14 +59,14 @@ export const Section: React.FC<Props> = ({
           _focus={{ boxShadow: "none" }}
           _expanded={{ bg: "none", fontWeight: "bold" }}
           p={0}
-          onClick={handleExpandSection}
         >
-          <Flex width={"100%"} grow={2} align="center">
+          <Flex
+            width={"100%"}
+            grow={2}
+            align="center"
+            onClick={handleExpandSection}
+          >
             <Flex grow={2} align="center">
-              <Box as="span" marginRight="2px" fontSize="lg" fontWeight="bold">
-                &bull;
-              </Box>
-
               <CircularProgress
                 mr="4px"
                 size="24px"

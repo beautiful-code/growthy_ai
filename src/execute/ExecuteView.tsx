@@ -160,7 +160,7 @@ export const ExecuteView: React.FC<Props> = ({
       inputs: exercise?.inputs || {},
       state: exercise?.state || "created",
       type: "blog-article",
-      xml_text: uiOutline.getUIStatelessXML(),
+      xml_text: blogArticle.getUIStatelessXML(),
     });
   };
 
@@ -169,6 +169,7 @@ export const ExecuteView: React.FC<Props> = ({
   }
 
   const blogArticle = new UIBlogArticle(exerciseXML || "");
+  console.log(blogArticle._xml);
 
   return (
     <div>
@@ -189,7 +190,7 @@ export const ExecuteView: React.FC<Props> = ({
           className="panel"
           style={{
             width: `${columnWidths[0]}%`,
-            height: `calc(100vh - 50px)`,
+            height: `calc(100vh - 65px)`,
             overflowY: "auto",
           }}
         >
@@ -238,7 +239,13 @@ export const ExecuteView: React.FC<Props> = ({
               className="resizer"
               onMouseDown={(e) => handleDrag(1, e.clientX)}
             />
-            <Box className="panel" style={{ width: `${columnWidths[2]}%` }}>
+            <Box
+              className="panel"
+              style={{
+                width: `${columnWidths[2]}%`,
+                height: "calc(100vh - 65px)",
+              }}
+            >
               {growthyAIDrawerType === "generate-content" && (
                 <AIGenerateContent
                   blogArticleInputs={{
@@ -251,7 +258,7 @@ export const ExecuteView: React.FC<Props> = ({
               {growthyAIDrawerType === "growthy-conversation" &&
                 growthExerciseId && (
                   <GrowthyConversation
-                    height="calc(100vh - 65px)"
+                    height="100%"
                     resourceId={growthExerciseId}
                     inputs={{
                       blog_article_goal: blogArticle?.getTitle() || "",

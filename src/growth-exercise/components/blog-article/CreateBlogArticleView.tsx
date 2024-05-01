@@ -47,7 +47,7 @@ const defaultOnCreateGrowthExercise = (
   navigate: (path: string) => void
 ) => {
   if (growthExercise) {
-    navigate(`/${growthExercise.id}/execute`);
+    navigate(`/execute/${growthExercise.id}`);
   }
 };
 
@@ -89,7 +89,6 @@ export const CreateBlogArticleView: React.FC<Props> = ({
   }, [suggestedBlogXMLData]);
 
   const onBlogArticleUpdate = (blogArticle: UIBlogArticle) => {
-    console.log(blogArticle._xml);
     setSuggestedBlogXML(blogArticle._xml);
   };
 
