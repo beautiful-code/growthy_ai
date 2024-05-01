@@ -38,7 +38,7 @@ const Message: React.FC<{ item: TConvo }> = ({ item }) => {
   );
 };
 
-type Props = {
+export type Props = {
   height?: string;
   inputs: any;
   resourceId: string;

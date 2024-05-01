@@ -20,13 +20,26 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 interface AuthProviderProps {
+  defaultValue?: {
+    session: Session | null;
+    isAuthenticated: boolean;
+  };
+  isFromFixture?: boolean;
   children: ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({
+  defaultValue,
+  isFromFixture,
+  children,
+}) => {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
+    if (isFromFixture) {
+      return;
+    }
+
     // Fetch the current session asynchronously
     const fetchSession = async () => {
       const {
@@ -70,7 +83,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated: !!session,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={isFromFixture ? defaultValue : value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 // Hook to use authentication context
