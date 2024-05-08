@@ -1,17 +1,21 @@
 import React from "react";
-import { Accordion, Box, Flex } from "@chakra-ui/react";
+import { Accordion, Box, Flex, Link } from "@chakra-ui/react";
 import { GButton } from "common/components/GButton";
 
 import { UIOutline } from "domain/common/UIOutline";
 import { UISection } from "domain/common/UISection";
 import { Section } from "./Section";
 import { domainUpdateAndCallback } from "common/utils";
+import { MdEdit } from "react-icons/md";
 
 type Props = {
   uiOutline: UIOutline | null;
   checkingEnabled?: boolean;
   taskSelectionEnabled?: boolean;
   onUpdateOutlineCallback: (uiOutline: UIOutline) => void;
+  allowOutlineChanges?: boolean;
+  alwaysExpand?: boolean;
+  allowExpand?: boolean;
 };
 
 export const Outline: React.FC<Props> = ({
@@ -19,9 +23,16 @@ export const Outline: React.FC<Props> = ({
   checkingEnabled = false,
   taskSelectionEnabled = false,
   onUpdateOutlineCallback,
+  allowOutlineChanges = false,
+  alwaysExpand = false,
+  allowExpand = true,
 }) => {
   if (!uiOutline) {
     return null;
+  }
+
+  if (alwaysExpand) {
+    uiOutline.expandAllSections();
   }
 
   const handleExpandAll = () => {
@@ -68,14 +79,35 @@ export const Outline: React.FC<Props> = ({
         ))}
       </Accordion>
 
-      <Flex justify={"flex-end"}>
-        <GButton size="xs" type="secondary" onClick={handleExpandAll}>
-          Expand all
-        </GButton>
-        <GButton size="xs" type="secondary" onClick={handleCollapseAll}>
-          Collapse all
-        </GButton>
-      </Flex>
+      {allowExpand && (
+        <Flex justifyContent={"flex-end"} mr={"10px"}>
+          <GButton size="xs" type="secondary" onClick={handleExpandAll}>
+            Expand all
+          </GButton>
+          <GButton
+            size="xs"
+            type="secondary"
+            onClick={handleCollapseAll}
+            ml={"10px"}
+          >
+            Collapse all
+          </GButton>
+        </Flex>
+      )}
+
+      {allowOutlineChanges && (
+        <Flex align={"center"} p={1} cursor={"pointer"} mt={"30px"} ml={"20px"}>
+          <MdEdit color="blue" />{" "}
+          <Link
+            ml="8px"
+            color={"blue"}
+            cursor={"pointer"}
+            _hover={{ textDecoration: "none" }}
+          >
+            Make changes to the outline
+          </Link>
+        </Flex>
+      )}
     </Box>
   );
 };

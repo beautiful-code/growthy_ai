@@ -94,6 +94,7 @@ export const Section: React.FC<Props> = ({
             taskSelectionEnabled={taskSelectionEnabled}
             onUpdateTaskCallback={onUpdateTaskCallback(taskIndex)}
             handleSelectTask={handleSelectTask}
+            key={task.getUUID()}
           />
         ))}
       </AccordionPanel>
