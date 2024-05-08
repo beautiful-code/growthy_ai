@@ -88,3 +88,5 @@ export type TConvo = {
   type: string;
   markdownText: string;
 };
+
+export type TExecutionModes = "Outline" | "Notes" | "Publish";
