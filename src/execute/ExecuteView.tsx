@@ -48,7 +48,10 @@ export const ExecuteView: React.FC<Props> = ({
   });
 
   const [executionMode, setExecutionMode] = useState<TExecutionModes>("Notes");
-  const { exercise, isLoading } = useGetExercise(growthExerciseId, getExercise);
+  const { exercise, isLoading } = useGetExercise(
+    growthExerciseId || "",
+    getExercise
+  );
 
   useEffect(() => {
     if (exercise?.xml_text) {
