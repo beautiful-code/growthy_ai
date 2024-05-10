@@ -47,7 +47,7 @@ declare module "slate" {
 
 const initialValue: Descendant[] = [
   {
-    children: [{ text: "Start typing..." }],
+    children: [{ text: "" }],
   },
 ];
 
