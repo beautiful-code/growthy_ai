@@ -75,6 +75,18 @@ export type ExercisePublication = {
   sections: PublicationSection[];
 };
 
+export type PreviewTasks = {
+  id: string;
+  title: string;
+  content?: string | null;
+  isChecked: boolean;
+};
+
+export type PreviewSection = {
+  title: string;
+  tasks: PreviewTasks[];
+};
+
 export type TGrowthyConversation = {
   id: string;
   type: string;
@@ -90,3 +102,8 @@ export type TConvo = {
 };
 
 export type TExecutionModes = "Outline" | "Notes" | "Publish";
+
+export type TGeneratedTasksContent = {
+  taskId: string;
+  content: string;
+};

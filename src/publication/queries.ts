@@ -46,7 +46,7 @@ export const getExercisePublication = async (exerciseId: string) => {
   } as ExercisePublication;
 };
 
-const getContentByTaskIds = async (taskIds: string[]) => {
+export const getContentByTaskIds = async (taskIds: string[]) => {
   const { data, error } = await supabaseClient
     .from("content")
     .select("task_id, data")
