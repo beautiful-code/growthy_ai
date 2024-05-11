@@ -18,6 +18,7 @@ import "App.css";
 import "main.css";
 import { MyGrowthyView } from "my-growthy/MyGrowthyView";
 import { PublicationView } from "publication/PublicationView";
+import { ModifyOutline } from "common/components/outline/ModifyOutline";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
   {
     path: "/execute/:growthExerciseId",
     element: <ExecuteView />,
+  },
+  {
+    path: "/execute/:growthExerciseId/modify-outline",
+    element: <ModifyOutline />,
   },
   {
     path: "/my-growthy",

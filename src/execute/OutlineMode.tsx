@@ -24,7 +24,7 @@ export const OutlineMode: React.FC<Props> = ({
       width="100%"
       my={"70px"}
     >
-      <Box width="50%" ml={"20%"}>
+      <Box width="50%" mx={"25%"}>
         <Outline
           uiOutline={blogArticle.getOutline()}
           allowOutlineChanges

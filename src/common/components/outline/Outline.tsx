@@ -7,6 +7,7 @@ import { UISection } from "domain/common/UISection";
 import { Section } from "./Section";
 import { domainUpdateAndCallback } from "common/utils";
 import { MdEdit } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   uiOutline: UIOutline | null;
@@ -27,6 +28,12 @@ export const Outline: React.FC<Props> = ({
   alwaysExpand = false,
   allowExpand = true,
 }) => {
+  const navigate = useNavigate();
+
+  const handleNavigateToModifyOutline = () => {
+    navigate('modify-outline');  
+  };
+
   if (!uiOutline) {
     return null;
   }
@@ -80,7 +87,7 @@ export const Outline: React.FC<Props> = ({
       </Accordion>
 
       {allowExpand && (
-        <Flex justifyContent={"flex-end"} mr={"10px"}>
+        <Flex justifyContent={"flex-end"} mr={"10px"} mt={"20px"}>
           <GButton size="xs" type="secondary" onClick={handleExpandAll}>
             Expand all
           </GButton>
@@ -96,13 +103,14 @@ export const Outline: React.FC<Props> = ({
       )}
 
       {allowOutlineChanges && (
-        <Flex align={"center"} p={1} cursor={"pointer"} mt={"30px"} ml={"20px"}>
+        <Flex align={"center"} p={1} cursor={"pointer"} mt={"30px"} ml={"20px"} pb={"80px"}>
           <MdEdit color="blue" />{" "}
           <Link
             ml="8px"
             color={"blue"}
             cursor={"pointer"}
             _hover={{ textDecoration: "none" }}
+            onClick={handleNavigateToModifyOutline}
           >
             Make changes to the outline
           </Link>

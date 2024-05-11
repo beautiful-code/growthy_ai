@@ -21,7 +21,7 @@ export const getBlogArticleXMLSuggestion = async ({
   blog_article_points = "",
 }: {
   blog_article_goal: string;
-  blog_article_points: string;
+  blog_article_points?: string;
 }) => {
   const config = getGrowthyConfig();
   const generateOutlineContentPrompt =
