@@ -5,22 +5,28 @@ import { NavMenu } from "common/components/header/NavMenu";
 
 type HeaderProps = {
   children: React.ReactNode;
+  showAvatar?: boolean;
 };
 
-export const Header: React.FC<HeaderProps> = ({ children }) => {
+export const Header: React.FC<HeaderProps> = ({
+  children,
+  showAvatar = true,
+}) => {
   return (
-    <Grid templateColumns="90% 10%">
+    <Grid templateColumns="2fr auto">
       <GridItem colSpan={1}>
         <Flex height="100%" justify={"flex-start"} align="center">
           {children}
         </Flex>
       </GridItem>
-      <GridItem colSpan={1}>
-        <Flex mr={"20px"} justify={"flex-end"} align="center">
+      {showAvatar && (
+        <GridItem colSpan={1}>
+          <Flex mr={"20px"} justify={"flex-end"} align="center">
             <UserAvatar />
             <NavMenu />
-        </Flex>
-      </GridItem>
+          </Flex>
+        </GridItem>
+      )}
     </Grid>
   );
 };
