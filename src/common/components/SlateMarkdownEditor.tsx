@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   createEditor,
   Editor,
@@ -20,8 +20,17 @@ import {
   useSlate,
 } from "slate-react";
 import { withHistory, HistoryEditor } from "slate-history";
-import { Box, Flex, IconButton, ButtonGroup } from "@chakra-ui/react";
-import { FiBold, FiItalic, FiUnderline } from "react-icons/fi";
+import {
+  Box,
+  Flex,
+  IconButton,
+  ButtonGroup,
+  Container,
+  Grid,
+  GridItem,
+  Textarea,
+} from "@chakra-ui/react";
+import { FiBold, FiItalic, FiUnderline, FiPlus } from "react-icons/fi";
 
 type CustomText = {
   text: string;
@@ -29,6 +38,7 @@ type CustomText = {
   bold?: boolean;
   italic?: boolean;
   underline?: boolean;
+  color?: string; // New property for color
 };
 
 declare module "slate" {
@@ -41,8 +51,13 @@ declare module "slate" {
       bold?: boolean;
       italic?: boolean;
       underline?: boolean;
+      color?: string;
     };
   }
+}
+
+interface CustomRange extends Range {
+  color?: string;
 }
 
 const initialValue: Descendant[] = [
@@ -56,7 +71,8 @@ type TSlateMarkdownEditorProps = {};
 export const SlateMarkdownEditor: React.FC<TSlateMarkdownEditorProps> = () => {
   const [editor] = useState(() => withHistory(withReact(createEditor())));
   const [value, setValue] = useState<Descendant[]>(initialValue);
-  const [selections, setSelections] = useState<Range[]>([]);
+  const [selections, setSelections] = useState<CustomRange[]>([]);
+  const [commentBoxes, setCommentBoxes] = useState<CustomRange[]>([]); // To store comment boxes info
 
   const renderLeaf = useCallback(
     (props: RenderLeafProps) => <Leaf {...props} />,
@@ -66,16 +82,35 @@ export const SlateMarkdownEditor: React.FC<TSlateMarkdownEditorProps> = () => {
   const handleMouseUp = () => {
     const { selection } = editor;
     if (selection && !Range.isCollapsed(selection)) {
-      setSelections([...selections, selection]);
+      setSelections([...selections, { ...selection, color: "lightblue" }]);
     }
   };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      event.target instanceof HTMLElement &&
+      !event.target.closest(".comment-box")
+    ) {
+      setSelections((prevSelections) =>
+        prevSelections.filter((sel) =>
+          commentBoxes.some((box) => Range.equals(box, sel))
+        )
+      );
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [commentBoxes]);
 
   const decorate = useCallback(
     ([node, path]: [Node, Path]) => {
       const ranges: any[] = [];
       if (Text.isText(node)) {
         selections.forEach((selection) => {
-          //   const { anchor, focus } = selection;
           const [start, end] = Range.edges(selection);
           const nodeRange = Editor.range(editor, path);
 
@@ -94,6 +129,7 @@ export const SlateMarkdownEditor: React.FC<TSlateMarkdownEditorProps> = () => {
               anchor: { path, offset: anchorOffset },
               focus: { path, offset: focusOffset },
               highlight: true,
+              color: selection.color,
             });
           }
         });
@@ -103,23 +139,62 @@ export const SlateMarkdownEditor: React.FC<TSlateMarkdownEditorProps> = () => {
     [editor, selections]
   );
 
+  const addCommentBox = (selection: CustomRange) => {
+    setCommentBoxes([...commentBoxes, selection]);
+    setSelections((prev) =>
+      prev.map((sel) =>
+        Range.equals(sel, selection) ? { ...sel, color: "yellow" } : sel
+      )
+    );
+  };
+
   return (
-    <Flex direction="column" align="center" p={4}>
-      <Box w="80%" onMouseUp={handleMouseUp}>
-        <Slate
-          editor={editor}
-          initialValue={value}
-          onChange={(newValue) => setValue(newValue)}
-        >
-          <Toolbar />
-          <Editable
-            renderLeaf={renderLeaf}
-            decorate={decorate}
-            placeholder="Enter some text..."
-          />
-        </Slate>
-      </Box>
-    </Flex>
+    <Container maxW="container.xl" p={4}>
+      <Grid templateColumns="70% 30%" gap={4}>
+        <GridItem>
+          <Flex
+            direction="column"
+            align="center"
+            p={4}
+            bg="white"
+            boxShadow="md"
+            borderRadius="md"
+          >
+            <Box w="100%" onMouseUp={handleMouseUp} position="relative">
+              <Slate
+                editor={editor}
+                initialValue={value}
+                onChange={(newValue) => setValue(newValue)}
+              >
+                <Toolbar />
+                <Editable
+                  renderLeaf={renderLeaf}
+                  decorate={decorate}
+                  placeholder="Enter some text..."
+                />
+              </Slate>
+              {selections
+                .filter((selection) => selection.color === "lightblue")
+                .map((selection, index) => (
+                  <PlusIcon
+                    key={index}
+                    selection={selection}
+                    editor={editor}
+                    onClick={() => addCommentBox(selection)}
+                  />
+                ))}
+            </Box>
+          </Flex>
+        </GridItem>
+        <GridItem>
+          <Box position="relative" height="100%">
+            {commentBoxes.map((box, index) => (
+              <CommentBox key={index} selection={box} editor={editor} />
+            ))}
+          </Box>
+        </GridItem>
+      </Grid>
+    </Container>
   );
 };
 
@@ -167,6 +242,7 @@ const isFormatActive = (editor: ReactEditor, format: keyof CustomText) => {
 
   return !!match;
 };
+
 const Leaf: React.FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
   if (leaf.bold) {
     children = <strong>{children}</strong>;
@@ -183,9 +259,63 @@ const Leaf: React.FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
   return (
     <span
       {...attributes}
-      style={{ backgroundColor: leaf.highlight ? "#ffeeba" : "transparent" }}
+      style={{
+        backgroundColor: leaf.highlight
+          ? leaf.color || "#ffeeba"
+          : "transparent",
+      }}
     >
       {children}
     </span>
+  );
+};
+
+const PlusIcon: React.FC<{
+  selection: CustomRange;
+  editor: ReactEditor;
+  onClick: () => void;
+}> = ({ selection, editor, onClick }) => {
+  const domRange = ReactEditor.toDOMRange(editor, selection);
+  const rect = domRange.getBoundingClientRect();
+
+  return (
+    <Box
+      position="absolute"
+      top={`${rect.top + window.scrollY}px`}
+      right="0"
+      zIndex="tooltip"
+      transform="translateY(-50%)" // Adjust the vertical alignment
+    >
+      <IconButton
+        icon={<FiPlus />}
+        aria-label="Add Comment"
+        onClick={onClick}
+      />
+    </Box>
+  );
+};
+
+const CommentBox: React.FC<{ selection: CustomRange; editor: ReactEditor }> = ({
+  selection,
+  editor,
+}) => {
+  const domRange = ReactEditor.toDOMRange(editor, selection);
+  const rect = domRange.getBoundingClientRect();
+
+  return (
+    <Box
+      position="absolute"
+      top={`${rect.top + window.scrollY}px`}
+      right="0"
+      zIndex="tooltip"
+      p={2}
+      bg="white"
+      boxShadow="md"
+      borderRadius="md"
+      className="comment-box"
+      width="100%"
+    >
+      <Textarea placeholder="Add a comment..." rows={3} width="100%" />
+    </Box>
   );
 };
