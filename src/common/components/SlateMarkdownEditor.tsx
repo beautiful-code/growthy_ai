@@ -30,6 +30,7 @@ import {
   GridItem,
   Textarea,
 } from "@chakra-ui/react";
+import ReactDOM from "react-dom";
 import { FiBold, FiItalic, FiUnderline, FiPlus } from "react-icons/fi";
 
 type CustomText = {
@@ -38,21 +39,14 @@ type CustomText = {
   bold?: boolean;
   italic?: boolean;
   underline?: boolean;
-  color?: string; // New property for color
+  color?: string;
 };
 
 declare module "slate" {
   interface CustomTypes {
     Editor: BaseEditor & ReactEditor & HistoryEditor;
     Element: BaseElement;
-    Text: {
-      text: string;
-      highlight?: boolean;
-      bold?: boolean;
-      italic?: boolean;
-      underline?: boolean;
-      color?: string;
-    };
+    Text: CustomText;
   }
 }
 
@@ -60,19 +54,13 @@ interface CustomRange extends Range {
   color?: string;
 }
 
-const initialValue: Descendant[] = [
-  {
-    children: [{ text: "" }],
-  },
-];
+const initialValue: Descendant[] = [{ children: [{ text: "" }] }];
 
-type TSlateMarkdownEditorProps = {};
-
-export const SlateMarkdownEditor: React.FC<TSlateMarkdownEditorProps> = () => {
+export const SlateMarkdownEditor: React.FC = () => {
   const [editor] = useState(() => withHistory(withReact(createEditor())));
   const [value, setValue] = useState<Descendant[]>(initialValue);
   const [selections, setSelections] = useState<CustomRange[]>([]);
-  const [commentBoxes, setCommentBoxes] = useState<CustomRange[]>([]); // To store comment boxes info
+  const [commentBoxes, setCommentBoxes] = useState<CustomRange[]>([]);
 
   const renderLeaf = useCallback(
     (props: RenderLeafProps) => <Leaf {...props} />,
@@ -161,11 +149,7 @@ export const SlateMarkdownEditor: React.FC<TSlateMarkdownEditorProps> = () => {
             borderRadius="md"
           >
             <Box w="100%" onMouseUp={handleMouseUp} position="relative">
-              <Slate
-                editor={editor}
-                initialValue={value}
-                onChange={(newValue) => setValue(newValue)}
-              >
+              <Slate editor={editor} initialValue={value} onChange={setValue}>
                 <Toolbar />
                 <Editable
                   renderLeaf={renderLeaf}
@@ -200,7 +184,6 @@ export const SlateMarkdownEditor: React.FC<TSlateMarkdownEditorProps> = () => {
 
 const Toolbar: React.FC = () => {
   const editor = useSlate();
-
   return (
     <ButtonGroup mb={4}>
       <IconButton
@@ -278,20 +261,19 @@ const PlusIcon: React.FC<{
   const domRange = ReactEditor.toDOMRange(editor, selection);
   const rect = domRange.getBoundingClientRect();
 
-  return (
-    <Box
-      position="absolute"
-      top={`${rect.top + window.scrollY}px`}
-      right="0"
-      zIndex="tooltip"
-      transform="translateY(-50%)" // Adjust the vertical alignment
-    >
-      <IconButton
-        icon={<FiPlus />}
-        aria-label="Add Comment"
-        onClick={onClick}
-      />
-    </Box>
+  return ReactDOM.createPortal(
+    <IconButton
+      style={{
+        position: "absolute",
+        top: `${rect.top + window.scrollY}px`, // Adjust this line if necessary
+        left: "70%",
+        transform: "translate(-50%, -40%)", // Changed from -100% to -50% for vertical alignment
+      }}
+      icon={<FiPlus />}
+      aria-label="Add Comment"
+      onClick={onClick}
+    />,
+    document.body
   );
 };
 
@@ -302,20 +284,22 @@ const CommentBox: React.FC<{ selection: CustomRange; editor: ReactEditor }> = ({
   const domRange = ReactEditor.toDOMRange(editor, selection);
   const rect = domRange.getBoundingClientRect();
 
-  return (
+  return ReactDOM.createPortal(
     <Box
-      position="absolute"
-      top={`${rect.top + window.scrollY}px`}
-      right="0"
-      zIndex="tooltip"
-      p={2}
-      bg="white"
-      boxShadow="md"
-      borderRadius="md"
+      style={{
+        position: "absolute",
+        top: `${rect.top + window.scrollY}px`,
+        left: `70%`,
+        width: "300px",
+        padding: "8px",
+        backgroundColor: "white",
+        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+        borderRadius: "4px",
+      }}
       className="comment-box"
-      width="100%"
     >
       <Textarea placeholder="Add a comment..." rows={3} width="100%" />
-    </Box>
+    </Box>,
+    document.body
   );
 };
