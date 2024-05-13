@@ -1,4 +1,5 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
+import ReactDOM from "react-dom";
 import {
   createEditor,
   Editor,
@@ -30,7 +31,6 @@ import {
   GridItem,
   Textarea,
 } from "@chakra-ui/react";
-import ReactDOM from "react-dom";
 import { FiBold, FiItalic, FiUnderline, FiPlus } from "react-icons/fi";
 
 type CustomText = {
@@ -74,51 +74,36 @@ export const SlateMarkdownEditor: React.FC = () => {
     }
   };
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      event.target instanceof HTMLElement &&
-      !event.target.closest(".comment-box")
-    ) {
-      setSelections((prevSelections) =>
-        prevSelections.filter((sel) =>
-          commentBoxes.some((box) => Range.equals(box, sel))
-        )
-      );
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [commentBoxes]);
-
   const decorate = useCallback(
     ([node, path]: [Node, Path]) => {
       const ranges: any[] = [];
       if (Text.isText(node)) {
         selections.forEach((selection) => {
-          const [start, end] = Range.edges(selection);
-          const nodeRange = Editor.range(editor, path);
-
           if (
-            Range.includes(nodeRange, start) ||
-            Range.includes(nodeRange, end)
+            Editor.hasPath(editor, selection.anchor.path) &&
+            Editor.hasPath(editor, selection.focus.path)
           ) {
-            const anchorOffset = Path.equals(start.path, path)
-              ? start.offset
-              : 0;
-            const focusOffset = Path.equals(end.path, path)
-              ? end.offset
-              : node.text.length;
+            const [start, end] = Range.edges(selection);
+            const nodeRange = Editor.range(editor, path);
 
-            ranges.push({
-              anchor: { path, offset: anchorOffset },
-              focus: { path, offset: focusOffset },
-              highlight: true,
-              color: selection.color,
-            });
+            if (
+              Range.includes(nodeRange, start) ||
+              Range.includes(nodeRange, end)
+            ) {
+              const anchorOffset = Path.equals(start.path, path)
+                ? start.offset
+                : 0;
+              const focusOffset = Path.equals(end.path, path)
+                ? end.offset
+                : node.text.length;
+
+              ranges.push({
+                anchor: { path, offset: anchorOffset },
+                focus: { path, offset: focusOffset },
+                highlight: true,
+                color: selection.color,
+              });
+            }
           }
         });
       }
@@ -141,6 +126,7 @@ export const SlateMarkdownEditor: React.FC = () => {
       <Grid templateColumns="70% 30%" gap={4}>
         <GridItem>
           <Flex
+            className="markdown-editor-container"
             direction="column"
             align="center"
             p={4}
@@ -149,7 +135,20 @@ export const SlateMarkdownEditor: React.FC = () => {
             borderRadius="md"
           >
             <Box w="100%" onMouseUp={handleMouseUp} position="relative">
-              <Slate editor={editor} initialValue={value} onChange={setValue}>
+              <Slate
+                editor={editor}
+                initialValue={value}
+                onChange={(newValue) => {
+                  setValue(newValue);
+                  setSelections((prevSelections) => {
+                    return prevSelections.filter(
+                      (selection) =>
+                        Editor.hasPath(editor, selection.anchor.path) &&
+                        Editor.hasPath(editor, selection.focus.path)
+                    );
+                  });
+                }}
+              >
                 <Toolbar />
                 <Editable
                   renderLeaf={renderLeaf}
