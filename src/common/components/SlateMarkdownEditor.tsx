@@ -70,7 +70,11 @@ export const SlateMarkdownEditor: React.FC = () => {
   const handleMouseUp = () => {
     const { selection } = editor;
     if (selection && !Range.isCollapsed(selection)) {
-      setSelections([...selections, { ...selection, color: "lightblue" }]);
+      const normalizedSelection = Editor.range(editor, selection);
+      setSelections((prev) => [
+        ...prev,
+        { ...normalizedSelection, color: "lightblue" },
+      ]);
     }
   };
 
@@ -79,31 +83,26 @@ export const SlateMarkdownEditor: React.FC = () => {
       const ranges: any[] = [];
       if (Text.isText(node)) {
         selections.forEach((selection) => {
-          if (
-            Editor.hasPath(editor, selection.anchor.path) &&
-            Editor.hasPath(editor, selection.focus.path)
-          ) {
-            const [start, end] = Range.edges(selection);
-            const nodeRange = Editor.range(editor, path);
+          const { anchor, focus } = selection;
+          const anchorPath = anchor.path;
+          const focusPath = focus.path;
 
-            if (
-              Range.includes(nodeRange, start) ||
-              Range.includes(nodeRange, end)
-            ) {
-              const anchorOffset = Path.equals(start.path, path)
-                ? start.offset
-                : 0;
-              const focusOffset = Path.equals(end.path, path)
-                ? end.offset
-                : node.text.length;
+          if (Path.equals(anchorPath, path) || Path.equals(focusPath, path)) {
+            const startOffset = Path.equals(anchorPath, path)
+              ? anchor.offset
+              : 0;
+            const endOffset = Path.equals(focusPath, path)
+              ? focus.offset
+              : node.text.length;
 
-              ranges.push({
-                anchor: { path, offset: anchorOffset },
-                focus: { path, offset: focusOffset },
-                highlight: true,
-                color: selection.color,
-              });
-            }
+            const adjustedRange = {
+              anchor: { path, offset: startOffset },
+              focus: { path, offset: endOffset },
+              highlight: true,
+              color: selection.color,
+            };
+
+            ranges.push(adjustedRange);
           }
         });
       }
@@ -113,11 +112,165 @@ export const SlateMarkdownEditor: React.FC = () => {
   );
 
   const addCommentBox = (selection: CustomRange) => {
-    setCommentBoxes([...commentBoxes, selection]);
+    setCommentBoxes((prev) => [...prev, selection]);
     setSelections((prev) =>
       prev.map((sel) =>
         Range.equals(sel, selection) ? { ...sel, color: "yellow" } : sel
       )
+    );
+  };
+
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const { selection } = editor;
+        if (selection) {
+          const { path } = selection.anchor;
+
+          Transforms.insertNodes(editor, {
+            type: "paragraph",
+            children: [{ text: "" }],
+          } as unknown as Node);
+
+          const newAnchor = { path: [path[0] + 1, 0], offset: 0 };
+          const newFocus = { path: [path[0] + 1, 0], offset: 0 };
+
+          setSelections((prev) =>
+            prev.map((sel) => {
+              const newAnchorPath =
+                sel.anchor.path[0] >= path[0]
+                  ? sel.anchor.path[0] + 1
+                  : sel.anchor.path[0];
+              const newFocusPath =
+                sel.focus.path[0] >= path[0]
+                  ? sel.focus.path[0] + 1
+                  : sel.focus.path[0];
+              return {
+                ...sel,
+                anchor: {
+                  ...sel.anchor,
+                  path: [newAnchorPath, sel.anchor.path[1]],
+                },
+                focus: {
+                  ...sel.focus,
+                  path: [newFocusPath, sel.focus.path[1]],
+                },
+              };
+            })
+          );
+
+          setCommentBoxes((prev) =>
+            prev.map((box) => {
+              const newAnchorPath =
+                box.anchor.path[0] >= path[0]
+                  ? box.anchor.path[0] + 1
+                  : box.anchor.path[0];
+              const newFocusPath =
+                box.focus.path[0] >= path[0]
+                  ? box.focus.path[0] + 1
+                  : box.focus.path[0];
+              return {
+                ...box,
+                anchor: {
+                  ...box.anchor,
+                  path: [newAnchorPath, box.anchor.path[1]],
+                },
+                focus: {
+                  ...box.focus,
+                  path: [newFocusPath, box.focus.path[1]],
+                },
+              };
+            })
+          );
+
+          Transforms.select(editor, { anchor: newAnchor, focus: newFocus });
+        }
+      }
+    },
+    [editor]
+  );
+
+  const handleInput = useCallback(
+    (event: React.FormEvent) => {
+      const { selection } = editor;
+      if (!selection) return;
+
+      const text = (event.nativeEvent as InputEvent).data || "";
+      const { path, offset } = selection.anchor;
+
+      // Update selections
+      setSelections((prev) =>
+        prev.map((sel) => {
+          if (
+            Path.equals(sel.anchor.path, path) &&
+            sel.anchor.offset >= offset
+          ) {
+            return {
+              ...sel,
+              anchor: {
+                ...sel.anchor,
+                offset: sel.anchor.offset + text.length,
+              },
+              focus: { ...sel.focus, offset: sel.focus.offset + text.length },
+            };
+          }
+          return sel;
+        })
+      );
+
+      // Update comment boxes
+      setCommentBoxes((prev) =>
+        prev.map((box) => {
+          if (
+            Path.equals(box.anchor.path, path) &&
+            box.anchor.offset >= offset
+          ) {
+            return {
+              ...box,
+              anchor: {
+                ...box.anchor,
+                offset: box.anchor.offset + text.length,
+              },
+              focus: { ...box.focus, offset: box.focus.offset + text.length },
+            };
+          }
+          return box;
+        })
+      );
+    },
+    [editor]
+  );
+
+  const handleChange = (newValue: Descendant[]) => {
+    setValue(newValue);
+
+    setSelections(
+      (prevSelections) =>
+        prevSelections
+          .map((selection) => {
+            try {
+              const normalizedSelection = Editor.range(editor, selection);
+              return normalizedSelection;
+            } catch {
+              return null;
+            }
+          })
+          .filter(Boolean) as CustomRange[]
+    );
+
+    setCommentBoxes(
+      (prevBoxes) =>
+        prevBoxes
+          .map((box) => {
+            try {
+              const normalizedBox = Editor.range(editor, box);
+              return normalizedBox;
+            } catch {
+              return null;
+            }
+          })
+          .filter(Boolean) as CustomRange[]
     );
   };
 
@@ -138,22 +291,15 @@ export const SlateMarkdownEditor: React.FC = () => {
               <Slate
                 editor={editor}
                 initialValue={value}
-                onChange={(newValue) => {
-                  setValue(newValue);
-                  setSelections((prevSelections) => {
-                    return prevSelections.filter(
-                      (selection) =>
-                        Editor.hasPath(editor, selection.anchor.path) &&
-                        Editor.hasPath(editor, selection.focus.path)
-                    );
-                  });
-                }}
+                onChange={handleChange}
               >
                 <Toolbar />
                 <Editable
                   renderLeaf={renderLeaf}
                   decorate={decorate}
                   placeholder="Enter some text..."
+                  onKeyDown={handleKeyDown}
+                  onInput={handleInput}
                 />
               </Slate>
               {selections
@@ -257,48 +403,58 @@ const PlusIcon: React.FC<{
   editor: ReactEditor;
   onClick: () => void;
 }> = ({ selection, editor, onClick }) => {
-  const domRange = ReactEditor.toDOMRange(editor, selection);
-  const rect = domRange.getBoundingClientRect();
+  try {
+    const domRange = ReactEditor.toDOMRange(editor, selection);
+    const rect = domRange.getBoundingClientRect();
 
-  return ReactDOM.createPortal(
-    <IconButton
-      style={{
-        position: "absolute",
-        top: `${rect.top + window.scrollY}px`, // Adjust this line if necessary
-        left: "70%",
-        transform: "translate(-50%, -40%)", // Changed from -100% to -50% for vertical alignment
-      }}
-      icon={<FiPlus />}
-      aria-label="Add Comment"
-      onClick={onClick}
-    />,
-    document.body
-  );
+    return ReactDOM.createPortal(
+      <IconButton
+        style={{
+          position: "absolute",
+          top: `${rect.top + window.scrollY}px`,
+          left: "70%",
+          transform: "translate(-50%, -40%)",
+        }}
+        icon={<FiPlus />}
+        aria-label="Add Comment"
+        onClick={onClick}
+      />,
+      document.body
+    );
+  } catch (e) {
+    console.error("Error in PlusIcon: ", e);
+    return null;
+  }
 };
 
 const CommentBox: React.FC<{ selection: CustomRange; editor: ReactEditor }> = ({
   selection,
   editor,
 }) => {
-  const domRange = ReactEditor.toDOMRange(editor, selection);
-  const rect = domRange.getBoundingClientRect();
+  try {
+    const domRange = ReactEditor.toDOMRange(editor, selection);
+    const rect = domRange.getBoundingClientRect();
 
-  return ReactDOM.createPortal(
-    <Box
-      style={{
-        position: "absolute",
-        top: `${rect.top + window.scrollY}px`,
-        left: `70%`,
-        width: "300px",
-        padding: "8px",
-        backgroundColor: "white",
-        boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
-        borderRadius: "4px",
-      }}
-      className="comment-box"
-    >
-      <Textarea placeholder="Add a comment..." rows={3} width="100%" />
-    </Box>,
-    document.body
-  );
+    return ReactDOM.createPortal(
+      <Box
+        style={{
+          position: "absolute",
+          top: `${rect.top + window.scrollY}px`,
+          left: `70%`,
+          width: "300px",
+          padding: "8px",
+          backgroundColor: "white",
+          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
+          borderRadius: "4px",
+        }}
+        className="comment-box"
+      >
+        <Textarea placeholder="Add a comment..." rows={3} width="100%" />
+      </Box>,
+      document.body
+    );
+  } catch (e) {
+    console.error("Error in CommentBox: ", e);
+    return null;
+  }
 };

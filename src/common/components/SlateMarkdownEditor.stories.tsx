@@ -6,7 +6,7 @@ const meta = {
   title: "SlateMarkdownEditor",
   component: SlateMarkdownEditor,
   parameters: {
-    layout: "centered",
+    layout: "fullscreen",
   },
   tags: ["autodocs"],
   argTypes: {},
@@ -14,9 +14,7 @@ const meta = {
   decorators: [
     (Story) => (
       <FixtureWrapper>
-        <div style={{ width: "90vw", height: "90vh", overflowY: "hidden" }}>
-          <Story />
-        </div>
+        <Story />
       </FixtureWrapper>
     ),
   ],
