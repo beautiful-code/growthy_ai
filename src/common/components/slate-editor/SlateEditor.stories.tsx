@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { SlateMarkdownEditor } from "./SlateMarkdownEditor";
+import { SlateEditor } from "./SlateEditor";
 import { FixtureWrapper } from "FixtureWrapper";
 
 const meta = {
-  title: "SlateMarkdownEditor",
-  component: SlateMarkdownEditor,
+  title: "SlateEditor",
+  component: SlateEditor,
   parameters: {
     layout: "fullscreen",
   },
@@ -18,7 +18,7 @@ const meta = {
       </FixtureWrapper>
     ),
   ],
-} satisfies Meta<typeof SlateMarkdownEditor>;
+} satisfies Meta<typeof SlateEditor>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

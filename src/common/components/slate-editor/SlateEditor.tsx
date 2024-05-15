@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from "react";
-import ReactDOM from "react-dom";
 import {
   createEditor,
   Editor,
@@ -18,29 +17,14 @@ import {
   withReact,
   ReactEditor,
   RenderLeafProps,
-  useSlate,
 } from "slate-react";
 import { withHistory, HistoryEditor } from "slate-history";
-import {
-  Box,
-  Flex,
-  IconButton,
-  ButtonGroup,
-  Container,
-  Grid,
-  GridItem,
-  Textarea,
-} from "@chakra-ui/react";
-import { FiBold, FiItalic, FiUnderline, FiPlus } from "react-icons/fi";
+import { Box, Flex, Container, Grid, GridItem } from "@chakra-ui/react";
 
-type CustomText = {
-  text: string;
-  highlight?: boolean;
-  bold?: boolean;
-  italic?: boolean;
-  underline?: boolean;
-  color?: string;
-};
+import { Leaf } from "./Leaf";
+import { Toolbar, CustomText } from "./Toolbar";
+import { CommentBox } from "./CommentBox";
+import { PlusIcon, CustomRange } from "./PlusIcon";
 
 declare module "slate" {
   interface CustomTypes {
@@ -50,81 +34,20 @@ declare module "slate" {
   }
 }
 
-interface CustomRange extends Range {
-  color?: string;
-}
-
 const initialValue: Descendant[] = [{ children: [{ text: "" }] }];
 
-export const SlateMarkdownEditor: React.FC = () => {
+export const SlateEditor: React.FC = () => {
   const [editor] = useState(() => withHistory(withReact(createEditor())));
   const [value, setValue] = useState<Descendant[]>(initialValue);
   const [selections, setSelections] = useState<CustomRange[]>([]);
   const [commentBoxes, setCommentBoxes] = useState<CustomRange[]>([]);
 
-  const renderLeaf = useCallback(
-    (props: RenderLeafProps) => <Leaf {...props} />,
-    []
-  );
-
-  const handleMouseUp = () => {
-    const { selection } = editor;
-    if (selection && !Range.isCollapsed(selection)) {
-      const normalizedSelection = Editor.range(editor, selection);
-      setSelections((prev) => [
-        ...prev,
-        { ...normalizedSelection, color: "lightblue" },
-      ]);
-    }
-  };
-
-  const decorate = useCallback(
-    ([node, path]: [Node, Path]) => {
-      const ranges: any[] = [];
-      if (Text.isText(node)) {
-        selections.forEach((selection) => {
-          const { anchor, focus } = selection;
-          const anchorPath = anchor.path;
-          const focusPath = focus.path;
-
-          if (Path.equals(anchorPath, path) || Path.equals(focusPath, path)) {
-            const startOffset = Path.equals(anchorPath, path)
-              ? anchor.offset
-              : 0;
-            const endOffset = Path.equals(focusPath, path)
-              ? focus.offset
-              : node.text.length;
-
-            const adjustedRange = {
-              anchor: { path, offset: startOffset },
-              focus: { path, offset: endOffset },
-              highlight: true,
-              color: selection.color,
-            };
-
-            ranges.push(adjustedRange);
-          }
-        });
-      }
-      return ranges;
-    },
-    [editor, selections]
-  );
-
-  const addCommentBox = (selection: CustomRange) => {
-    setCommentBoxes((prev) => [...prev, selection]);
-    setSelections((prev) =>
-      prev.map((sel) =>
-        Range.equals(sel, selection) ? { ...sel, color: "yellow" } : sel
-      )
-    );
-  };
-
+  // on key down event of editor
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
+      const { selection } = editor;
       if (event.key === "Enter") {
         event.preventDefault();
-        const { selection } = editor;
         if (selection) {
           const { path } = selection.anchor;
 
@@ -186,11 +109,71 @@ export const SlateMarkdownEditor: React.FC = () => {
 
           Transforms.select(editor, { anchor: newAnchor, focus: newFocus });
         }
+      } else if (event.key === "Backspace") {
+        event.preventDefault();
+        if (selection) {
+          const { path } = selection.anchor;
+
+          // Custom logic to delete content but preserve selections and comments
+          // Ensure not to delete everything or go beyond bounds
+          if (path[0] > 0) {
+            Transforms.delete(editor, { unit: "character" });
+
+            setSelections((prev) =>
+              prev.map((sel) => {
+                const newAnchorPath =
+                  sel.anchor.path[0] > path[0]
+                    ? sel.anchor.path[0] - 1
+                    : sel.anchor.path[0];
+                const newFocusPath =
+                  sel.focus.path[0] > path[0]
+                    ? sel.focus.path[0] - 1
+                    : sel.focus.path[0];
+                return {
+                  ...sel,
+                  anchor: {
+                    ...sel.anchor,
+                    path: [newAnchorPath, sel.anchor.path[1]],
+                  },
+                  focus: {
+                    ...sel.focus,
+                    path: [newFocusPath, sel.focus.path[1]],
+                  },
+                };
+              })
+            );
+
+            setCommentBoxes((prev) =>
+              prev.map((box) => {
+                const newAnchorPath =
+                  box.anchor.path[0] > path[0]
+                    ? box.anchor.path[0] - 1
+                    : box.anchor.path[0];
+                const newFocusPath =
+                  box.focus.path[0] > path[0]
+                    ? box.focus.path[0] - 1
+                    : box.focus.path[0];
+                return {
+                  ...box,
+                  anchor: {
+                    ...box.anchor,
+                    path: [newAnchorPath, box.anchor.path[1]],
+                  },
+                  focus: {
+                    ...box.focus,
+                    path: [newFocusPath, box.focus.path[1]],
+                  },
+                };
+              })
+            );
+          }
+        }
       }
     },
     [editor]
   );
 
+  // on input event of editor
   const handleInput = useCallback(
     (event: React.FormEvent) => {
       const { selection } = editor;
@@ -242,6 +225,7 @@ export const SlateMarkdownEditor: React.FC = () => {
     [editor]
   );
 
+  // On change of slate container component
   const handleChange = (newValue: Descendant[]) => {
     setValue(newValue);
 
@@ -274,6 +258,69 @@ export const SlateMarkdownEditor: React.FC = () => {
     );
   };
 
+  // Add Selection
+  const handleMouseUp = () => {
+    const { selection } = editor;
+    if (selection && !Range.isCollapsed(selection)) {
+      const normalizedSelection = Editor.range(editor, selection);
+      setSelections((prev) => [
+        ...prev,
+        { ...normalizedSelection, color: "lightblue" },
+      ]);
+    }
+  };
+
+  // Add comment box
+  const handleAddCommentBox = (selection: CustomRange) => {
+    setCommentBoxes((prev) => [...prev, selection]);
+    setSelections((prev) =>
+      prev.map((sel) =>
+        Range.equals(sel, selection) ? { ...sel, color: "yellow" } : sel
+      )
+    );
+  };
+
+  // Render leaf
+  const renderLeaf = useCallback(
+    (props: RenderLeafProps) => <Leaf {...props} />,
+    []
+  );
+
+  // Decorate leaf - highlight selected text in the editor
+  const decorate = useCallback(
+    ([node, path]: [Node, Path]) => {
+      const ranges: any[] = [];
+      if (Text.isText(node)) {
+        selections.forEach((selection) => {
+          const { anchor, focus } = selection;
+          const anchorPath = anchor.path;
+          const focusPath = focus.path;
+
+          if (Path.equals(anchorPath, path) || Path.equals(focusPath, path)) {
+            const startOffset = Path.equals(anchorPath, path)
+              ? anchor.offset
+              : 0;
+            const endOffset = Path.equals(focusPath, path)
+              ? focus.offset
+              : node.text.length;
+
+            const adjustedRange = {
+              anchor: { path, offset: startOffset },
+              focus: { path, offset: endOffset },
+              highlight: true,
+              color: selection.color,
+            };
+
+            ranges.push(adjustedRange);
+          }
+        });
+      }
+      return ranges;
+    },
+    [editor, selections]
+  );
+
+  // Render component
   return (
     <Container maxW="container.xl" p={4}>
       <Grid templateColumns="70% 30%" gap={4}>
@@ -309,7 +356,7 @@ export const SlateMarkdownEditor: React.FC = () => {
                     key={index}
                     selection={selection}
                     editor={editor}
-                    onClick={() => addCommentBox(selection)}
+                    onClick={() => handleAddCommentBox(selection)}
                   />
                 ))}
             </Box>
@@ -325,136 +372,4 @@ export const SlateMarkdownEditor: React.FC = () => {
       </Grid>
     </Container>
   );
-};
-
-const Toolbar: React.FC = () => {
-  const editor = useSlate();
-  return (
-    <ButtonGroup mb={4}>
-      <IconButton
-        icon={<FiBold />}
-        aria-label="Bold"
-        onClick={() => toggleFormat(editor, "bold")}
-      />
-      <IconButton
-        icon={<FiItalic />}
-        aria-label="Italic"
-        onClick={() => toggleFormat(editor, "italic")}
-      />
-      <IconButton
-        icon={<FiUnderline />}
-        aria-label="Underline"
-        onClick={() => toggleFormat(editor, "underline")}
-      />
-    </ButtonGroup>
-  );
-};
-
-const toggleFormat = (editor: ReactEditor, format: keyof CustomText) => {
-  const isActive = isFormatActive(editor, format);
-  Transforms.setNodes(
-    editor as BaseEditor & ReactEditor & HistoryEditor,
-    { [format]: isActive ? null : true },
-    { match: Text.isText, split: true }
-  );
-};
-
-const isFormatActive = (editor: ReactEditor, format: keyof CustomText) => {
-  const [match] = Editor.nodes(
-    editor as BaseEditor & ReactEditor & HistoryEditor,
-    {
-      match: (n) => Text.isText(n) && n[format] === true,
-      universal: true,
-    }
-  );
-
-  return !!match;
-};
-
-const Leaf: React.FC<RenderLeafProps> = ({ attributes, children, leaf }) => {
-  if (leaf.bold) {
-    children = <strong>{children}</strong>;
-  }
-
-  if (leaf.italic) {
-    children = <em>{children}</em>;
-  }
-
-  if (leaf.underline) {
-    children = <u>{children}</u>;
-  }
-
-  return (
-    <span
-      {...attributes}
-      style={{
-        backgroundColor: leaf.highlight
-          ? leaf.color || "#ffeeba"
-          : "transparent",
-      }}
-    >
-      {children}
-    </span>
-  );
-};
-
-const PlusIcon: React.FC<{
-  selection: CustomRange;
-  editor: ReactEditor;
-  onClick: () => void;
-}> = ({ selection, editor, onClick }) => {
-  try {
-    const domRange = ReactEditor.toDOMRange(editor, selection);
-    const rect = domRange.getBoundingClientRect();
-
-    return ReactDOM.createPortal(
-      <IconButton
-        style={{
-          position: "absolute",
-          top: `${rect.top + window.scrollY}px`,
-          left: "70%",
-          transform: "translate(-50%, -40%)",
-        }}
-        icon={<FiPlus />}
-        aria-label="Add Comment"
-        onClick={onClick}
-      />,
-      document.body
-    );
-  } catch (e) {
-    console.error("Error in PlusIcon: ", e);
-    return null;
-  }
-};
-
-const CommentBox: React.FC<{ selection: CustomRange; editor: ReactEditor }> = ({
-  selection,
-  editor,
-}) => {
-  try {
-    const domRange = ReactEditor.toDOMRange(editor, selection);
-    const rect = domRange.getBoundingClientRect();
-
-    return ReactDOM.createPortal(
-      <Box
-        style={{
-          position: "absolute",
-          top: `${rect.top + window.scrollY}px`,
-          left: `70%`,
-          width: "300px",
-          padding: "8px",
-          backgroundColor: "white",
-          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
-          borderRadius: "4px",
-        }}
-        className="comment-box"
-      >
-        <Textarea placeholder="Add a comment..." rows={3} width="100%" />
-      </Box>,
-      document.body
-    );
-  } catch (e) {
-    console.error("Error in CommentBox: ", e);
-    return null;
-  }
 };
