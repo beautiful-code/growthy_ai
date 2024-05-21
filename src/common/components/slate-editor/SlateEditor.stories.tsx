@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { SlateEditor } from "./SlateEditor";
+import { Box } from "@chakra-ui/react";
 import { FixtureWrapper } from "FixtureWrapper";
 
 const meta = {
@@ -14,7 +15,9 @@ const meta = {
   decorators: [
     (Story) => (
       <FixtureWrapper>
-        <Story />
+        <Box m={8}>
+          <Story />
+        </Box>
       </FixtureWrapper>
     ),
   ],

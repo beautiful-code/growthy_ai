@@ -1,10 +1,7 @@
-import { RenderLeafProps } from "slate-react";
+import React from "react";
 
-export const Leaf: React.FC<RenderLeafProps> = ({
-  attributes,
-  children,
-  leaf,
-}) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const Leaf: React.FC<any> = ({ attributes, children, leaf }) => {
   if (leaf.bold) {
     children = <strong>{children}</strong>;
   }
@@ -17,16 +14,5 @@ export const Leaf: React.FC<RenderLeafProps> = ({
     children = <u>{children}</u>;
   }
 
-  return (
-    <span
-      {...attributes}
-      style={{
-        backgroundColor: leaf.highlight
-          ? leaf.color || "#ffeeba"
-          : "transparent",
-      }}
-    >
-      {children}
-    </span>
-  );
+  return <span {...attributes}>{children}</span>;
 };
