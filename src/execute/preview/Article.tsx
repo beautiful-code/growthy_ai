@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, MutableRefObject } from "react";
 import { Box, Text } from "@chakra-ui/react";
 
 import { MarkdownEditor } from "common/components/MarkdownEditor";
@@ -8,19 +8,38 @@ type Props = {
   sections: PreviewSection[] | undefined;
   selectedSectionIndex: number;
   onTopSectionChangeCallback: (id: number) => void;
+  hasUserSelectedSectionRef: MutableRefObject<boolean>;
 };
 
 export const Article: React.FC<Props> = ({
   selectedSectionIndex,
   sections,
   onTopSectionChangeCallback,
+  hasUserSelectedSectionRef,
 }) => {
   const sectionsContainerRef = useRef<HTMLDivElement | null>(null);
   const visibleSectionRefs = useRef<(HTMLDivElement | null)[]>(
     new Array(sections?.length || 0).fill(null)
   );
 
+  useEffect(() => {
+    const element = document.getElementById(`execute-preview-mode-section-${selectedSectionIndex}`);
+    if (element && hasUserSelectedSectionRef.current) {
+      element.scrollIntoView({
+        behavior: "instant",
+        block: "start",
+        inline: "start",
+      });
+      setTimeout(() => {
+        // Assumes the next line runs after the invocation of handleScroll
+        hasUserSelectedSectionRef.current = false;
+      }, 0);
+    }
+  });
+
   const handleScroll = () => {
+    if (hasUserSelectedSectionRef.current) return;
+
     const sectionIndexes = visibleSectionRefs.current
       .filter((ref) => ref !== null)
       .map((ref, index) => {

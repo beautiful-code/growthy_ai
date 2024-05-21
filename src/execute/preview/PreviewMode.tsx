@@ -1,4 +1,5 @@
 import React, {
+  useRef,
   useState,
   // useRef
 } from "react";
@@ -46,6 +47,8 @@ export const PreviewMode: React.FC<Props> = ({
   saveBulkTasksContent = defaultSaveBulkTasksContent,
 }) => {
   const [selectedSectionIndex, setSelectedSectionIndex] = useState<number>(0);
+  const hasUserSelectedSectionRef = useRef<boolean>(false);
+
   const {
     completedSections,
     generatedSections,
@@ -63,17 +66,7 @@ export const PreviewMode: React.FC<Props> = ({
 
   const handleSelectSection = (index: number) => {
     setSelectedSectionIndex(index);
-
-    const element = document.getElementById(
-      `execute-preview-mode-section-${index}`
-    );
-    if (element) {
-      element.scrollIntoView({
-        behavior: "instant",
-        block: "start",
-        inline: "start",
-      });
-    }
+    hasUserSelectedSectionRef.current = true;
   };
 
   const onTopSectionChangeCallback = (sectionIndex: number) => {
@@ -102,6 +95,7 @@ export const PreviewMode: React.FC<Props> = ({
           selectedSectionIndex={selectedSectionIndex}
           sections={generatedSections}
           onTopSectionChangeCallback={onTopSectionChangeCallback}
+          hasUserSelectedSectionRef={hasUserSelectedSectionRef}
         />
       </GridItem>
     </Grid>

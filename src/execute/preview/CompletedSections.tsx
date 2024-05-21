@@ -93,7 +93,7 @@ export const CompletedSections: React.FC<Props> = ({
   return (
     <Box>
       {sections?.map((section, index) => (
-        <Flex>
+        <Flex key={index}>
           <Checkbox
             isChecked={selectedSectionsMap[index]}
             onChange={() => handleCheck(index)}
