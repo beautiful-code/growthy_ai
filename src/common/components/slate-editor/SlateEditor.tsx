@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { createEditor } from "slate";
+import { createEditor, Range } from "slate";
 import { Slate, Editable, withReact } from "slate-react";
 import { BaseEditor } from "slate";
 import { ReactEditor } from "slate-react";
+import { Grid, Box } from "@chakra-ui/react";
 
 import { Leaf } from "common/components/slate-editor/Leaf";
 import { toggleFormat } from "common/components/slate-editor/utils";
 import { ToolbarPopover } from "common/components/slate-editor/ToolbarPopover";
+import { Comments } from "common/components/slate-editor/Comments";
 
 type CustomElement = { type: "paragraph"; children: CustomText[] };
 type CustomText = {
@@ -14,6 +16,7 @@ type CustomText = {
   bold?: boolean;
   italic?: boolean;
   underline?: boolean;
+  comment?: boolean;
 };
 
 declare module "slate" {
@@ -34,6 +37,7 @@ const initialValue: CustomElement[] = [
 export const SlateEditor: React.FC = () => {
   const [editor] = useState(() => withReact(createEditor()));
   const [targetRange, setTargetRange] = useState<DOMRect | null>(null);
+  const [selections, setSelections] = useState<Range[]>([]);
   const [shiftKeyPressed, setShiftKeyPressed] = useState(false);
   const [ctrlKeyPressed, setCtrlKeyPressed] = useState(false);
 
@@ -118,33 +122,48 @@ export const SlateEditor: React.FC = () => {
     }
   }, [shiftKeyPressed, ctrlKeyPressed]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const renderLeaf = useCallback((props: any) => {
-    return <Leaf {...props} />;
-  }, []);
+  const handleComment = () => {
+    const { selection } = editor;
+    if (selection && !selections.some((sel) => Range.equals(sel, selection))) {
+      setSelections([...selections, selection]);
+      setTargetRange(null);
+    }
+  };
+
+  const renderLeaf = useCallback(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (props: any) => {
+      return <Leaf {...props} selections={selections} />;
+    },
+    [selections]
+  );
 
   return (
-    <div ref={editorRef}>
-      <Slate
-        editor={editor}
-        initialValue={initialValue}
-        onChange={() => setTargetRange(null)}
-      >
-        <Editable
-          placeholder="Enter your text here..."
-          renderLeaf={renderLeaf}
-          onKeyDown={onKeyDown}
-          onSelect={onSelect}
-        />
-        {targetRange && (
-          <ToolbarPopover
-            editor={editor}
-            targetRange={targetRange}
-            toggleFormat={toggleFormat}
-            setTargetRange={setTargetRange}
+    <Grid templateColumns="2fr 1fr" gap={4}>
+      <Box ref={editorRef}>
+        <Slate
+          editor={editor}
+          initialValue={initialValue}
+          onChange={() => setTargetRange(null)}
+        >
+          <Editable
+            placeholder="Enter your text here..."
+            renderLeaf={renderLeaf}
+            onKeyDown={onKeyDown}
+            onSelect={onSelect}
           />
-        )}
-      </Slate>
-    </div>
+          {targetRange && (
+            <ToolbarPopover
+              editor={editor}
+              targetRange={targetRange}
+              toggleFormat={toggleFormat}
+              setTargetRange={setTargetRange}
+              handleComment={handleComment}
+            />
+          )}
+        </Slate>
+      </Box>
+      <Comments selections={selections} editorRef={editorRef} />
+    </Grid>
   );
 };

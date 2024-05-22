@@ -12,6 +12,7 @@ import {
   MdFormatBold,
   MdFormatItalic,
   MdFormatUnderlined,
+  MdComment,
 } from "react-icons/md";
 
 type Props = {
@@ -21,6 +22,7 @@ type Props = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   toggleFormat: (editor: any, format: string) => void;
   setTargetRange: React.Dispatch<React.SetStateAction<DOMRect | null>>;
+  handleComment: () => void;
 };
 
 export const ToolbarPopover: React.FC<Props> = ({
@@ -28,6 +30,7 @@ export const ToolbarPopover: React.FC<Props> = ({
   targetRange,
   toggleFormat,
   setTargetRange,
+  handleComment,
 }) => {
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -79,6 +82,14 @@ export const ToolbarPopover: React.FC<Props> = ({
               onMouseDown={(event) => {
                 event.preventDefault();
                 toggleFormat(editor, "underline");
+              }}
+            />
+            <IconButton
+              icon={<MdComment />}
+              aria-label="Comment"
+              onMouseDown={(event) => {
+                event.preventDefault();
+                handleComment();
               }}
             />
           </ButtonGroup>
