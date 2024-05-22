@@ -21,7 +21,7 @@ import { SkeletonScreen } from "common/components/SkeletonScreen";
 import { ToggleMode } from "common/components/ToggleMode";
 import { RenderMode } from "./RenderMode";
 
-type Props = {
+export type ExecuteViewProps = {
   useParams?: () => { growthExerciseId: string };
   getExercise?: (
     id: string
@@ -32,7 +32,7 @@ type Props = {
   getGuidance?: () => Promise<AsyncGenerator<string, void, unknown>>;
 };
 
-export const ExecuteView: React.FC<Props> = ({
+export const ExecuteView: React.FC<ExecuteViewProps> = ({
   useParams = useDefaultUseParams,
   getExercise = defaultGetExercise,
   saveGrowthExercise = defaultSaveGrowthExercise,

@@ -1,7 +1,8 @@
+import { Meta, StoryObj } from "@storybook/react";
 import { PostgrestError } from "@supabase/supabase-js";
 import { FixtureWrapper } from "FixtureWrapper";
 
-import { ExecuteView } from "execute/ExecuteView";
+import { ExecuteView, ExecuteViewProps } from "execute/ExecuteView";
 import { TGrowthExercise } from "types";
 
 const mockExercise: TGrowthExercise = {
@@ -25,7 +26,6 @@ const mockExercise: TGrowthExercise = {
 };
 
 const mockGetExercise = (
-  _id: string
 ): Promise<{ data: TGrowthExercise | null; error: PostgrestError | null }> => {
   return new Promise((resolve) => {
     setTimeout(() => {
@@ -40,20 +40,32 @@ const mockGetGuidance = async () => {
   })();
 };
 
-export default {
-  ExecuteView: () => {
-    return (
-      <FixtureWrapper>
-        <ExecuteView
-          useParams={() => ({ growthExerciseId: "123" })}
-          getExercise={mockGetExercise}
-          saveGrowthExercise={async () => ({
-            data: mockExercise,
-            error: null,
-          })}
-          getGuidance={mockGetGuidance}
-        />
-      </FixtureWrapper>
-    );
+const ExecuteViewStory: React.FC<ExecuteViewProps> = ({ ...props }) => {
+  return (
+    <FixtureWrapper>
+      <ExecuteView {...props} />
+    </FixtureWrapper>
+  );
+};
+
+const meta = {
+  title: "Execute/Execute View",
+  component: ExecuteViewStory,
+  tags: ["autodocs"],
+  args: {},
+} satisfies Meta<typeof ExecuteView>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const BaseCase: Story = {
+  args: {
+    useParams: () => ({ growthExerciseId: "123" }),
+    getExercise: mockGetExercise,
+    saveGrowthExercise: async () => ({
+      data: mockExercise,
+      error: null,
+    }),
+    getGuidance: mockGetGuidance,
   },
 };

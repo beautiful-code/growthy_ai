@@ -6,14 +6,14 @@ import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 import { Outline } from "common/components/outline/Outline";
 import { UIOutline } from "domain/common/UIOutline";
 
-type Props = {
+export type BlogArticleProps = {
   isAddingBlogArticle?: boolean;
   blogArticle: UIBlogArticle;
   onBlogArticleUpdate: (blogArticle: UIBlogArticle) => void;
   handleAddBlogArticle: () => void;
 };
 
-export const BlogArticle: React.FC<Props> = ({
+export const BlogArticle: React.FC<BlogArticleProps> = ({
   isAddingBlogArticle = false,
   blogArticle,
   onBlogArticleUpdate,

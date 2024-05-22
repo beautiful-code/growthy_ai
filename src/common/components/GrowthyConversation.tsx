@@ -38,7 +38,7 @@ const Message: React.FC<{ item: TConvo }> = ({ item }) => {
   );
 };
 
-export type Props = {
+export type GrowthyConversationProps = {
   height?: string;
   inputs: any;
   resourceId: string;
@@ -49,7 +49,7 @@ export type Props = {
   persistConversation?: any;
 };
 
-export const GrowthyConversation: React.FC<Props> = ({
+export const GrowthyConversation: React.FC<GrowthyConversationProps> = ({
   height = "100vh",
   inputs,
   resourceId,
@@ -175,8 +175,8 @@ export const GrowthyConversation: React.FC<Props> = ({
       <Box overflowY="auto" overflowX="hidden" flex="1">
         <Box ml="20px">
           <Box>
-            {conversation.map((item) => {
-              return <Message item={item} />;
+            {conversation.map((item, index) => {
+              return <Message item={item} key={index}/>;
             })}
           </Box>
 

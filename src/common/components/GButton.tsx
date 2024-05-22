@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "@chakra-ui/react";
 
-type Props = {
+export type GButtonProps = {
   type?: "primary" | "secondary";
   htmlType?: "button" | "submit" | "reset";
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
@@ -10,7 +10,7 @@ type Props = {
   [key: string]: any;
 };
 
-export const GButton: React.FC<Props> = ({
+export const GButton: React.FC<GButtonProps> = ({
   type = "primary",
   htmlType,
   size = "md",

@@ -1,13 +1,13 @@
 import { Box, Link } from "@chakra-ui/react";
 import { PublicationSection } from "types";
 
-type Props = {
+export type SectionListProps = {
   publicationSections: PublicationSection[];
   onSelectionCallback: (id: number) => void;
   selectedSectionIndex: number;
 };
 
-export const SectionList: React.FC<Props> = ({
+export const SectionList: React.FC<SectionListProps> = ({
   publicationSections,
   onSelectionCallback,
   selectedSectionIndex,

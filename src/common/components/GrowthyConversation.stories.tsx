@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { FixtureWrapper } from "FixtureWrapper";
 import {
   GrowthyConversation,
-  Props,
+  GrowthyConversationProps,
 } from "common/components/GrowthyConversation";
 
 const mockResponse =
@@ -78,7 +78,7 @@ const mockEmptyGetPersistedConversations = async () => {
 
 const mockEmptyResponse = false;
 
-const GrowthConvoStory: React.FC<Props> = ({ ...props }) => {
+const GrowthConvoStory: React.FC<GrowthyConversationProps> = ({ ...props }) => {
   return (
     <FixtureWrapper>
       <GrowthyConversation {...props} />
@@ -87,7 +87,7 @@ const GrowthConvoStory: React.FC<Props> = ({ ...props }) => {
 };
 
 const meta = {
-  title: "Growthy Conversation",
+  title: "common/Growthy Conversation",
   component: GrowthConvoStory,
   tags: ["autodocs"],
   argTypes: {

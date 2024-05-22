@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { GButton } from "common/components/GButton";
 
-type AddGrowthExerciseProps = {
+export type AddGrowthExerciseProps = {
     createParams: {
         guildId?: string;
         type: "guild-view" | "user-view";

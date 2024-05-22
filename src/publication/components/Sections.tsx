@@ -3,14 +3,14 @@ import { MarkdownRenderer } from "common/components/MarkdownRenderer";
 import { MutableRefObject, useEffect, useRef } from "react";
 import { PublicationSection } from "types";
 
-type Props = {
+export type SectionsProps = {
   publicationSections: PublicationSection[];
   selectedSectionIndex: number;
   onTopSectionChangeCallback: (id: number) => void;
   hasUserSelectedSectionRef: MutableRefObject<boolean>;
 };
 
-export const Sections: React.FC<Props> = ({
+export const Sections: React.FC<SectionsProps> = ({
   publicationSections,
   selectedSectionIndex,
   onTopSectionChangeCallback,
