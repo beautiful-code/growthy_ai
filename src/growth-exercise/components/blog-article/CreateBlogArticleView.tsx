@@ -25,7 +25,7 @@ import { BlogArticle } from "./BlogArticle";
 import { saveGrowthExercise as defaultSaveGrowthExercise } from "growth-exercise/queries";
 import { TGrowthExercise } from "types";
 
-type Props = {
+export type CreateBlogArticleViewProps = {
   getBlogArticleXMLSuggestion?: ({
     blog_article_goal,
     blog_article_points,
@@ -51,7 +51,7 @@ const defaultOnCreateGrowthExercise = (
   }
 };
 
-export const CreateBlogArticleView: React.FC<Props> = ({
+export const CreateBlogArticleView: React.FC<CreateBlogArticleViewProps> = ({
   getBlogArticleXMLSuggestion = defaultGetBlogArticleXMLSuggestion,
   saveGrowthExercise = defaultSaveGrowthExercise,
   onCreateGrowthExerciseCallback = defaultOnCreateGrowthExercise,

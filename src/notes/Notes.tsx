@@ -10,13 +10,13 @@ import {
   saveNote as defaultSaveNote,
 } from "notes/queries";
 
-type Props = {
+export type NotesProps = {
   taskId: string;
   getNoteByTaskId?: (taskId: string) => Promise<{ note: any; error: any }>;
   saveNote?: (note: any) => Promise<{ data: any; error: any }>;
 };
 
-export const Notes: React.FC<Props> = ({
+export const Notes: React.FC<NotesProps> = ({
   taskId,
   getNoteByTaskId = defaultGetNoteByTaskId,
   saveNote = defaultSaveNote,

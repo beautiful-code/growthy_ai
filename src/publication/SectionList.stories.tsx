@@ -1,7 +1,8 @@
-import { SectionList } from "publication/components/SectionList";
+import { SectionList, SectionListProps } from "publication/components/SectionList";
 import { PublicationSection } from "types";
 import { useState } from "react";
 import { FixtureWrapper } from "FixtureWrapper";
+import { Meta, StoryObj } from "@storybook/react";
 
 const publicationSections: PublicationSection[] = [
   {
@@ -22,9 +23,24 @@ const publicationSections: PublicationSection[] = [
   },
 ];
 
-export default {
-  "With Callback": () => {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
+const meta: Meta<SectionListProps> = {
+  title: "Publication/SectionList",
+  component: SectionList,
+  tags: ["autodocs"],
+  args: {
+    publicationSections,
+  },
+};
+
+export default meta;
+
+type Story = StoryObj<SectionListProps>;
+
+export const WithCallback: Story = {
+  args: { 
+    publicationSections: publicationSections,
+  },
+  render: (args) => {
     const [selectedSectionIndex, setSelectedSectionIndex] = useState<number>(0);
     const onSelectionCallback = (id: number) => {
       setSelectedSectionIndex(id);
@@ -33,7 +49,7 @@ export default {
     return (
       <FixtureWrapper>
         <SectionList
-          publicationSections={publicationSections}
+          {...args}
           onSelectionCallback={onSelectionCallback}
           selectedSectionIndex={selectedSectionIndex}
         />

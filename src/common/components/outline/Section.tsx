@@ -15,7 +15,7 @@ import { domainUpdateAndCallback } from "common/utils";
 
 import "./Section.css";
 
-type Props = {
+export type SectionProps = {
   uiSection: UISection;
   checkingEnabled?: boolean;
   taskSelectionEnabled?: boolean;
@@ -23,7 +23,7 @@ type Props = {
   handleSelectTask: (taskId: string) => void;
 };
 
-export const Section: React.FC<Props> = ({
+export const Section: React.FC<SectionProps> = ({
   uiSection,
   checkingEnabled = false,
   taskSelectionEnabled = false,

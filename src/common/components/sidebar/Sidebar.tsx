@@ -8,11 +8,11 @@ import { TGuild } from "types";
 import { useGetGuilds } from "guilds/hooks/useGetGuilds";
 import { GuildBox } from "./GuildBox";
 
-type TSideBarProps = {
+export type SideBarProps = {
   selectedGuildId?: string;
 };
 
-export const Sidebar: React.FC<TSideBarProps> = ({selectedGuildId}) => {
+export const Sidebar: React.FC<SideBarProps> = ({selectedGuildId}) => {
   const navigate = useNavigate();
   
   const handleNavigateHome = () => {

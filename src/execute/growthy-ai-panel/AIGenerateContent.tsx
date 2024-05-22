@@ -17,7 +17,7 @@ import { getContent as defaultGetContent } from "execute/chains/generateContent"
 import { MarkdownEditor } from "common/components/MarkdownEditor";
 import { useGenerateContent } from "execute/hooks/useGenerateContent";
 
-type Props = {
+export type AIGenerateContentProps = {
   blogArticleInputs: {
     blog_article_goal: string;
     blog_article_xml: string;
@@ -29,7 +29,7 @@ type Props = {
   }) => Promise<any>;
 };
 
-export const AIGenerateContent: React.FC<Props> = ({
+export const AIGenerateContent: React.FC<AIGenerateContentProps> = ({
   blogArticleInputs,
   onClose,
   generateContent = defaultGetContent,

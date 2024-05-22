@@ -10,12 +10,12 @@ import { Sections } from "./components/Sections";
 import { ExercisePublication } from "types";
 import { useNavigate } from "react-router-dom";
 
-type Props = {
+export type PublicationViewProps = {
   useGetExercisePublication?: (exerciseId: string) => {data: ExercisePublication | undefined, isLoading: boolean};
   useParams?: () => { id: string };
 }
 
-export const PublicationView: React.FC<Props> = ({
+export const PublicationView: React.FC<PublicationViewProps> = ({
   useGetExercisePublication = defaultGetExercisePublication,
   useParams = useDefaultUseParams,
 }) => {

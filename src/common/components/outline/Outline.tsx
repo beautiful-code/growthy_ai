@@ -9,7 +9,7 @@ import { domainUpdateAndCallback } from "common/utils";
 import { MdEdit } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
-type Props = {
+export type OutlineProps = {
   uiOutline: UIOutline | null;
   checkingEnabled?: boolean;
   taskSelectionEnabled?: boolean;
@@ -19,7 +19,7 @@ type Props = {
   allowExpand?: boolean;
 };
 
-export const Outline: React.FC<Props> = ({
+export const Outline: React.FC<OutlineProps> = ({
   uiOutline,
   checkingEnabled = false,
   taskSelectionEnabled = false,

@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Button, Flex, Text } from "@chakra-ui/react";
 import { TExecutionModes } from "types";
 
-type Props = {
+export type ToggleModeProps = {
   mode: TExecutionModes;
   setMode?: React.Dispatch<React.SetStateAction<TExecutionModes>>;
 };
 
-export const ToggleMode: React.FC<Props> = ({ mode, setMode }) => {
+export const ToggleMode: React.FC<ToggleModeProps> = ({ mode, setMode }) => {
   const [selectedMode, setSelectedMode] = useState(mode);
 
   const inactiveBg = "gray.200";

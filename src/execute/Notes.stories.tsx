@@ -1,7 +1,8 @@
-import { Notes } from "notes/Notes";
+import { Notes, NotesProps } from "notes/Notes";
 import { PostgrestError } from "@supabase/supabase-js";
 import { TNote } from "types";
 import { FixtureWrapper } from "FixtureWrapper";
+import { Meta, StoryObj } from "@storybook/react";
 
 const mockGetNoteByTaskId = async (
   taskId: string
@@ -53,23 +54,36 @@ const mockSaveNote = async (
   });
 };
 
-export default {
-  "Notes with default value": (
+const NotesStory: React.FC<NotesProps> = ({ ...props }) => {
+  return (
     <FixtureWrapper>
-      <Notes
-        taskId="1"
-        getNoteByTaskId={mockGetNoteByTaskId}
-        saveNote={mockSaveNote}
-      />
+      <Notes {...props} />
     </FixtureWrapper>
-  ),
-  "Notes without default value": (
-    <FixtureWrapper>
-      <Notes
-        taskId="1"
-        getNoteByTaskId={mockGetNoteByTaskIdWithoutData}
-        saveNote={mockSaveNote}
-      />
-    </FixtureWrapper>
-  ),
+  );
+};
+
+const meta = {
+  title: "Execute/Notes",
+  component: NotesStory,
+  tags: ["autodocs"],
+  args: {},
+} satisfies Meta<typeof Notes>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const NotesWithDefaultValue: Story = {
+  args: {
+    taskId: "1",
+    getNoteByTaskId: mockGetNoteByTaskId,
+    saveNote: mockSaveNote,
+  },
+};
+
+export const NotesWithoutDefaultValue: Story = {
+  args: {
+    taskId: "1",
+    getNoteByTaskId: mockGetNoteByTaskIdWithoutData,
+    saveNote: mockSaveNote,
+  },
 };

@@ -15,7 +15,7 @@ import ResizeTextarea from "react-textarea-autosize";
 import { MdMoreVert, MdEdit } from "react-icons/md";
 import { UITask } from "domain/common/UITask";
 
-type Props = {
+export type TaskProps = {
   uiTask: UITask;
   checkingEnabled?: boolean;
   taskSelectionEnabled?: boolean;
@@ -23,7 +23,7 @@ type Props = {
   handleSelectTask: (taskId: string) => void;
 };
 
-export const Task: React.FC<Props> = ({
+export const Task: React.FC<TaskProps> = ({
   uiTask,
   checkingEnabled = false,
   taskSelectionEnabled = false,
@@ -35,7 +35,7 @@ export const Task: React.FC<Props> = ({
   const [taskChecked, setTaskChecked] = useState(uiTask.getChecked());
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleEdit = (e: any) => {
+  const handleEdit = (e: { preventDefault: () => void; stopPropagation: () => void; }) => {
     e.preventDefault();
     e.stopPropagation();
     setIsEditing(true);

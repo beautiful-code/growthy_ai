@@ -84,7 +84,7 @@ const ModifyOutlineStory: React.FC<ModifyOutlineProps> = ({ ...props }) => {
 };
 
 const meta = {
-  title: "Modify Outline",
+  title: "common/outline/Modify Outline",
   component: ModifyOutlineStory,
   tags: ["autodocs"],
   args: {},
