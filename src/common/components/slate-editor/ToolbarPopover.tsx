@@ -51,12 +51,12 @@ export const ToolbarPopover: React.FC<Props> = ({
         <div
           style={{
             position: "absolute",
-            top: `${targetRange?.top || 0 + window.scrollY}px`,
-            left: `${targetRange?.left || 0 + window.scrollX}px`,
+            top: `${(targetRange?.top || 0) - 40 + window.scrollY}px`,
+            left: `${(targetRange?.left || 0) + (targetRange?.width || 0)/2 + window.scrollX}px`,
           }}
         />
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent height={"60px"} width={"fit-content"}>
         <PopoverArrow />
         <PopoverBody>
           <ButtonGroup>

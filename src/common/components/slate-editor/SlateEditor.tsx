@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { createEditor, Range } from "slate";
-import { Slate, Editable, withReact } from "slate-react";
+import { createEditor, Range, Transforms, Text } from "slate";
+import { Slate, Editable, withReact, RenderLeafProps } from "slate-react";
 import { BaseEditor } from "slate";
 import { ReactEditor } from "slate-react";
 import { Grid, Box } from "@chakra-ui/react";
@@ -30,7 +30,15 @@ declare module "slate" {
 const initialValue: CustomElement[] = [
   {
     type: "paragraph",
-    children: [{ text: "" }],
+    children: [
+      {
+        text: "",
+        bold: false,
+        italic: false,
+        underline: false,
+        comment: false,
+      },
+    ],
   },
 ];
 
@@ -124,16 +132,21 @@ export const SlateEditor: React.FC = () => {
 
   const handleComment = () => {
     const { selection } = editor;
+    
     if (selection && !selections.some((sel) => Range.equals(sel, selection))) {
+      Transforms.setNodes(
+        editor,
+        { comment: true },
+        { match: (n) => Text.isText(n), split: true }
+      );
       setSelections([...selections, selection]);
       setTargetRange(null);
     }
   };
 
   const renderLeaf = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (props: any) => {
-      return <Leaf {...props} selections={selections} />;
+    (props: RenderLeafProps) => {
+      return <Leaf renderLeafProps={props} selections={selections} />;
     },
     [selections]
   );
@@ -151,6 +164,7 @@ export const SlateEditor: React.FC = () => {
             renderLeaf={renderLeaf}
             onKeyDown={onKeyDown}
             onSelect={onSelect}
+            style={{ outline: "none", border: "none" }}
           />
           {targetRange && (
             <ToolbarPopover

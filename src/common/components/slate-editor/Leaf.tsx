@@ -1,22 +1,17 @@
 import React from "react";
 import { Range } from "slate";
+import { RenderLeafProps } from "slate-react";
 
 type LeafProps = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  attributes: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  children: any;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  leaf: any;
+  renderLeafProps: RenderLeafProps;
   selections: Range[];
 };
 
 export const Leaf: React.FC<LeafProps> = ({
-  attributes,
-  children,
-  leaf,
+  renderLeafProps: { leaf, attributes, children },
   selections,
 }) => {
+  console.log({ selections, leaf, attributes, children });
   if (leaf.bold) {
     children = <strong>{children}</strong>;
   }
@@ -29,13 +24,7 @@ export const Leaf: React.FC<LeafProps> = ({
     children = <u>{children}</u>;
   }
 
-  if (
-    selections.some(
-      (selection) =>
-        selection.anchor.offset === leaf.text.anchor &&
-        selection.focus.offset === leaf.text.focus
-    )
-  ) {
+  if (leaf.comment) {
     children = <span style={{ backgroundColor: "yellow" }}>{children}</span>;
   }
 
