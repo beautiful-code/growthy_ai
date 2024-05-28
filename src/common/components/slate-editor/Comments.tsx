@@ -1,28 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Range } from "slate";
-import { Portal } from "@chakra-ui/react";
+import { ReactEditor } from "slate-react";
+import { Portal, Textarea } from "@chakra-ui/react";
 
 type CommentsProps = {
   selections: Range[];
-  editorRef: React.RefObject<HTMLDivElement>;
+  editor: ReactEditor;
 };
 
-export const Comments: React.FC<CommentsProps> = ({ selections }) => {
+export const Comments: React.FC<CommentsProps> = ({ selections, editor }) => {
   const [positions, setPositions] = useState<{ top: number; left: number }[]>(
     []
   );
 
-  useEffect(() => {
-    const newPositions = selections.map(() => {
-      const domRange = window.getSelection()?.getRangeAt(0);
-      const rect = domRange?.getBoundingClientRect();
-      return {
-        top: rect?.top || 0 + window.scrollY,
-        left: rect?.left || 0 + window.scrollX,
-      };
+  const updatePositions = useCallback(() => {
+    const newPositions: { top: number; left: number }[] = [];
+    selections.forEach((sel) => {
+      const domRange = ReactEditor.toDOMRange(editor, sel);
+      const rect = domRange.getBoundingClientRect();
+
+      let top = rect.top - 40 + window.scrollY;
+      const left = rect.right + window.scrollX;
+
+      for (let i = 0; i < newPositions.length; i++) {
+        const pos = newPositions[i];
+        if (Math.abs(pos.top - top) < 75) {
+          top = pos.top + 50 + 50; //50px gap between comments
+        }
+      }
+
+      newPositions.push({ top, left });
     });
     setPositions(newPositions);
-  }, [selections]);
+  }, [editor, selections]);
+
+  useEffect(() => {
+    updatePositions();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Enter") {
+        updatePositions();
+      }
+    };
+
+    window.addEventListener("scroll", updatePositions);
+    window.addEventListener("resize", updatePositions);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("scroll", updatePositions);
+      window.removeEventListener("resize", updatePositions);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [updatePositions]);
 
   return (
     <div style={{ position: "relative" }}>
@@ -34,12 +64,15 @@ export const Comments: React.FC<CommentsProps> = ({ selections }) => {
               top: `${position.top}px`,
               left: `70%`,
               backgroundColor: "white",
-              border: "1px solid black",
               padding: "5px",
               zIndex: 10,
             }}
           >
-            Comment {index + 1}
+            <Textarea
+              placeholder="Add a comment..."
+              resize="none"
+              focusBorderColor="black.500"
+            />
           </div>
         </Portal>
       ))}
