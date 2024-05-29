@@ -254,7 +254,7 @@ export const SlateEditor: React.FC = () => {
         </Box>
       </GridItem>
       <GridItem colSpan={1}>
-        <Comments selections={selections} editor={editor} />
+        <Comments editor={editor} />
       </GridItem>
     </Grid>
   );

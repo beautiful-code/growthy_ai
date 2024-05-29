@@ -1,58 +1,70 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Range } from "slate";
+import { BaseRange } from "slate";
 import { ReactEditor } from "slate-react";
 import { Portal, Textarea } from "@chakra-ui/react";
+import { CustomElement } from "./SlateEditor";
 
 type CommentsProps = {
-  selections: Range[];
   editor: ReactEditor;
 };
 
-export const Comments: React.FC<CommentsProps> = ({ selections, editor }) => {
+export const Comments: React.FC<CommentsProps> = ({ editor }) => {
   const [positions, setPositions] = useState<{ top: number; left: number }[]>(
     []
   );
 
   const updatePositions = useCallback(() => {
-    const newPositions: { top: number; left: number }[] = [];
-    selections.forEach((sel) => {
-      const domRange = ReactEditor.toDOMRange(editor, sel);
-      const rect = domRange.getBoundingClientRect();
-
-      let top = rect.top - 40 + window.scrollY;
-      const left = rect.right + window.scrollX;
-
-      for (let i = 0; i < newPositions.length; i++) {
-        const pos = newPositions[i];
-        if (Math.abs(pos.top - top) < 75) {
-          top = pos.top + 50 + 50; //50px gap between comments
-        }
+    try {
+      const selections: BaseRange[] = [];
+      const newPositions: { top: number; left: number }[] = [];
+      const children = editor.children;
+      // Fetch selections whose comment property is true
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i] as CustomElement;
+        child.children.forEach((ch, index) => {
+          if (ch.comment) {
+            selections.push({anchor: {path: [i, index], offset: 0}, focus: {path: [i, index], offset: 0}})
+          }
+        })
       }
 
-      newPositions.push({ top, left });
-    });
-    setPositions(newPositions);
-  }, [editor, selections]);
+      selections.forEach((sel) => {
+        const domRange = ReactEditor.toDOMRange(editor, sel);
+        const rect = domRange.getBoundingClientRect();
+
+        let top = rect.top - 40 + window.scrollY;
+        const left = rect.right + window.scrollX;
+
+        for (let i = 0; i < newPositions.length; i++) {
+          const pos = newPositions[i];
+          if (Math.abs(pos.top - top) < 75) {
+            top = pos.top + 50 + 50; //50px gap between comments
+          }
+        }
+
+        newPositions.push({ top, left });
+      });
+      setPositions(newPositions);
+    } catch (error) {
+      console.error('Error while updating comment positions:', error);
+    }
+  }, [editor]);
 
   useEffect(() => {
     updatePositions();
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Enter") {
+      if (event.key === "Enter" || event.key === "Backspace") {
         updatePositions();
       }
     };
 
-    window.addEventListener("scroll", updatePositions);
-    window.addEventListener("resize", updatePositions);
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      window.removeEventListener("scroll", updatePositions);
-      window.removeEventListener("resize", updatePositions);
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [updatePositions]);
+  }, [editor.selection, updatePositions]);
 
   return (
     <div style={{ position: "relative" }}>
