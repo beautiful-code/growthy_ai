@@ -7008,6 +7008,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/escape-html@npm:^1.0.0":
+  version: 1.0.4
+  resolution: "@types/escape-html@npm:1.0.4"
+  checksum: 10c0/5cdae9d38e97b1ad61180528ef7ca66bf6be96e875cc560c3e064d6ca75ccf2adaf2fa3b7bdd4f7494013e4357a2fb0bb62f2e59ca53097d5c45c7519d0ce9c3
+  languageName: node
+  linkType: hard
+
 "@types/escodegen@npm:^0.0.6":
   version: 0.0.6
   resolution: "@types/escodegen@npm:0.0.6"
@@ -8841,6 +8848,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chromatic@npm:^11.4.1":
+  version: 11.4.1
+  resolution: "chromatic@npm:11.4.1"
+  peerDependencies:
+    "@chromatic-com/cypress": ^0.*.* || ^1.0.0
+    "@chromatic-com/playwright": ^0.*.* || ^1.0.0
+  peerDependenciesMeta:
+    "@chromatic-com/cypress":
+      optional: true
+    "@chromatic-com/playwright":
+      optional: true
+  bin:
+    chroma: dist/bin.js
+    chromatic: dist/bin.js
+    chromatic-cli: dist/bin.js
+  checksum: 10c0/50a913706145aaf1eb4e1f2d3f9f00c5d06b61fe3775c5b69099d24192bbde4fa14d53c48fbc90bc070811974fa524e799ca272b7cf0c7ecd1532df56e5453b5
+  languageName: node
+  linkType: hard
+
 "ci-info@npm:^3.2.0":
   version: 3.9.0
   resolution: "ci-info@npm:3.9.0"
@@ -10070,7 +10096,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"escape-html@npm:~1.0.3":
+"escape-html@npm:^1.0.3, escape-html@npm:~1.0.3":
   version: 1.0.3
   resolution: "escape-html@npm:1.0.3"
   checksum: 10c0/524c739d776b36c3d29fa08a22e03e8824e3b2fd57500e5e44ecf3cc4707c34c60f9ca0781c0e33d191f2991161504c295e98f68c78fe7baa6e57081ec6ac0a3
@@ -11199,9 +11225,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-growthy-prompts@ravibhim/growthy-prompts:
+"growthy-prompts@github:ravibhim/growthy-prompts":
   version: 1.0.2
-  resolution: "growthy-prompts@git+ssh://git@github.com/ravibhim/growthy-prompts.git#commit=f8d5169f504c57f50956feab68865ec52b55f036"
+  resolution: "growthy-prompts@https://github.com/ravibhim/growthy-prompts.git#commit=f8d5169f504c57f50956feab68865ec52b55f036"
   checksum: 10c0/bbbec9e853d83b68f81f56261bd1508e73f842b9de311f2a816fcd81ad8874438f7b0271e266428f39d565e0c5c528af8d4a06178e931677be6f456dde45bf07
   languageName: node
   linkType: hard
@@ -11240,12 +11266,13 @@ growthy-prompts@ravibhim/growthy-prompts:
     "@vitejs/plugin-react-swc": "npm:^3.5.0"
     buffer: "npm:^6.0.3"
     chakra-ui: "npm:^0.3.9"
+    chromatic: "npm:^11.4.1"
     eslint: "npm:^8.57.0"
     eslint-plugin-react-hooks: "npm:^4.6.0"
     eslint-plugin-react-refresh: "npm:^0.4.6"
     eslint-plugin-storybook: "npm:^0.8.0"
     framer-motion: "npm:^11.0.22"
-    growthy-prompts: ravibhim/growthy-prompts
+    growthy-prompts: "github:ravibhim/growthy-prompts"
     jest: "npm:^29.7.0"
     jsdom: "npm:^24.0.0"
     langsmith: "npm:^0.1.14"
@@ -11260,7 +11287,9 @@ growthy-prompts@ravibhim/growthy-prompts:
     react-textarea-autosize: "npm:^8.5.3"
     recoil: "npm:^0.7.7"
     rehype-raw: "npm:^7.0.0"
+    remark: "npm:^15.0.1"
     remark-gfm: "npm:^4.0.0"
+    remark-slate: "npm:^1.8.6"
     slate: "npm:^0.103.0"
     slate-history: "npm:^0.100.0"
     slate-react: "npm:^0.102.0"
@@ -16329,6 +16358,16 @@ growthy-prompts@ravibhim/growthy-prompts:
   languageName: node
   linkType: hard
 
+"remark-slate@npm:^1.8.6":
+  version: 1.8.6
+  resolution: "remark-slate@npm:1.8.6"
+  dependencies:
+    "@types/escape-html": "npm:^1.0.0"
+    escape-html: "npm:^1.0.3"
+  checksum: 10c0/e8284e49f563d575e9b3e51ae54122ca0f2f42887656c6078cd6b28c792353002a17fddda5aac121bb8a3adfdbf7ed90ed163eb0b5afeebdabf9862d481eed45
+  languageName: node
+  linkType: hard
+
 "remark-stringify@npm:^11.0.0":
   version: 11.0.0
   resolution: "remark-stringify@npm:11.0.0"
@@ -16337,6 +16376,18 @@ growthy-prompts@ravibhim/growthy-prompts:
     mdast-util-to-markdown: "npm:^2.0.0"
     unified: "npm:^11.0.0"
   checksum: 10c0/0cdb37ce1217578f6f847c7ec9f50cbab35df5b9e3903d543e74b405404e67c07defcb23cd260a567b41b769400f6de03c2c3d9cd6ae7a6707d5c8d89ead489f
+  languageName: node
+  linkType: hard
+
+"remark@npm:^15.0.1":
+  version: 15.0.1
+  resolution: "remark@npm:15.0.1"
+  dependencies:
+    "@types/mdast": "npm:^4.0.0"
+    remark-parse: "npm:^11.0.0"
+    remark-stringify: "npm:^11.0.0"
+    unified: "npm:^11.0.0"
+  checksum: 10c0/ba675e4a5b114355991d2c6f5b09a632121fc8825257b0d148b3938420713f9e9b6f012120604435d5c217d42742f60195ac6f898dc1339d313a6608a84dbc49
   languageName: node
   linkType: hard
 

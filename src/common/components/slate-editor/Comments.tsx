@@ -8,28 +8,50 @@ type CommentsProps = {
   editor: ReactEditor;
 };
 
+type Comment = {
+  commentId: string;
+  text: string;
+};
+
+type Selection = {
+  selection: BaseRange;
+  commentId: string;
+};
+
+type Position = {
+  top: number;
+  left: number;
+  commentId: string;
+};
+
 export const Comments: React.FC<CommentsProps> = ({ editor }) => {
-  const [positions, setPositions] = useState<{ top: number; left: number }[]>(
-    []
-  );
+  const [positions, setPositions] = useState<Position[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
 
   const updatePositions = useCallback(() => {
     try {
-      const selections: BaseRange[] = [];
-      const newPositions: { top: number; left: number }[] = [];
+      const selections: Selection[] = [];
+      const newPositions: Position[] = [];
       const children = editor.children;
-      // Fetch selections whose comment property is true
+      // Fetch selections whose comment property is present
       for (let i = 0; i < children.length; i++) {
         const child = children[i] as CustomElement;
         child.children.forEach((ch, index) => {
           if (ch.comment) {
-            selections.push({anchor: {path: [i, index], offset: 0}, focus: {path: [i, index], offset: 0}})
+            setComments([...comments, { commentId: ch.comment, text: "" }]);
+            selections.push({
+              selection: {
+                anchor: { path: [i, index], offset: 0 },
+                focus: { path: [i, index], offset: 0 },
+              },
+              commentId: ch.comment,
+            });
           }
-        })
+        });
       }
 
       selections.forEach((sel) => {
-        const domRange = ReactEditor.toDOMRange(editor, sel);
+        const domRange = ReactEditor.toDOMRange(editor, sel.selection);
         const rect = domRange.getBoundingClientRect();
 
         let top = rect.top - 40 + window.scrollY;
@@ -42,17 +64,16 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
           }
         }
 
-        newPositions.push({ top, left });
+        newPositions.push({ top, left, commentId: sel.commentId });
       });
       setPositions(newPositions);
     } catch (error) {
-      console.error('Error while updating comment positions:', error);
+      console.error("Error while updating comment positions:", error);
     }
   }, [editor]);
 
   useEffect(() => {
     updatePositions();
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Enter" || event.key === "Backspace") {
         updatePositions();
@@ -65,6 +86,12 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [editor.selection, updatePositions]);
+
+  const handleCommentChange = (commentId: string, text: string) => {
+    setComments(
+      comments.map((c) => (c.commentId === commentId ? { commentId, text } : c))
+    );
+  };
 
   return (
     <div style={{ position: "relative" }}>
@@ -84,6 +111,9 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
               placeholder="Add a comment..."
               resize="none"
               focusBorderColor="black.500"
+              onChange={(e) =>
+                handleCommentChange(position.commentId, e.target.value)
+              }
             />
           </div>
         </Portal>

@@ -14,7 +14,7 @@ export const ToggleMode: React.FC<ToggleModeProps> = ({ mode, setMode }) => {
   const activeBg = "green.500";
   const activeColor = "white";
 
-  const handleModeChange = (mode: Props["mode"]) => {
+  const handleModeChange = (mode: ToggleModeProps["mode"]) => {
     setSelectedMode(mode);
     if (setMode) {
       setMode(mode);

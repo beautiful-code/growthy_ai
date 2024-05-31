@@ -1,22 +1,33 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { createEditor, Range, Editor, Transforms } from "slate";
-import { Slate, Editable, withReact, RenderLeafProps } from "slate-react";
+import { createEditor, Editor, Transforms } from "slate";
+import {
+  Slate,
+  Editable,
+  withReact,
+  RenderLeafProps,
+  RenderElementProps,
+} from "slate-react";
 import { BaseEditor, Text } from "slate";
 import { ReactEditor } from "slate-react";
 import { Grid, Box, GridItem } from "@chakra-ui/react";
-import { debounce } from "lodash";
-import { Leaf } from "common/components/slate-editor/Leaf";
-import { toggleFormat } from "common/components/slate-editor/utils";
-import { ToolbarPopover } from "common/components/slate-editor/ToolbarPopover";
-import { Comments } from "common/components/slate-editor/Comments";
+import { Leaf } from "./Leaf";
+import { serialize, toggleFormat } from "./utils";
+import { ToolbarPopover } from "./ToolbarPopover";
+import { Comments } from "./Comments";
+import { v4 as uuid } from "uuid";
 
-export type CustomElement = { type: "paragraph"; children: CustomText[] };
+export type CustomElement = {
+  type: "paragraph" | "code";
+  children: CustomText[];
+};
+
 export type CustomText = {
   text: string;
   bold?: boolean;
   italic?: boolean;
   underline?: boolean;
-  comment?: boolean;
+  comment?: string;
+  code?: boolean;
 };
 
 declare module "slate" {
@@ -27,6 +38,9 @@ declare module "slate" {
   }
 }
 
+// const initialMarkdown = `# Hello World\nThis is **bold** and *italic* text.\n\n\`\`\`code block\`\`\``;
+// const initialValue = deserialize(initialMarkdown);
+
 const initialValue: CustomElement[] = [
   {
     type: "paragraph",
@@ -36,18 +50,29 @@ const initialValue: CustomElement[] = [
         bold: false,
         italic: false,
         underline: false,
-        comment: false,
+        comment: "",
       },
     ],
   },
 ];
 
+const CodeElement: React.FC<RenderElementProps> = ({
+  attributes,
+  children,
+}) => {
+  return (
+    <pre {...attributes}>
+      <code>{children}</code>
+    </pre>
+  );
+};
+
 export const SlateEditor: React.FC = () => {
   const [editor] = useState(() => withReact(createEditor()));
   const [targetRange, setTargetRange] = useState<DOMRect | null>(null);
-  const [selections, setSelections] = useState<Range[]>([]);
   const [shiftKeyPressed, setShiftKeyPressed] = useState(false);
   const [ctrlKeyPressed, setCtrlKeyPressed] = useState(false);
+  const [markdown, setMarkdown] = useState("");
 
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -102,76 +127,12 @@ export const SlateEditor: React.FC = () => {
         // Set the `comment` mark on the newly inserted text
         Transforms.setNodes(
           editor,
-          { comment: true },
+          { comment: node.comment },
           { at: selection, match: (n) => Text.isText(n), split: true }
         );
-
-        const newSelections = selections.map((sel) => {
-          if (
-            sel.anchor.path.toString() === selection.anchor.path.toString() ||
-            sel.focus.path.toString() === selection.focus.path.toString()
-          ) {
-            return {
-              ...sel,
-              focus: {
-                path: sel.focus.path,
-                offset: sel.focus.offset + pastedText.length,
-              },
-            };
-          }
-          return sel;
-        });
-        setSelections(newSelections);
       }
     }
   };
-
-  const debounceHandleKeyDown = debounce((event: React.KeyboardEvent) => {
-    if (event.key.length === 1 || ["Backspace", "Delete"].includes(event.key)) {
-      event.preventDefault();
-      const { selection } = editor;
-      if (selections && selection) {
-        let newSelections = selections.map((sel) => {
-          const path = sel.anchor.path;
-          const child = editor.children[path[0]] as CustomElement;
-          if (child.children.length < path[1] + 1) {
-            return {} as Range;
-          }
-          const newText = child.children[path[1]].text || "";
-          return {
-            ...sel,
-            focus: { path: sel.focus.path, offset: newText.length },
-          };
-        });
-        newSelections = newSelections.filter((sel) => Object.keys(sel).length);
-        setSelections(newSelections);
-      }
-    }
-
-    if (!event.ctrlKey && !event.metaKey) {
-      return;
-    }
-
-    switch (event.key) {
-      case "b": {
-        event.preventDefault();
-        toggleFormat(editor, "bold");
-        break;
-      }
-
-      case "i": {
-        event.preventDefault();
-        toggleFormat(editor, "italic");
-        break;
-      }
-
-      case "u": {
-        event.preventDefault();
-        toggleFormat(editor, "underline");
-        break;
-      }
-    }
-  }, 300);
 
   const onKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
@@ -181,9 +142,38 @@ export const SlateEditor: React.FC = () => {
         Transforms.insertText(editor, "\n");
         return;
       }
-      debounceHandleKeyDown(event);
+
+      if (!event.ctrlKey && !event.metaKey) {
+        return;
+      }
+
+      switch (event.key) {
+        case "b": {
+          event.preventDefault();
+          toggleFormat(editor, "bold");
+          break;
+        }
+
+        case "i": {
+          event.preventDefault();
+          toggleFormat(editor, "italic");
+          break;
+        }
+
+        case "u": {
+          event.preventDefault();
+          toggleFormat(editor, "underline");
+          break;
+        }
+
+        case "`": {
+          event.preventDefault();
+          toggleFormat(editor, "code");
+          break;
+        }
+      }
     },
-    [debounceHandleKeyDown, editor]
+    [editor]
   );
 
   const onSelect = useCallback(() => {
@@ -205,24 +195,37 @@ export const SlateEditor: React.FC = () => {
   }, [shiftKeyPressed, ctrlKeyPressed]);
 
   const handleComment = () => {
-    const { selection } = editor;
+    // Generate uuid
+    const id = uuid();
+    Transforms.setNodes(
+      editor,
+      { comment: id },
+      { match: (n) => Text.isText(n), split: true }
+    );
 
-    if (selection && !selections.some((sel) => Range.equals(sel, selection))) {
-      toggleFormat(editor, "comment");
-      // Fetch the updated selection from the editor
-      const updatedSelection = editor.selection;
-      if (updatedSelection) {
-        setSelections([...selections, updatedSelection]);
-      }
-      setTargetRange(null);
-    }
+    setTargetRange(null);
   };
 
   const renderLeaf = useCallback((props: RenderLeafProps) => {
     return <Leaf renderLeafProps={props} />;
   }, []);
 
-  console.log({ editor }, "selections", selections);
+  const renderElement = useCallback((props: RenderElementProps) => {
+    switch (props.element.type) {
+      case "code":
+        return <CodeElement {...props} />;
+      default:
+        return <p {...props.attributes}>{props.children}</p>;
+    }
+  }, []);
+
+  const handleChange = useCallback((newValue: CustomElement[]) => {
+    setTargetRange(null);
+    const markdownString = serialize(newValue);
+    setMarkdown(markdownString);
+  }, []);
+
+  console.log({ editor, markdown });
 
   return (
     <Grid templateColumns="70% 30%" gap={4}>
@@ -231,7 +234,7 @@ export const SlateEditor: React.FC = () => {
           <Slate
             editor={editor}
             initialValue={initialValue}
-            onChange={() => setTargetRange(null)}
+            onChange={(newValue) => handleChange(newValue as CustomElement[])}
           >
             <Editable
               placeholder="Enter your text here..."
@@ -240,6 +243,7 @@ export const SlateEditor: React.FC = () => {
               onSelect={onSelect}
               style={{ outline: "none", border: "none" }}
               onPaste={handlePaste}
+              renderElement={renderElement}
             />
             {targetRange && (
               <ToolbarPopover

@@ -4,7 +4,7 @@ import { Box } from "@chakra-ui/react";
 import { FixtureWrapper } from "FixtureWrapper";
 
 const meta = {
-  title: "SlateEditor",
+  title: "common/SlateEditor",
   component: SlateEditor,
   parameters: {
     layout: "fullscreen",

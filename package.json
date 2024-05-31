@@ -12,7 +12,8 @@
     "cosmos": "cosmos",
     "cosmos-export": "cosmos-export",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "chromatic": "npx chromatic --project-token=chpt_e1bdd3f238598cf"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -27,7 +28,7 @@
     "buffer": "^6.0.3",
     "chakra-ui": "^0.3.9",
     "framer-motion": "^11.0.22",
-    "growthy-prompts": "ravibhim/growthy-prompts",
+    "growthy-prompts": "github:ravibhim/growthy-prompts",
     "jest": "^29.7.0",
     "langsmith": "^0.1.14",
     "react": "^18.2.0",
@@ -39,7 +40,9 @@
     "react-textarea-autosize": "^8.5.3",
     "recoil": "^0.7.7",
     "rehype-raw": "^7.0.0",
+    "remark": "^15.0.1",
     "remark-gfm": "^4.0.0",
+    "remark-slate": "^1.8.6",
     "slate": "^0.103.0",
     "slate-history": "^0.100.0",
     "slate-react": "^0.102.0",
@@ -69,6 +72,7 @@
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
+    "chromatic": "^11.4.1",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",

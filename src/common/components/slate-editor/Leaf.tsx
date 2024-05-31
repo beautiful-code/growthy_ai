@@ -20,6 +20,10 @@ export const Leaf: React.FC<LeafProps> = ({
     children = <u>{children}</u>;
   }
 
+  if (leaf.code) {
+    children = <code style={{ backgroundColor: "#eee", padding: "3px", borderRadius: "4px" }}>{children}</code>;
+  }
+
   if (leaf.comment) {
     children = <span style={{ backgroundColor: "yellow" }}>{children}</span>;
   }
