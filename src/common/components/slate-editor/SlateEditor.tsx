@@ -41,21 +41,6 @@ declare module "slate" {
 // const initialMarkdown = `# Hello World\nThis is **bold** and *italic* text.\n\n\`\`\`code block\`\`\``;
 // const initialValue = deserialize(initialMarkdown);
 
-const initialValue: CustomElement[] = [
-  {
-    type: "paragraph",
-    children: [
-      {
-        text: "",
-        bold: false,
-        italic: false,
-        underline: false,
-        comment: "",
-      },
-    ],
-  },
-];
-
 const CodeElement: React.FC<RenderElementProps> = ({
   attributes,
   children,
@@ -67,7 +52,11 @@ const CodeElement: React.FC<RenderElementProps> = ({
   );
 };
 
-export const SlateEditor: React.FC = () => {
+type TSlateEditor = {
+  initialText?: string;
+};
+
+export const SlateEditor: React.FC<TSlateEditor> = ({ initialText }) => {
   const [editor] = useState(() => withReact(createEditor()));
   const [targetRange, setTargetRange] = useState<DOMRect | null>(null);
   const [shiftKeyPressed, setShiftKeyPressed] = useState(false);
@@ -233,7 +222,20 @@ export const SlateEditor: React.FC = () => {
         <Box ref={editorRef}>
           <Slate
             editor={editor}
-            initialValue={initialValue}
+            initialValue={[
+              {
+                type: "paragraph",
+                children: [
+                  {
+                    text: initialText || "",
+                    bold: false,
+                    italic: false,
+                    underline: false,
+                    comment: "",
+                  },
+                ],
+              },
+            ]}
             onChange={(newValue) => handleChange(newValue as CustomElement[])}
           >
             <Editable

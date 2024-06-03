@@ -65,6 +65,14 @@ export type TNote = {
   updated_at?: string;
 };
 
+export type TTaskNote = {
+  id: string;
+  task_id: string;
+  content: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type PublicationSection = {
   title: string;
   content: string;

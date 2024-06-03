@@ -4,7 +4,7 @@ import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 import { UISection } from "domain/common/UISection";
 
 import { getContentByTaskIds } from "publication/queries";
-import { TGrowthExercise, PreviewSection, Dictionary } from "types";
+import { TGrowthExercise, PreviewSection, Dictionary, TTaskNote } from "types";
 
 export const getExercise = async (
   id: string
@@ -73,6 +73,22 @@ export const saveBulkTasksContent = async (
   const { data, error } = await supabaseClient
     .from("task_content")
     .upsert(tasks);
+
+  return { data, error };
+};
+
+export const getBulkTaskNotes = async (
+  taskIds: string[]
+): Promise<{ data: TTaskNote[]; error: PostgrestError | null }> => {
+  const { data, error } = await supabaseClient
+    .from("notes")
+    .select("*")
+    .in("task_id", taskIds);
+
+  if (error) {
+    console.log("error", error);
+    return { data: [], error };
+  }
 
   return { data, error };
 };

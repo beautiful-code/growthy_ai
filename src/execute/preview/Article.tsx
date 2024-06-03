@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, MutableRefObject } from "react";
 import { Box, Text } from "@chakra-ui/react";
 
-import { MarkdownEditor } from "common/components/MarkdownEditor";
+// import { MarkdownEditor } from "common/components/MarkdownEditor";
+import { SlateEditor } from "common/components/slate-editor/SlateEditor";
 import { PreviewSection } from "types";
 
 type Props = {
@@ -23,7 +24,9 @@ export const Article: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    const element = document.getElementById(`execute-preview-mode-section-${selectedSectionIndex}`);
+    const element = document.getElementById(
+      `execute-preview-mode-section-${selectedSectionIndex}`
+    );
     if (element && hasUserSelectedSectionRef.current) {
       element.scrollIntoView({
         behavior: "instant",
@@ -96,7 +99,8 @@ export const Article: React.FC<Props> = ({
           </Box>
           {section?.tasks?.map((task, index) => {
             return task?.content ? (
-              <MarkdownEditor key={index} markdown={task.content} />
+              // <MarkdownEditor key={index} markdown={task.content} />
+              <SlateEditor key={index} initialText={task.content} />
             ) : (
               <Box
                 height="200px"

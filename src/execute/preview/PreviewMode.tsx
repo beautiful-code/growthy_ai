@@ -23,16 +23,24 @@ import { generateSectionsContent as defaultGenerateSectionsContent } from "execu
 
 type Props = {
   exerciseId: string;
+  blogArticle: {
+    title: string;
+    xml: string;
+  };
   getExercisePreview?: (
     exerciseId: string
   ) => Promise<PreviewSection[] | undefined>;
   generateSectionsContent?: ({
     blog_article_goal,
     blog_article_xml,
+    blog_article_title,
+    blog_article_task_notes,
     sections,
   }: {
     blog_article_goal: string;
     blog_article_xml: string;
+    blog_article_title: string;
+    blog_article_task_notes: string;
     sections: PreviewSection[];
   }) => Promise<string[]>;
   saveBulkTasksContent?: (
@@ -42,6 +50,7 @@ type Props = {
 
 export const PreviewMode: React.FC<Props> = ({
   exerciseId,
+  blogArticle,
   getExercisePreview = defaultGetExercisePreview,
   generateSectionsContent = defaultGenerateSectionsContent,
   saveBulkTasksContent = defaultSaveBulkTasksContent,
@@ -84,6 +93,10 @@ export const PreviewMode: React.FC<Props> = ({
         <Box mt={"64px"}>
           <CompletedSections
             sections={completedSections || []}
+            blogArticle={{
+              blog_article_xml: blogArticle.xml,
+              blog_article_title: blogArticle.title,
+            }}
             generateSectionsContent={generateSectionsContent}
             saveBulkTasksContent={saveBulkTasksContent}
             refetchSections={refetchSections}

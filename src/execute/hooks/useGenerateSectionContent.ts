@@ -1,11 +1,11 @@
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { PreviewSection } from "types";
 import { getXMLStringFromMarkdown } from "growth-exercise/chains/utils";
 import { generateSectionsContent as defaultGenerateSectionsContent } from "execute/chains/generateSectionContent";
 
 type TUseGenerateContentResp = {
-  sections: PreviewSection[];
+  content: string[];
   isLoading: boolean;
   isFetching: boolean;
   refetch: () => void;
@@ -13,34 +13,44 @@ type TUseGenerateContentResp = {
 
 type TUseGenerateContentArgs = {
   enabled?: boolean;
-  blog_article_goal: string;
+  blog_article_title: string;
   blog_article_xml: string;
-  sections: PreviewSection[];
+  blog_article_tasks: string[];
+  blog_article_tasks_notes: string[];
   generateSectionsContent: ({
-    blog_article_goal,
+    blog_article_task,
     blog_article_xml,
-    sections,
+    blog_article_title,
+    blog_article_task_notes,
   }: {
-    blog_article_goal: string;
+    blog_article_title: string;
     blog_article_xml: string;
-    sections: PreviewSection[];
-  }) => Promise<string[]>;
+    blog_article_task: string;
+    blog_article_task_notes: string;
+  }) => Promise<string>;
 };
 
 export const useGenerateSectionsContent = ({
   enabled = false,
-  blog_article_goal = "",
+  blog_article_title = "",
   blog_article_xml = "",
-  sections,
+  blog_article_tasks = [],
+  blog_article_tasks_notes = [],
   generateSectionsContent = defaultGenerateSectionsContent,
 }: TUseGenerateContentArgs): TUseGenerateContentResp => {
+  const [generatedSectionsData, setGeneratedSectionsData] = useState<string[]>(
+    []
+  );
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["generate-sections-conent"],
     queryFn: () =>
       generateSectionsContent({
-        blog_article_goal,
+        blog_article_title,
         blog_article_xml,
-        sections,
+        blog_article_task: blog_article_tasks[currentIndex],
+        blog_article_task_notes: blog_article_tasks_notes[currentIndex],
       }),
     enabled,
   });
@@ -49,28 +59,26 @@ export const useGenerateSectionsContent = ({
     console.log(error);
   }
 
-  let index = 0;
-  const uiSections = sections.map((section) => {
-    const tasks = section.tasks;
-
-    const tasksWithContent = tasks.map((task) => {
-      index += 1;
-      return {
-        title: task.title,
-        id: task.id,
-        content: data ? getXMLStringFromMarkdown(data[index - 1]) : "",
-        isChecked: task.isChecked,
-      };
-    });
-
-    return {
-      title: section.title,
-      tasks: tasksWithContent,
-    };
-  });
+  useEffect(() => {
+    if (data && !isLoading && currentIndex < blog_article_tasks.length) {
+      setGeneratedSectionsData([
+        ...generatedSectionsData,
+        data ? getXMLStringFromMarkdown(data) : "null",
+      ]);
+      setCurrentIndex(currentIndex + 1);
+      refetch();
+    }
+  }, [
+    isLoading,
+    data,
+    currentIndex,
+    blog_article_tasks.length,
+    refetch,
+    generatedSectionsData,
+  ]);
 
   return {
-    sections: uiSections,
+    content: generatedSectionsData,
     isLoading,
     isFetching,
     refetch,

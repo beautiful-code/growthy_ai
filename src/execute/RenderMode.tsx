@@ -1,9 +1,10 @@
 import React from "react";
-import { Text } from "@chakra-ui/react";
 import { TExecutionModes } from "types";
 import { UIOutline } from "domain/common/UIOutline";
+import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 import { NotesMode } from "./NotesMode";
 import { OutlineMode } from "./OutlineMode";
+import { PreviewMode } from "./preview/PreviewMode";
 
 type RenderModeProps = {
   executionMode: TExecutionModes;
@@ -40,9 +41,13 @@ export const RenderMode: React.FC<RenderModeProps> = ({
       );
     case "Publish":
       return (
-        <div>
-          <Text>Publish Mode</Text>
-        </div>
+        <PreviewMode
+          exerciseId={growthExerciseId}
+          blogArticle={{
+            title: new UIBlogArticle(exerciseXML).getTitle() || "",
+            xml: exerciseXML,
+          }}
+        />
       );
     default:
       return null;

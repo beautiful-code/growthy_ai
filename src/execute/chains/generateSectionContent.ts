@@ -4,23 +4,24 @@ import { StringOutputParser } from "@langchain/core/output_parsers";
 import { RunnableSequence } from "@langchain/core/runnables";
 import getGrowthyConfig from "growthy-prompts";
 
-import { PreviewSection } from "types";
-
 const parser = new StringOutputParser();
 
 type TGenerateSectionContent = {
-  blog_article_goal: string;
   blog_article_xml: string;
-  sections: PreviewSection[];
+  blog_article_title: string;
+  blog_article_task: string;
+  blog_article_task_notes: string;
 };
 
 export const generateSectionsContent = async ({
-  blog_article_goal,
   blog_article_xml,
-  sections,
-}: TGenerateSectionContent) => {
+  blog_article_title,
+  blog_article_task,
+  blog_article_task_notes,
+}: TGenerateSectionContent): Promise<string> => {
   const config = getGrowthyConfig();
-  const generateContentPrompt = config?.blog_article?.generate_content?.prompt;
+  const generateContentPrompt =
+    config?.blog_article?.generateContentForTask?.prompt;
   const chain = RunnableSequence.from([
     PromptTemplate.fromTemplate(generateContentPrompt),
     openAIModel,
@@ -29,11 +30,12 @@ export const generateSectionsContent = async ({
 
   const response = await chain.invoke({
     specialization: "", // Ravi - is specialization still needed?
-    blog_article_goal,
     blog_article_xml,
-    selectedSections: sections.map((section) => section.title).join(",\n"),
+    blog_article_title,
+    blog_article_task,
+    blog_article_task_notes,
     format_instructions: parser.getFormatInstructions(),
   });
 
-  return response?.split(",") || [];
+  return response;
 };
