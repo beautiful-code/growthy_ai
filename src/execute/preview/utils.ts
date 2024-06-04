@@ -1,9 +1,10 @@
-import { UISection } from "domain/common/UISection";
-export const getTasksTitles = (sections: UISection[]): string[] => {
+import { PreviewSection } from "types";
+
+export const getTasksTitles = (sections: PreviewSection[]): string[] => {
   const tasks = sections.flatMap((section) => {
-    const sectionTasks = section.getUITasks();
+    const sectionTasks = section.tasks;
     return sectionTasks;
   });
 
-  return tasks?.map((task) => task.getTitle());
+  return tasks?.map((task) => task.title);
 };

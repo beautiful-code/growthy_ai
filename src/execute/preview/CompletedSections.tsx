@@ -3,9 +3,12 @@ import { Box, Flex, Checkbox, Text, Spinner } from "@chakra-ui/react";
 import { PostgrestError } from "@supabase/supabase-js";
 
 import { GButton } from "common/components/GButton";
-import { UISection } from "domain/common/UISection";
-import { UITask } from "domain/common/UITask";
-import { Dictionary, TGeneratedTasksContent } from "types";
+import {
+  Dictionary,
+  PreviewSection,
+  PreviewTasks,
+  TGeneratedTasksContent,
+} from "types";
 import { useGenerateSectionsContent } from "execute/hooks/useGenerateSectionContent";
 import { useGetBulkTaskNotes } from "execute/hooks/useGetBulkTaskNotes";
 import { useSaveContent } from "execute/hooks/useSaveContent";
@@ -14,7 +17,7 @@ import { saveBulkTasksContent as defaultSaveBulkTasksContent } from "execute/que
 import { getTasksTitles } from "execute/preview/utils";
 
 type Props = {
-  sections: UISection[];
+  sections: PreviewSection[];
   blogArticle: {
     blog_article_title: string;
     blog_article_xml: string;
@@ -48,9 +51,7 @@ export const CompletedSections: React.FC<Props> = ({
   );
 
   const { data: taskNotes, isLoading } = useGetBulkTaskNotes(
-    sections
-      .map((section) => section.getUITasks().map((task) => task.id))
-      .flat()
+    sections.map((section) => section.tasks.map((task) => task.id)).flat()
   );
 
   const { content, isFetching, refetch } = useGenerateSectionsContent({
@@ -75,7 +76,7 @@ export const CompletedSections: React.FC<Props> = ({
 
       sections?.forEach((section, index) => {
         if (selectedSectionsMap[index]) {
-          section.tasks.forEach((task: UITask) => {
+          section.tasks.forEach((task: PreviewTasks) => {
             generatedTaskContent.push({
               taskId: task.id,
               content: content[index],

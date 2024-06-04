@@ -60,7 +60,9 @@ export const useGenerateSectionsContent = ({
   }
 
   useEffect(() => {
+    console.log("in use effect");
     if (data && !isLoading && currentIndex < blog_article_tasks.length) {
+      console.log("data", data);
       setGeneratedSectionsData([
         ...generatedSectionsData,
         data ? getXMLStringFromMarkdown(data) : "null",

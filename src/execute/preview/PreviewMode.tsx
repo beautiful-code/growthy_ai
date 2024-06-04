@@ -31,18 +31,16 @@ type Props = {
     exerciseId: string
   ) => Promise<PreviewSection[] | undefined>;
   generateSectionsContent?: ({
-    blog_article_goal,
+    blog_article_task,
     blog_article_xml,
     blog_article_title,
     blog_article_task_notes,
-    sections,
   }: {
-    blog_article_goal: string;
+    blog_article_task: string;
     blog_article_xml: string;
     blog_article_title: string;
     blog_article_task_notes: string;
-    sections: PreviewSection[];
-  }) => Promise<string[]>;
+  }) => Promise<string>;
   saveBulkTasksContent?: (
     tasksContent: TGeneratedTasksContent[]
   ) => Promise<{ data: null; error: PostgrestError | null }>;

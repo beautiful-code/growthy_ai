@@ -61,7 +61,7 @@ const meta = {
                   id: "3",
                   content: `Section 2 Task 1 content Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et`,
                   isChecked: false,
-                }
+                },
               ],
             },
             {
@@ -82,7 +82,7 @@ const meta = {
                   Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
                   `,
                   isChecked: false,
-                }
+                },
               ],
             },
             {
@@ -143,7 +143,7 @@ const meta = {
     generateSectionsContent: async () => {
       return new Promise((resolve) => {
         setTimeout(() => {
-          resolve(["content 1", "content 2"]);
+          resolve("content 1");
         }, 1000);
       });
     },
@@ -166,5 +166,9 @@ type Story = StoryObj<typeof meta>;
 export const PreviewModeStory: Story = {
   args: {
     exerciseId: "1",
+    blogArticle: {
+      title: "Blog Article Title",
+      xml: "<xml></xml>",
+    },
   },
 };

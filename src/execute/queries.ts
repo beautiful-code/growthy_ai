@@ -70,9 +70,7 @@ export const saveBulkTasksContent = async (
     content: string;
   }[]
 ) => {
-  const { data, error } = await supabaseClient
-    .from("task_content")
-    .upsert(tasks);
+  const { data, error } = await supabaseClient.from("content").upsert(tasks);
 
   return { data, error };
 };

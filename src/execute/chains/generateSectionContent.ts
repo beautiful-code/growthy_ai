@@ -21,7 +21,7 @@ export const generateSectionsContent = async ({
 }: TGenerateSectionContent): Promise<string> => {
   const config = getGrowthyConfig();
   const generateContentPrompt =
-    config?.blog_article?.generateContentForTask?.prompt;
+    config?.blog_article?.generate_content_for_task?.prompt;
   const chain = RunnableSequence.from([
     PromptTemplate.fromTemplate(generateContentPrompt),
     openAIModel,
@@ -30,12 +30,14 @@ export const generateSectionsContent = async ({
 
   const response = await chain.invoke({
     specialization: "", // Ravi - is specialization still needed?
+    blog_article_goal: blog_article_title,
     blog_article_xml,
-    blog_article_title,
     blog_article_task,
     blog_article_task_notes,
     format_instructions: parser.getFormatInstructions(),
   });
+
+  console.log({ response });
 
   return response;
 };
