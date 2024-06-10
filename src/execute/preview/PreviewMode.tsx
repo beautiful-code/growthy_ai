@@ -18,6 +18,7 @@ import { useGetExercisePreview } from "execute/hooks/useGetExercisePreview";
 import {
   getExercisePreview as defaultGetExercisePreview,
   saveBulkTasksContent as defaultSaveBulkTasksContent,
+  updateTaskContent as defaultUpdateTaskContent,
 } from "execute/queries";
 import { generateSectionsContent as defaultGenerateSectionsContent } from "execute/chains/generateSectionContent";
 
@@ -44,6 +45,9 @@ type Props = {
   saveBulkTasksContent?: (
     tasksContent: TGeneratedTasksContent[]
   ) => Promise<{ data: null; error: PostgrestError | null }>;
+  updateTaskContent?: (
+    taskContent: TGeneratedTasksContent
+  ) => Promise<{ data: null; error: PostgrestError | null }>;
 };
 
 export const PreviewMode: React.FC<Props> = ({
@@ -52,6 +56,7 @@ export const PreviewMode: React.FC<Props> = ({
   getExercisePreview = defaultGetExercisePreview,
   generateSectionsContent = defaultGenerateSectionsContent,
   saveBulkTasksContent = defaultSaveBulkTasksContent,
+  updateTaskContent = defaultUpdateTaskContent,
 }) => {
   const [selectedSectionIndex, setSelectedSectionIndex] = useState<number>(0);
   const hasUserSelectedSectionRef = useRef<boolean>(false);
@@ -107,6 +112,8 @@ export const PreviewMode: React.FC<Props> = ({
           sections={generatedSections}
           onTopSectionChangeCallback={onTopSectionChangeCallback}
           hasUserSelectedSectionRef={hasUserSelectedSectionRef}
+          updateTaskContent={updateTaskContent}
+          refetchSections={refetchSections}
         />
       </GridItem>
     </Grid>

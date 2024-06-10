@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Popover,
   PopoverTrigger,
@@ -32,6 +32,8 @@ export const ToolbarPopover: React.FC<Props> = ({
   setTargetRange,
   handleComment,
 }) => {
+  const triggerRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -45,16 +47,48 @@ export const ToolbarPopover: React.FC<Props> = ({
     };
   }, [setTargetRange]);
 
+  useEffect(() => {
+    const updatePosition = () => {
+      if (!targetRange || !triggerRef.current) return;
+
+      const scrollableParent = findScrollableParent(triggerRef.current);
+      const scrollY = scrollableParent.scrollTop ?? window.scrollY;
+      const scrollX = scrollableParent.scrollLeft ?? window.scrollX;
+
+      const top = targetRange.top + scrollY;
+      const left = targetRange.left + scrollX + targetRange.width / 2;
+
+      triggerRef.current.style.top = `${top - 40}px`;
+      triggerRef.current.style.left = `${left}px`;
+    };
+
+    const findScrollableParent = (element: HTMLElement | null) => {
+      while (element && element !== document.body) {
+        const { overflowY } = window.getComputedStyle(element);
+        if (overflowY === 'auto' || overflowY === 'scroll') {
+          return element;
+        }
+        element = element.parentElement;
+      }
+      return document.scrollingElement || document.documentElement;
+    };
+
+    const scrollableParent = findScrollableParent(triggerRef.current);
+    scrollableParent?.addEventListener('scroll', updatePosition);
+    window.addEventListener('resize', updatePosition);
+
+    updatePosition(); // Initial position update
+
+    return () => {
+      scrollableParent?.removeEventListener('scroll', updatePosition);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [targetRange]);
+
   return (
     <Popover isOpen={!!targetRange} placement="top">
       <PopoverTrigger>
-        <div
-          style={{
-            position: "absolute",
-            top: `${(targetRange?.top || 0) - 40 + window.scrollY}px`,
-            left: `${(targetRange?.left || 0) + (targetRange?.width || 0)/2 + window.scrollX}px`,
-          }}
-        />
+        <div ref={triggerRef} style={{ position: "absolute", visibility: targetRange ? 'visible' : 'hidden' }} />
       </PopoverTrigger>
       <PopoverContent height={"60px"} width={"fit-content"}>
         <PopoverArrow />

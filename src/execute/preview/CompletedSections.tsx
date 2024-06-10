@@ -15,6 +15,7 @@ import { useSaveContent } from "execute/hooks/useSaveContent";
 import { generateSectionsContent as defaultGenerateSectionsContent } from "execute/chains/generateSectionContent";
 import { saveBulkTasksContent as defaultSaveBulkTasksContent } from "execute/queries";
 import { getTasksTitles } from "execute/preview/utils";
+import { deserialize } from "common/components/slate-editor/utils";
 
 type Props = {
   sections: PreviewSection[];
@@ -77,17 +78,18 @@ export const CompletedSections: React.FC<Props> = ({
       sections?.forEach((section, index) => {
         if (selectedSectionsMap[index]) {
           section.tasks.forEach((task: PreviewTasks) => {
-            generatedTaskContent.push({
-              taskId: task.id,
-              content: content[index],
-            });
+            if (content && content[index]) {
+              const data = deserialize(content[index]);
+              generatedTaskContent.push({
+                task_id: task.id,
+                data: JSON.stringify(data),
+              });
+            }
           });
         }
       });
 
-      saveBulkTasksContentMutation({
-        tasksContent: generatedTaskContent,
-      });
+      saveBulkTasksContentMutation(generatedTaskContent);
     }
   }, [
     content,

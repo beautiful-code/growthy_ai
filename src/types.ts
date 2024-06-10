@@ -112,6 +112,6 @@ export type TConvo = {
 export type TExecutionModes = "Outline" | "Notes" | "Publish";
 
 export type TGeneratedTasksContent = {
-  taskId: string;
-  content: string;
+  task_id: string;
+  data: string;
 };

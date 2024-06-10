@@ -12,7 +12,7 @@ export const useGetExercisePreview = ({
   ) => Promise<PreviewSection[] | undefined>;
 }) => {
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["exercise-preivew", exerciseId],
+    queryKey: ["exercise-preview", exerciseId],
     queryFn: () => getExercisePreview(exerciseId),
   });
 

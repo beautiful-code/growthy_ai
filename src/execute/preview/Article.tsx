@@ -1,15 +1,20 @@
 import React, { useRef, useEffect, MutableRefObject } from "react";
 import { Box, Text } from "@chakra-ui/react";
 
-// import { MarkdownEditor } from "common/components/MarkdownEditor";
-import { SlateEditor } from "common/components/slate-editor/SlateEditor";
-import { PreviewSection } from "types";
+import { CustomElement, SlateEditor } from "common/components/slate-editor/SlateEditor";
+import { PreviewSection, TGeneratedTasksContent } from "types";
+import { useUpdateTaskContent } from "execute/hooks/useUpdateTaskContent";
+import { PostgrestError } from "@supabase/supabase-js";
 
 type Props = {
   sections: PreviewSection[] | undefined;
   selectedSectionIndex: number;
   onTopSectionChangeCallback: (id: number) => void;
   hasUserSelectedSectionRef: MutableRefObject<boolean>;
+  updateTaskContent?: (
+    taskContent: TGeneratedTasksContent
+  ) => Promise<{ error: PostgrestError | null }>;
+  refetchSections: () => void;
 };
 
 export const Article: React.FC<Props> = ({
@@ -17,11 +22,20 @@ export const Article: React.FC<Props> = ({
   sections,
   onTopSectionChangeCallback,
   hasUserSelectedSectionRef,
+  updateTaskContent,
+  refetchSections,
 }) => {
   const sectionsContainerRef = useRef<HTMLDivElement | null>(null);
   const visibleSectionRefs = useRef<(HTMLDivElement | null)[]>(
     new Array(sections?.length || 0).fill(null)
   );
+
+  const { updateTaskContentMutation } = useUpdateTaskContent({
+    updateTaskContent,      
+    onSuccess: () => {
+      refetchSections();
+    }
+  });
 
   useEffect(() => {
     const element = document.getElementById(
@@ -79,6 +93,7 @@ export const Article: React.FC<Props> = ({
         // Max height calculation is hacky
         maxHeight: "calc(101vh - 135px)",
         overflowY: "scroll",
+        position: "relative",
       }}
     >
       {sections?.map((section, index) => (
@@ -99,8 +114,16 @@ export const Article: React.FC<Props> = ({
           </Box>
           {section?.tasks?.map((task, index) => {
             return task?.content ? (
-              // <MarkdownEditor key={index} markdown={task.content} />
-              <SlateEditor key={index} initialText={task.content} />
+              <SlateEditor
+                key={index}
+                initialText={task.content}
+                onEditorChangeCallback={(markdown: CustomElement[]) => {
+                  updateTaskContentMutation({
+                    task_id: task.id,
+                    data: JSON.stringify(markdown),
+                  });
+                }}
+              />
             ) : (
               <Box
                 height="200px"

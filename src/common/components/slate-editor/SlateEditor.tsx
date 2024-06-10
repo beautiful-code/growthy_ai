@@ -11,10 +11,17 @@ import { BaseEditor, Text } from "slate";
 import { ReactEditor } from "slate-react";
 import { Grid, Box, GridItem } from "@chakra-ui/react";
 import { Leaf } from "./Leaf";
-import { serialize, toggleFormat } from "./utils";
+import { toggleFormat } from "./utils";
 import { ToolbarPopover } from "./ToolbarPopover";
 import { Comments } from "./Comments";
 import { v4 as uuid } from "uuid";
+import { saveEditorComments } from "common/queries";
+import { useGetCurrentUserId } from "common/hooks/useGetCurrentUserId";
+
+type TSlateEditor = {
+  initialText?: string;
+  onEditorChangeCallback?: (markdown: CustomElement[]) => void;
+};
 
 export type CustomElement = {
   type: "paragraph" | "code";
@@ -38,8 +45,22 @@ declare module "slate" {
   }
 }
 
-// const initialMarkdown = `# Hello World\nThis is **bold** and *italic* text.\n\n\`\`\`code block\`\`\``;
-// const initialValue = deserialize(initialMarkdown);
+// const initialMarkdownn = `# Hello World\nThis is **bold** and *italic* text.\n\n\`\`\`code block\`\`\``
+
+// const initialValue: CustomElement[] = [
+//   {
+//     type: "paragraph",
+//     children: [
+//       {
+//         text: "",
+//         bold: false,
+//         italic: false,
+//         underline: false,
+//         comment: "",
+//       },
+//     ],
+//   },
+// ];
 
 const CodeElement: React.FC<RenderElementProps> = ({
   attributes,
@@ -52,16 +73,17 @@ const CodeElement: React.FC<RenderElementProps> = ({
   );
 };
 
-type TSlateEditor = {
-  initialText?: string;
-};
-
-export const SlateEditor: React.FC<TSlateEditor> = ({ initialText }) => {
+export const SlateEditor: React.FC<TSlateEditor> = ({
+  initialText: initialMarkdown = "",
+  onEditorChangeCallback,
+}) => {
+  const initialValue = JSON.parse(initialMarkdown);
+  console.log("inititalMarkdown", { initialMarkdown, initialValue });
   const [editor] = useState(() => withReact(createEditor()));
   const [targetRange, setTargetRange] = useState<DOMRect | null>(null);
   const [shiftKeyPressed, setShiftKeyPressed] = useState(false);
   const [ctrlKeyPressed, setCtrlKeyPressed] = useState(false);
-  const [markdown, setMarkdown] = useState("");
+  const { currentUserId } = useGetCurrentUserId();
 
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -192,6 +214,8 @@ export const SlateEditor: React.FC<TSlateEditor> = ({ initialText }) => {
       { match: (n) => Text.isText(n), split: true }
     );
 
+    saveEditorComments([{ commentId: id, text: "", authorId: currentUserId }]);
+
     setTargetRange(null);
   };
 
@@ -208,13 +232,17 @@ export const SlateEditor: React.FC<TSlateEditor> = ({ initialText }) => {
     }
   }, []);
 
-  const handleChange = useCallback((newValue: CustomElement[]) => {
-    setTargetRange(null);
-    const markdownString = serialize(newValue);
-    setMarkdown(markdownString);
-  }, []);
+  const handleChange = useCallback(
+    (newValue: CustomElement[]) => {
+      setTargetRange(null);
+      if (onEditorChangeCallback) {
+        onEditorChangeCallback(newValue);
+      }
+    },
+    [onEditorChangeCallback]
+  );
 
-  console.log({ editor, markdown });
+  console.log({ editor });
 
   return (
     <Grid templateColumns="70% 30%" gap={4}>
@@ -222,20 +250,7 @@ export const SlateEditor: React.FC<TSlateEditor> = ({ initialText }) => {
         <Box ref={editorRef}>
           <Slate
             editor={editor}
-            initialValue={[
-              {
-                type: "paragraph",
-                children: [
-                  {
-                    text: initialText || "",
-                    bold: false,
-                    italic: false,
-                    underline: false,
-                    comment: "",
-                  },
-                ],
-              },
-            ]}
+            initialValue={initialValue}
             onChange={(newValue) => handleChange(newValue as CustomElement[])}
           >
             <Editable

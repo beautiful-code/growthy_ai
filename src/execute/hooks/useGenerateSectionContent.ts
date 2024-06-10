@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
-import { getXMLStringFromMarkdown } from "growth-exercise/chains/utils";
 import { generateSectionsContent as defaultGenerateSectionsContent } from "execute/chains/generateSectionContent";
 
 type TUseGenerateContentResp = {
@@ -38,10 +37,8 @@ export const useGenerateSectionsContent = ({
   blog_article_tasks_notes = [],
   generateSectionsContent = defaultGenerateSectionsContent,
 }: TUseGenerateContentArgs): TUseGenerateContentResp => {
-  const [generatedSectionsData, setGeneratedSectionsData] = useState<string[]>(
-    []
-  );
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const generatedSectionsDataRef = useRef<string[]>([]);
+  const currentIndexRef = useRef(0);
 
   const { data, error, isLoading, isFetching, refetch } = useQuery({
     queryKey: ["generate-sections-conent"],
@@ -49,8 +46,9 @@ export const useGenerateSectionsContent = ({
       generateSectionsContent({
         blog_article_title,
         blog_article_xml,
-        blog_article_task: blog_article_tasks[currentIndex],
-        blog_article_task_notes: blog_article_tasks_notes[currentIndex],
+        blog_article_task: blog_article_tasks[currentIndexRef.current],
+        blog_article_task_notes:
+          blog_article_tasks_notes[currentIndexRef.current],
       }),
     enabled,
   });
@@ -61,26 +59,27 @@ export const useGenerateSectionsContent = ({
 
   useEffect(() => {
     console.log("in use effect");
-    if (data && !isLoading && currentIndex < blog_article_tasks.length) {
-      console.log("data", data);
-      setGeneratedSectionsData([
-        ...generatedSectionsData,
-        data ? getXMLStringFromMarkdown(data) : "null",
-      ]);
-      setCurrentIndex(currentIndex + 1);
+    if (
+      data &&
+      !isLoading &&
+      currentIndexRef.current < blog_article_tasks.length - 1
+    ) {
+      // generatedSectionsDataRef.current.push(data ? getXMLStringFromMarkdown(data) : "");
+      generatedSectionsDataRef.current.push(data || "");
+      currentIndexRef.current = currentIndexRef.current + 1;
       refetch();
     }
   }, [
     isLoading,
     data,
-    currentIndex,
+    currentIndexRef,
     blog_article_tasks.length,
     refetch,
-    generatedSectionsData,
+    generatedSectionsDataRef,
   ]);
 
   return {
-    content: generatedSectionsData,
+    content: generatedSectionsDataRef.current,
     isLoading,
     isFetching,
     refetch,

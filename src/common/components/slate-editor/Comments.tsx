@@ -1,44 +1,77 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { BaseRange } from "slate";
 import { ReactEditor } from "slate-react";
 import { Portal, Textarea } from "@chakra-ui/react";
 import { CustomElement } from "./SlateEditor";
+import { getEditorComment, saveEditorComments } from "common/queries";
+import { useGetCurrentUserId } from "common/hooks/useGetCurrentUserId";
 
 type CommentsProps = {
   editor: ReactEditor;
 };
 
-type Comment = {
+export type TComment = {
   commentId: string;
   text: string;
+  authorId: string;
 };
 
-type Selection = {
+type TSelection = {
   selection: BaseRange;
   commentId: string;
 };
 
-type Position = {
+type TPosition = {
   top: number;
   left: number;
   commentId: string;
 };
 
 export const Comments: React.FC<CommentsProps> = ({ editor }) => {
-  const [positions, setPositions] = useState<Position[]>([]);
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [positions, setPositions] = useState<TPosition[]>([]);
+  const [comments, setComments] = useState<TComment[]>([]);
+  const commentsRef = useRef<TComment[]>([]);
+  const { currentUserId } = useGetCurrentUserId();
+  console.log("currentUserId", currentUserId);
+  const fetchComments = useCallback(async (commentIds: string[]) => {
+    const newComments: TComment[] = [];
+
+    for (const commentId of commentIds) {
+      const commentExists = commentsRef.current.some(
+        (c) => c.commentId === commentId
+      );
+      if (!commentExists) {
+        const comment = await getEditorComment(commentId);
+        if (comment.data) {
+          console.log("comment.data", comment.data);
+          newComments.push({
+            commentId,
+            text: comment.data.text,
+            authorId: comment.data.author,
+          });
+        }
+      }
+    }
+
+    if (newComments.length > 0) {
+      commentsRef.current = [...commentsRef.current, ...newComments];
+      setComments(commentsRef.current);
+    }
+  }, []);
 
   const updatePositions = useCallback(() => {
     try {
-      const selections: Selection[] = [];
-      const newPositions: Position[] = [];
+      const selections: TSelection[] = [];
+      const newPositions: TPosition[] = [];
       const children = editor.children;
-      // Fetch selections whose comment property is present
+
+      const commentIds: string[] = [];
+
       for (let i = 0; i < children.length; i++) {
         const child = children[i] as CustomElement;
         child.children.forEach((ch, index) => {
           if (ch.comment) {
-            setComments([...comments, { commentId: ch.comment, text: "" }]);
+            commentIds.push(ch.comment);
             selections.push({
               selection: {
                 anchor: { path: [i, index], offset: 0 },
@@ -49,6 +82,8 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
           }
         });
       }
+
+      fetchComments(commentIds);
 
       selections.forEach((sel) => {
         const domRange = ReactEditor.toDOMRange(editor, sel.selection);
@@ -70,7 +105,7 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
     } catch (error) {
       console.error("Error while updating comment positions:", error);
     }
-  }, [editor]);
+  }, [editor, fetchComments]);
 
   useEffect(() => {
     updatePositions();
@@ -88,10 +123,15 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
   }, [editor.selection, updatePositions]);
 
   const handleCommentChange = (commentId: string, text: string) => {
-    setComments(
-      comments.map((c) => (c.commentId === commentId ? { commentId, text } : c))
+    const updatedComments = commentsRef.current.map((c) =>
+      c.commentId === commentId ? { commentId, text, authorId: c.authorId } : c
     );
+    commentsRef.current = updatedComments;
+    setComments(updatedComments);
+    saveEditorComments(updatedComments);
   };
+
+  console.log("commentsRef.current", commentsRef.current, comments);
 
   return (
     <div style={{ position: "relative" }}>
@@ -111,8 +151,17 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
               placeholder="Add a comment..."
               resize="none"
               focusBorderColor="black.500"
+              value={
+                comments.find((c) => c.commentId === position.commentId)
+                  ?.text || ""
+              }
               onChange={(e) =>
                 handleCommentChange(position.commentId, e.target.value)
+              }
+              isReadOnly={
+                currentUserId !==
+                comments.find((c) => c.commentId === position.commentId)
+                  ?.authorId
               }
             />
           </div>

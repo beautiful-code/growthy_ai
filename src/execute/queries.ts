@@ -4,7 +4,13 @@ import { UIBlogArticle } from "domain/blog-article/UIBlogArticle";
 import { UISection } from "domain/common/UISection";
 
 import { getContentByTaskIds } from "publication/queries";
-import { TGrowthExercise, PreviewSection, Dictionary, TTaskNote } from "types";
+import {
+  TGrowthExercise,
+  PreviewSection,
+  Dictionary,
+  TTaskNote,
+  TGeneratedTasksContent,
+} from "types";
 
 export const getExercise = async (
   id: string
@@ -40,7 +46,7 @@ export const getExercisePreview = async (exerciseId: string) => {
   const bulkContent = (await getContentByTaskIds(allTaskIds)) || [];
   const taskContent: Dictionary = {};
   bulkContent.forEach((content) => {
-    taskContent[content.task_id] = content.data.join("\n");
+    taskContent[content.task_id] = content.data;
   });
 
   const previewSections: PreviewSection[] = sections.map((section) => {
@@ -64,15 +70,23 @@ export const getExercisePreview = async (exerciseId: string) => {
   return previewSections;
 };
 
-export const saveBulkTasksContent = async (
-  tasks: {
-    taskId: string;
-    content: string;
-  }[]
-) => {
+export const saveBulkTasksContent = async (tasks: TGeneratedTasksContent[]) => {
   const { data, error } = await supabaseClient.from("content").upsert(tasks);
 
   return { data, error };
+};
+
+export const updateTaskContent = async (task: TGeneratedTasksContent) => {
+  const { error } = await supabaseClient
+    .from("content")
+    .update({ data: task.data })
+    .eq("task_id", task.task_id);
+
+  if (error) {
+    console.log("error", error);
+  }
+
+  return { error };
 };
 
 export const getBulkTaskNotes = async (
