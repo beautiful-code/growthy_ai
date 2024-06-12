@@ -16,7 +16,7 @@ import { ToolbarPopover } from "./ToolbarPopover";
 import { Comments } from "./Comments";
 import { v4 as uuid } from "uuid";
 import { saveEditorComments } from "common/queries";
-import { useGetCurrentUserId } from "common/hooks/useGetCurrentUserId";
+import { useGetCurrentUser } from "my-growthy/hooks";
 
 type TSlateEditor = {
   initialText?: string;
@@ -78,12 +78,11 @@ export const SlateEditor: React.FC<TSlateEditor> = ({
   onEditorChangeCallback,
 }) => {
   const initialValue = JSON.parse(initialMarkdown);
-  console.log("inititalMarkdown", { initialMarkdown, initialValue });
   const [editor] = useState(() => withReact(createEditor()));
   const [targetRange, setTargetRange] = useState<DOMRect | null>(null);
   const [shiftKeyPressed, setShiftKeyPressed] = useState(false);
   const [ctrlKeyPressed, setCtrlKeyPressed] = useState(false);
-  const { currentUserId } = useGetCurrentUserId();
+  const { currentUser } = useGetCurrentUser();
 
   const editorRef = useRef<HTMLDivElement>(null);
 
@@ -214,7 +213,7 @@ export const SlateEditor: React.FC<TSlateEditor> = ({
       { match: (n) => Text.isText(n), split: true }
     );
 
-    saveEditorComments([{ commentId: id, text: "", authorId: currentUserId }]);
+    saveEditorComments([{ commentId: id, text: "", author: currentUser, enableReply: false }]);
 
     setTargetRange(null);
   };
@@ -241,8 +240,6 @@ export const SlateEditor: React.FC<TSlateEditor> = ({
     },
     [onEditorChangeCallback]
   );
-
-  console.log({ editor });
 
   return (
     <Grid templateColumns="70% 30%" gap={4}>

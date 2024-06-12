@@ -1,19 +1,40 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useRef,
+  useMemo,
+} from "react";
 import { BaseRange } from "slate";
 import { ReactEditor } from "slate-react";
-import { Portal, Textarea } from "@chakra-ui/react";
+import {
+  Box,
+  Portal,
+  Textarea,
+  Text,
+  Avatar,
+  Flex,
+  Button,
+} from "@chakra-ui/react";
 import { CustomElement } from "./SlateEditor";
-import { getEditorComment, saveEditorComments } from "common/queries";
-import { useGetCurrentUserId } from "common/hooks/useGetCurrentUserId";
+import {
+  getEditorComments,
+  saveEditorComments,
+  updateEditorComment,
+} from "common/queries";
+import { useGetCurrentUser } from "my-growthy/hooks";
+import { TUser } from "types";
 
 type CommentsProps = {
   editor: ReactEditor;
 };
 
 export type TComment = {
+  dbId?: string;
   commentId: string;
   text: string;
-  authorId: string;
+  author: TUser;
+  enableReply: boolean;
 };
 
 type TSelection = {
@@ -29,32 +50,51 @@ type TPosition = {
 
 export const Comments: React.FC<CommentsProps> = ({ editor }) => {
   const [positions, setPositions] = useState<TPosition[]>([]);
-  const [comments, setComments] = useState<TComment[]>([]);
+  const [editModes, setEditModes] = useState<{ [key: string]: boolean }>({});
+  const [visibleReply, setVisibleReply] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+  const [, setComments] = useState<TComment[]>([]);
+  const [commentIdAndCommentsMap, setCommentIdAndCommentsMap] = useState<{
+    [key: string]: TComment[];
+  }>({});
+
   const commentsRef = useRef<TComment[]>([]);
-  const { currentUserId } = useGetCurrentUserId();
-  console.log("currentUserId", currentUserId);
+  const editRefs = useRef<{ [key: string]: HTMLTextAreaElement | null }>({});
+  const replyRefs = useRef<{ [key: string]: string }>({});
+
+  const commentIds: string[] = useMemo(() => {
+    return [];
+  }, []);
+
+  const { currentUser } = useGetCurrentUser();
+
   const fetchComments = useCallback(async (commentIds: string[]) => {
-    const newComments: TComment[] = [];
+    const allComments: TComment[] = [];
 
     for (const commentId of commentIds) {
-      const commentExists = commentsRef.current.some(
-        (c) => c.commentId === commentId
-      );
-      if (!commentExists) {
-        const comment = await getEditorComment(commentId);
-        if (comment.data) {
-          console.log("comment.data", comment.data);
+      const newComments: TComment[] = [];
+      const comment = await getEditorComments(commentId);
+      if (comment.data) {
+        comment.data.forEach((c) => {
           newComments.push({
             commentId,
-            text: comment.data.text,
-            authorId: comment.data.author,
+            text: c.text,
+            author: c.author,
+            enableReply: c.enableReply,
+            dbId: c.dbId,
           });
-        }
+        });
       }
+      setCommentIdAndCommentsMap((prev) => ({
+        ...prev,
+        [commentId]: newComments,
+      }));
+      allComments.push(...newComments);
     }
 
-    if (newComments.length > 0) {
-      commentsRef.current = [...commentsRef.current, ...newComments];
+    if (allComments.length > 0) {
+      commentsRef.current = [...commentsRef.current, ...allComments];
       setComments(commentsRef.current);
     }
   }, []);
@@ -64,8 +104,6 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
       const selections: TSelection[] = [];
       const newPositions: TPosition[] = [];
       const children = editor.children;
-
-      const commentIds: string[] = [];
 
       for (let i = 0; i < children.length; i++) {
         const child = children[i] as CustomElement;
@@ -105,7 +143,7 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
     } catch (error) {
       console.error("Error while updating comment positions:", error);
     }
-  }, [editor, fetchComments]);
+  }, [commentIds, editor, fetchComments]);
 
   useEffect(() => {
     updatePositions();
@@ -122,49 +160,171 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
     };
   }, [editor.selection, updatePositions]);
 
-  const handleCommentChange = (commentId: string, text: string) => {
+  const handleCommentSave = (
+    commentDbId: string,
+    commentId: string,
+    text: string
+  ) => {
     const updatedComments = commentsRef.current.map((c) =>
-      c.commentId === commentId ? { commentId, text, authorId: c.authorId } : c
+      c.dbId === commentDbId
+        ? {
+            commentId: c.commentId,
+            text,
+            author: c.author,
+            enableReply: c.enableReply,
+            dbId: commentDbId,
+          }
+        : c
     );
     commentsRef.current = updatedComments;
+    commentIdAndCommentsMap[commentId].map((c) => {
+      if (c.dbId === commentDbId) {
+        c.text = text;
+      }
+    });
     setComments(updatedComments);
-    saveEditorComments(updatedComments);
+    updatedComments.forEach((c) => {
+      updateEditorComment(c);
+    });
   };
 
-  console.log("commentsRef.current", commentsRef.current, comments);
+  const handleEditClick = (
+    commentDbId: string,
+    isSave: boolean,
+    commentId: string
+  ) => {
+    if (!isSave) {
+      editRefs.current[commentDbId]?.focus();
+    } else {
+      handleCommentSave(
+        commentDbId || "",
+        commentId,
+        editRefs.current[commentDbId]?.value || ""
+      );
+    }
+
+    setEditModes((prevEditModes) => ({
+      ...prevEditModes,
+      [commentDbId]: !prevEditModes[commentDbId],
+    }));
+  };
+
+  const handleReply = async (commentId: string) => {
+    setVisibleReply((prevVisibleReply) => ({
+      ...prevVisibleReply,
+      [commentId]: false,
+    }));
+    const replyText = replyRefs.current[commentId];
+    await saveEditorComments([
+      {
+        commentId: commentId,
+        text: replyText,
+        author: currentUser,
+        enableReply: false,
+      },
+    ]);
+    await fetchComments(commentIds);
+  };
+
+  const handleReplyChange = (commentId: string, text: string) => {
+    replyRefs.current[commentId] = text;
+  };
+
+  console.log("visibleReply", { visibleReply });
 
   return (
     <div style={{ position: "relative" }}>
-      {positions.map((position, index) => (
-        <Portal key={index}>
-          <div
+      {Object.entries(commentIdAndCommentsMap).map(([commentId, comments]) => (
+        <Portal key={commentId}>
+          <Box
             style={{
               position: "absolute",
-              top: `${position.top}px`,
+              top: `${positions.find((p) => p.commentId === commentId)?.top}px`,
               left: `70%`,
-              backgroundColor: "white",
               padding: "5px",
               zIndex: 10,
+              width: "400px",
             }}
+            backgroundColor={"gray.100"}
+            border={"1px solid whitesmoke"}
+            borderRadius={15}
           >
-            <Textarea
-              placeholder="Add a comment..."
-              resize="none"
-              focusBorderColor="black.500"
-              value={
-                comments.find((c) => c.commentId === position.commentId)
-                  ?.text || ""
-              }
-              onChange={(e) =>
-                handleCommentChange(position.commentId, e.target.value)
-              }
-              isReadOnly={
-                currentUserId !==
-                comments.find((c) => c.commentId === position.commentId)
-                  ?.authorId
-              }
-            />
-          </div>
+            {comments.map((comment) => (
+              <React.Fragment key={comment.dbId}>
+                <Flex alignItems={"center"} my={"10px"} mx={"10px"} mr={"30px"}>
+                  <Avatar
+                    size={"sm"}
+                    name={comment?.author.username}
+                    src={comment?.author.avatar_url}
+                    bgColor={"#D9D9D9"}
+                    mr={2}
+                  />
+                  <Text fontSize="sm" fontWeight={"normal"}>
+                    {comment?.author.username}
+                  </Text>
+                  {currentUser.id === comment.author.id && (
+                    <Button
+                      p={2}
+                      ml={"20px"}
+                      onClick={() =>
+                        handleEditClick(
+                          comment.dbId || "",
+                          editModes[comment.dbId || ""],
+                          commentId
+                        )
+                      }
+                    >
+                      {editModes[comment.dbId || ""] ? "Save" : "Edit"}
+                    </Button>
+                  )}
+                </Flex>
+
+                <Textarea
+                  placeholder="Add a comment..."
+                  resize="none"
+                  focusBorderColor="black.500"
+                  defaultValue={comment?.text || ""}
+                  isReadOnly={!editModes[comment.dbId || ""]}
+                  border={"none"}
+                  _hover={{
+                    backgroundColor:
+                      !editModes[comment.dbId || ""] && "gray.200",
+                  }}
+                  borderRadius={15}
+                  ref={(el) => (editRefs.current[comment.dbId || ""] = el)}
+                  onClick={() => {
+                    if (!editModes[comment.dbId || ""]) {
+                      setVisibleReply((prev) => ({
+                        ...prev,
+                        [commentId]: !prev[commentId],
+                      }));
+                    }
+                  }}
+                />
+              </React.Fragment>
+            ))}
+
+            {visibleReply[commentId] && (
+              <>
+                <Textarea
+                  placeholder="Add a reply..."
+                  resize="none"
+                  focusBorderColor="black.500"
+                  borderRadius={15}
+                  mt={"10px"}
+                  backgroundColor={"white"}
+                  onChange={(e) => handleReplyChange(commentId, e.target.value)}
+                />
+                <Button
+                  p={1}
+                  mt={"10px"}
+                  onClick={() => handleReply(commentId)}
+                >
+                  Reply
+                </Button>
+              </>
+            )}
+          </Box>
         </Portal>
       ))}
     </div>

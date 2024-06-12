@@ -73,10 +73,7 @@ export const saveEditorComments = async (
       selection_id: comment.commentId,
       author: userId,
       text: comment.text,
-    })),
-    {
-      onConflict: "selection_id", // Handle conflicts based on the selection_id
-    }
+    }))
   );
 
   if (error) {
@@ -87,21 +84,60 @@ export const saveEditorComments = async (
   return { error: null };
 };
 
-export const getEditorComment = async (
+export const updateEditorComment = async (
+  comment: TComment
+): Promise<{
+  error: PostgrestError | null;
+}> => {
+  const { error } = await supabaseClient
+    .from("comments")
+    .update({ text: comment.text })
+    .eq("id", comment.dbId)
+    .eq("selection_id", comment.commentId);
+
+  if (error) {
+    console.log("error", error);
+    return { error };
+  }
+
+  return { error: null };
+};
+
+export const getEditorComments = async (
   commentId: string
 ): Promise<{
-  data: any | null;
+  data: TComment[] | null;
   error: PostgrestError | null;
 }> => {
   const { data, error } = await supabaseClient
     .from("comments")
     .select("*")
-    .eq("selection_id", commentId);
+    .eq("selection_id", commentId)
+    .order("created_at", { ascending: true });
 
   if (error) {
     console.log("error", error);
     return { data: null, error };
   }
-  console.log("commentsRef.current", data);
-  return { data: data[0], error: null };
+
+  const res: TComment[] = [];
+
+  for (const comment of data) {
+    comment.enableReply = false;
+    const user = await getUserById(comment.author);
+
+    if (user) {
+      res.push({
+        commentId: comment.selection_id,
+        text: comment.text,
+        author: user,
+        enableReply: false,
+        dbId: comment.id,
+      });
+    }
+  }
+
+  console.log("query", { commentId, res });
+
+  return { data: res, error: null };
 };
