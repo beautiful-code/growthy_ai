@@ -58,7 +58,6 @@ export const useGenerateSectionsContent = ({
   }
 
   useEffect(() => {
-    console.log("in use effect");
     if (
       data &&
       !isLoading &&

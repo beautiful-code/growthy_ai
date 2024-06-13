@@ -24,6 +24,7 @@ import {
 } from "common/queries";
 import { useGetCurrentUser } from "my-growthy/hooks";
 import { TUser } from "types";
+import { v4 as uuid } from "uuid";
 
 type CommentsProps = {
   editor: ReactEditor;
@@ -71,7 +72,6 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
 
   const fetchComments = useCallback(async (commentIds: string[]) => {
     const allComments: TComment[] = [];
-
     for (const commentId of commentIds) {
       const newComments: TComment[] = [];
       const comment = await getEditorComments(commentId);
@@ -86,6 +86,14 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
           });
         });
       }
+
+      if (newComments.length > 0 && newComments[0].text.length === 0) {
+        setEditModes((prevEditModes) => ({
+          ...prevEditModes,
+          [newComments[0].dbId || ""]: true,
+        }));
+      }
+
       setCommentIdAndCommentsMap((prev) => ({
         ...prev,
         [commentId]: newComments,
@@ -104,7 +112,7 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
       const selections: TSelection[] = [];
       const newPositions: TPosition[] = [];
       const children = editor.children;
-
+      commentIds.length = 0;
       for (let i = 0; i < children.length; i++) {
         const child = children[i] as CustomElement;
         child.children.forEach((ch, index) => {
@@ -120,8 +128,6 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
           }
         });
       }
-
-      fetchComments(commentIds);
 
       selections.forEach((sel) => {
         const domRange = ReactEditor.toDOMRange(editor, sel.selection);
@@ -143,10 +149,11 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
     } catch (error) {
       console.error("Error while updating comment positions:", error);
     }
-  }, [commentIds, editor, fetchComments]);
+  }, [commentIds, editor]);
 
   useEffect(() => {
     updatePositions();
+    fetchComments(commentIds);
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Enter" || event.key === "Backspace") {
         updatePositions();
@@ -158,51 +165,10 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [editor.selection, updatePositions]);
+  }, [commentIds, editor.selection, fetchComments, updatePositions]);
 
-  const handleCommentSave = (
-    commentDbId: string,
-    commentId: string,
-    text: string
-  ) => {
-    const updatedComments = commentsRef.current.map((c) =>
-      c.dbId === commentDbId
-        ? {
-            commentId: c.commentId,
-            text,
-            author: c.author,
-            enableReply: c.enableReply,
-            dbId: commentDbId,
-          }
-        : c
-    );
-    commentsRef.current = updatedComments;
-    commentIdAndCommentsMap[commentId].map((c) => {
-      if (c.dbId === commentDbId) {
-        c.text = text;
-      }
-    });
-    setComments(updatedComments);
-    updatedComments.forEach((c) => {
-      updateEditorComment(c);
-    });
-  };
-
-  const handleEditClick = (
-    commentDbId: string,
-    isSave: boolean,
-    commentId: string
-  ) => {
-    if (!isSave) {
-      editRefs.current[commentDbId]?.focus();
-    } else {
-      handleCommentSave(
-        commentDbId || "",
-        commentId,
-        editRefs.current[commentDbId]?.value || ""
-      );
-    }
-
+  const handleEditClick = (commentDbId: string) => {
+    editRefs.current[commentDbId]?.focus();
     setEditModes((prevEditModes) => ({
       ...prevEditModes,
       [commentDbId]: !prevEditModes[commentDbId],
@@ -210,19 +176,43 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
   };
 
   const handleReply = async (commentId: string) => {
+    const replyDbId = uuid();
+
+    // Hide the reply input box
     setVisibleReply((prevVisibleReply) => ({
       ...prevVisibleReply,
       [commentId]: false,
     }));
+
     const replyText = replyRefs.current[commentId];
+
+    // Update the map with the new reply
+    setCommentIdAndCommentsMap((prev) => ({
+      ...prev,
+      [commentId]: [
+        ...prev[commentId],
+        {
+          commentId,
+          text: replyText,
+          author: currentUser,
+          enableReply: false,
+          dbId: replyDbId,
+        },
+      ],
+    }));
+
+    // Save the reply
     await saveEditorComments([
       {
-        commentId: commentId,
+        commentId,
         text: replyText,
         author: currentUser,
         enableReply: false,
+        dbId: replyDbId,
       },
     ]);
+
+    // Fetch the latest comments
     await fetchComments(commentIds);
   };
 
@@ -230,7 +220,35 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
     replyRefs.current[commentId] = text;
   };
 
-  console.log("visibleReply", { visibleReply });
+  const handleReplyKeyDown = (
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
+    commentId: string
+  ) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      handleReply(commentId);
+    }
+  };
+
+  const handleCommentKeyDown = (
+    event: React.KeyboardEvent<HTMLTextAreaElement>,
+    commentDbId: string,
+    commentId: string
+  ) => {
+    if (event.key === "Enter") {
+      updateEditorComment({
+        commentId,
+        text: editRefs.current[commentDbId]?.value || "",
+        dbId: commentDbId,
+        author: currentUser,
+        enableReply: false,
+      } as TComment);
+
+      setEditModes((prevEditModes) => ({
+        ...prevEditModes,
+        [commentDbId]: !prevEditModes[commentDbId],
+      }));
+    }
+  };
 
   return (
     <div style={{ position: "relative" }}>
@@ -262,21 +280,16 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
                   <Text fontSize="sm" fontWeight={"normal"}>
                     {comment?.author.username}
                   </Text>
-                  {currentUser.id === comment.author.id && (
-                    <Button
-                      p={2}
-                      ml={"20px"}
-                      onClick={() =>
-                        handleEditClick(
-                          comment.dbId || "",
-                          editModes[comment.dbId || ""],
-                          commentId
-                        )
-                      }
-                    >
-                      {editModes[comment.dbId || ""] ? "Save" : "Edit"}
-                    </Button>
-                  )}
+                  {currentUser.id === comment.author.id &&
+                    !editModes[comment.dbId || ""] && (
+                      <Button
+                        p={2}
+                        ml={"20px"}
+                        onClick={() => handleEditClick(comment.dbId || "")}
+                      >
+                        Edit
+                      </Button>
+                    )}
                 </Flex>
 
                 <Textarea
@@ -300,29 +313,25 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
                       }));
                     }
                   }}
+                  cursor={!editModes[comment.dbId || ""] ? "pointer" : "auto"}
+                  onKeyDown={(e) =>
+                    handleCommentKeyDown(e, comment.dbId || "", commentId)
+                  }
                 />
               </React.Fragment>
             ))}
 
             {visibleReply[commentId] && (
-              <>
-                <Textarea
-                  placeholder="Add a reply..."
-                  resize="none"
-                  focusBorderColor="black.500"
-                  borderRadius={15}
-                  mt={"10px"}
-                  backgroundColor={"white"}
-                  onChange={(e) => handleReplyChange(commentId, e.target.value)}
-                />
-                <Button
-                  p={1}
-                  mt={"10px"}
-                  onClick={() => handleReply(commentId)}
-                >
-                  Reply
-                </Button>
-              </>
+              <Textarea
+                placeholder="Add a reply..."
+                resize="none"
+                focusBorderColor="black.500"
+                borderRadius={15}
+                mt={"10px"}
+                backgroundColor={"white"}
+                onChange={(e) => handleReplyChange(commentId, e.target.value)}
+                onKeyDown={(e) => handleReplyKeyDown(e, commentId)}
+              />
             )}
           </Box>
         </Portal>

@@ -2,6 +2,7 @@ import { supabaseClient } from "supabaseClient";
 import { PostgrestError } from "@supabase/supabase-js";
 import { TUser, TGrowthyConversation } from "types";
 import { TComment } from "./components/slate-editor/Comments";
+import { v4 as uuid } from "uuid";
 
 export const getUserById = async (id: string): Promise<TUser | null> => {
   // Return only one user by id
@@ -70,6 +71,7 @@ export const saveEditorComments = async (
 
   const { error } = await supabaseClient.from("comments").upsert(
     comments.map((comment) => ({
+      id: comment.dbId || uuid(),
       selection_id: comment.commentId,
       author: userId,
       text: comment.text,
@@ -136,8 +138,6 @@ export const getEditorComments = async (
       });
     }
   }
-
-  console.log("query", { commentId, res });
 
   return { data: res, error: null };
 };
