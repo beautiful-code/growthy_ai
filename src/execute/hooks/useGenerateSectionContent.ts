@@ -61,7 +61,7 @@ export const useGenerateSectionsContent = ({
     if (
       data &&
       !isLoading &&
-      currentIndexRef.current < blog_article_tasks.length - 1
+      currentIndexRef.current < blog_article_tasks.length
     ) {
       // generatedSectionsDataRef.current.push(data ? getXMLStringFromMarkdown(data) : "");
       generatedSectionsDataRef.current.push(data || "");

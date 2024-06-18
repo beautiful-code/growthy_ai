@@ -75,6 +75,7 @@ export const CompletedSections: React.FC<Props> = ({
     if (!isFetching) {
       const generatedTaskContent: TGeneratedTasksContent[] = [];
 
+      console.log({ selectedSectionsMap, content, sections });
       sections?.forEach((section, index) => {
         if (selectedSectionsMap[index]) {
           section.tasks.forEach((task: PreviewTasks) => {
@@ -88,6 +89,8 @@ export const CompletedSections: React.FC<Props> = ({
           });
         }
       });
+
+      console.log({ generatedTaskContent });
 
       saveBulkTasksContentMutation(generatedTaskContent);
     }
