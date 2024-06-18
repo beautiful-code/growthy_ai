@@ -128,15 +128,17 @@ export const CompletedSections: React.FC<Props> = ({
         </Flex>
       ))}
 
-      <GButton
-        disabled={isFetching || isPending || isLoading}
-        mt="8px"
-        size={"sm"}
-        onClick={handleGenerate}
-      >
-        Generate
-        {(isFetching || isPending) && <Spinner size="sm" ml="4px" />}
-      </GButton>
+      {sections?.length > 0 && (
+        <GButton
+          disabled={isFetching || isPending || isLoading}
+          mt="8px"
+          size={"sm"}
+          onClick={handleGenerate}
+        >
+          Generate
+          {(isFetching || isPending) && <Spinner size="sm" ml="4px" />}
+        </GButton>
+      )}
     </Box>
   );
 };

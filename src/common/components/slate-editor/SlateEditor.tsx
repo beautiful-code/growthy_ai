@@ -213,7 +213,9 @@ export const SlateEditor: React.FC<TSlateEditor> = ({
       { match: (n) => Text.isText(n), split: true }
     );
 
-    saveEditorComments([{ commentId: id, text: "", author: currentUser, enableReply: false }]);
+    saveEditorComments([
+      { commentId: id, text: "", author: currentUser, enableReply: false },
+    ]);
 
     setTargetRange(null);
   };
@@ -242,7 +244,7 @@ export const SlateEditor: React.FC<TSlateEditor> = ({
   );
 
   return (
-    <Grid templateColumns="70% 30%" gap={4}>
+    <Grid templateColumns="70% 30%">
       <GridItem colSpan={1}>
         <Box ref={editorRef}>
           <Slate

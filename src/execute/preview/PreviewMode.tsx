@@ -86,8 +86,8 @@ export const PreviewMode: React.FC<Props> = ({
   };
 
   return (
-    <Grid templateColumns={"20% 80%"}>
-      <GridItem borderRight={"1px solid #e3e3e3"}>
+    <Grid templateColumns={"20% 80%"} height={"calc(100vh - 64px)"}>
+      <GridItem borderRight={"1px solid #e3e3e3"} paddingLeft={"20px"}>
         <SectionList
           publicationSections={generatedSectionsCasted}
           selectedSectionIndex={selectedSectionIndex}

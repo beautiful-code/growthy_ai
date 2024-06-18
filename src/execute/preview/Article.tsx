@@ -1,7 +1,10 @@
 import React, { useRef, useEffect, MutableRefObject } from "react";
 import { Box, Text } from "@chakra-ui/react";
 
-import { CustomElement, SlateEditor } from "common/components/slate-editor/SlateEditor";
+import {
+  CustomElement,
+  SlateEditor,
+} from "common/components/slate-editor/SlateEditor";
 import { PreviewSection, TGeneratedTasksContent } from "types";
 import { useUpdateTaskContent } from "execute/hooks/useUpdateTaskContent";
 import { PostgrestError } from "@supabase/supabase-js";
@@ -31,10 +34,10 @@ export const Article: React.FC<Props> = ({
   );
 
   const { updateTaskContentMutation } = useUpdateTaskContent({
-    updateTaskContent,      
+    updateTaskContent,
     onSuccess: () => {
       refetchSections();
-    }
+    },
   });
 
   useEffect(() => {
@@ -79,6 +82,7 @@ export const Article: React.FC<Props> = ({
         scrollableElement.removeEventListener("scroll", handleScroll);
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const setVisibleSectionRef = (node: HTMLDivElement | null, index: number) => {
@@ -93,7 +97,7 @@ export const Article: React.FC<Props> = ({
         // Max height calculation is hacky
         maxHeight: "calc(101vh - 135px)",
         overflowY: "scroll",
-        position: "relative",
+        // position: "relative",
       }}
     >
       {sections?.map((section, index) => (

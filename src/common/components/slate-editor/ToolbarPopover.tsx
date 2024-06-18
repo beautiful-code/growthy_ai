@@ -58,14 +58,14 @@ export const ToolbarPopover: React.FC<Props> = ({
       const top = targetRange.top + scrollY;
       const left = targetRange.left + scrollX + targetRange.width / 2;
 
-      triggerRef.current.style.top = `${top - 40}px`;
+      triggerRef.current.style.top = `${top - 10}px`;
       triggerRef.current.style.left = `${left}px`;
     };
 
     const findScrollableParent = (element: HTMLElement | null) => {
       while (element && element !== document.body) {
         const { overflowY } = window.getComputedStyle(element);
-        if (overflowY === 'auto' || overflowY === 'scroll') {
+        if (overflowY === "auto" || overflowY === "scroll") {
           return element;
         }
         element = element.parentElement;
@@ -74,21 +74,27 @@ export const ToolbarPopover: React.FC<Props> = ({
     };
 
     const scrollableParent = findScrollableParent(triggerRef.current);
-    scrollableParent?.addEventListener('scroll', updatePosition);
-    window.addEventListener('resize', updatePosition);
+    scrollableParent?.addEventListener("scroll", updatePosition);
+    window.addEventListener("resize", updatePosition);
 
     updatePosition(); // Initial position update
 
     return () => {
-      scrollableParent?.removeEventListener('scroll', updatePosition);
-      window.removeEventListener('resize', updatePosition);
+      scrollableParent?.removeEventListener("scroll", updatePosition);
+      window.removeEventListener("resize", updatePosition);
     };
   }, [targetRange]);
 
   return (
     <Popover isOpen={!!targetRange} placement="top">
       <PopoverTrigger>
-        <div ref={triggerRef} style={{ position: "absolute", visibility: targetRange ? 'visible' : 'hidden' }} />
+        <div
+          ref={triggerRef}
+          style={{
+            position: "absolute",
+            visibility: targetRange ? "visible" : "hidden",
+          }}
+        />
       </PopoverTrigger>
       <PopoverContent height={"60px"} width={"fit-content"}>
         <PopoverArrow />

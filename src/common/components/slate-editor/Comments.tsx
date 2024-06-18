@@ -7,15 +7,8 @@ import React, {
 } from "react";
 import { BaseRange } from "slate";
 import { ReactEditor } from "slate-react";
-import {
-  Box,
-  Portal,
-  Textarea,
-  Text,
-  Avatar,
-  Flex,
-  Button,
-} from "@chakra-ui/react";
+import { Box, Portal, Textarea, Text, Avatar, Flex } from "@chakra-ui/react";
+import { MdEdit } from "react-icons/md";
 import { CustomElement } from "./SlateEditor";
 import {
   getEditorComments,
@@ -56,6 +49,9 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
     {}
   );
   const [, setComments] = useState<TComment[]>([]);
+  const [highlightedCommentId, setHighlightedCommentId] = useState<
+    string | null
+  >(null);
   const [commentIdAndCommentsMap, setCommentIdAndCommentsMap] = useState<{
     [key: string]: TComment[];
   }>({});
@@ -258,76 +254,91 @@ export const Comments: React.FC<CommentsProps> = ({ editor }) => {
             style={{
               position: "absolute",
               top: `${positions.find((p) => p.commentId === commentId)?.top}px`,
-              left: `70%`,
+              left: `80%`,
               padding: "5px",
-              zIndex: 10,
-              width: "400px",
+              zIndex: highlightedCommentId === commentId ? 100 : 10,
+              marginBottom:
+                highlightedCommentId === commentId ? "10px" : undefined,
+              width: "270px",
             }}
             backgroundColor={"gray.100"}
             border={"1px solid whitesmoke"}
             borderRadius={15}
           >
             {comments.map((comment) => (
-              <React.Fragment key={comment.dbId}>
-                <Flex alignItems={"center"} my={"10px"} mx={"10px"} mr={"30px"}>
-                  <Avatar
-                    size={"sm"}
-                    name={comment?.author.username}
-                    src={comment?.author.avatar_url}
-                    bgColor={"#D9D9D9"}
-                    mr={2}
-                  />
-                  <Text fontSize="sm" fontWeight={"normal"}>
-                    {comment?.author.username}
-                  </Text>
+              <Box
+                mt={"8px"}
+                cursor={"pointer"}
+                key={comment.dbId}
+                onClick={() => {
+                  setHighlightedCommentId(commentId);
+                  if (!editModes[comment.dbId || ""]) {
+                    setVisibleReply((prev) => ({
+                      ...prev,
+                      [commentId]: !prev[commentId],
+                    }));
+                  }
+                }}
+              >
+                <Flex alignItems={"center"} justifyContent={"space-between"}>
+                  <Flex alignItems={"center"}>
+                    <Avatar
+                      size={"xs"}
+                      name={comment?.author.username}
+                      src={comment?.author.avatar_url}
+                      bgColor={"#D9D9D9"}
+                      mr={2}
+                    />
+                    <Text fontSize="x-small" fontWeight={"normal"}>
+                      {comment?.author.username}
+                    </Text>
+                  </Flex>
                   {currentUser.id === comment.author.id &&
                     !editModes[comment.dbId || ""] && (
-                      <Button
-                        p={2}
-                        ml={"20px"}
+                      <MdEdit
+                        style={{
+                          cursor: "pointer",
+                          marginRight: "8px",
+                        }}
                         onClick={() => handleEditClick(comment.dbId || "")}
-                      >
-                        Edit
-                      </Button>
+                      />
                     )}
                 </Flex>
 
-                <Textarea
-                  placeholder="Add a comment..."
-                  resize="none"
-                  focusBorderColor="black.500"
-                  defaultValue={comment?.text || ""}
-                  isReadOnly={!editModes[comment.dbId || ""]}
-                  border={"none"}
-                  _hover={{
-                    backgroundColor:
-                      !editModes[comment.dbId || ""] && "gray.200",
-                  }}
-                  borderRadius={15}
-                  ref={(el) => (editRefs.current[comment.dbId || ""] = el)}
-                  onClick={() => {
-                    if (!editModes[comment.dbId || ""]) {
-                      setVisibleReply((prev) => ({
-                        ...prev,
-                        [commentId]: !prev[commentId],
-                      }));
+                {comment?.text ? (
+                  <Text fontSize="small">{comment?.text}</Text>
+                ) : (
+                  <Textarea
+                    placeholder="Add a comment..."
+                    resize="none"
+                    size={"xs"}
+                    rows={1}
+                    focusBorderColor="black.500"
+                    defaultValue={comment?.text || ""}
+                    isReadOnly={!editModes[comment.dbId || ""]}
+                    border={"none"}
+                    _hover={{
+                      backgroundColor:
+                        !editModes[comment.dbId || ""] && "gray.200",
+                    }}
+                    borderRadius={15}
+                    ref={(el) => (editRefs.current[comment.dbId || ""] = el)}
+                    cursor={!editModes[comment.dbId || ""] ? "pointer" : "auto"}
+                    onKeyDown={(e) =>
+                      handleCommentKeyDown(e, comment.dbId || "", commentId)
                     }
-                  }}
-                  cursor={!editModes[comment.dbId || ""] ? "pointer" : "auto"}
-                  onKeyDown={(e) =>
-                    handleCommentKeyDown(e, comment.dbId || "", commentId)
-                  }
-                />
-              </React.Fragment>
+                  />
+                )}
+              </Box>
             ))}
 
             {visibleReply[commentId] && (
               <Textarea
+                rows={1}
                 placeholder="Add a reply..."
                 resize="none"
                 focusBorderColor="black.500"
                 borderRadius={15}
-                mt={"10px"}
                 backgroundColor={"white"}
                 onChange={(e) => handleReplyChange(commentId, e.target.value)}
                 onKeyDown={(e) => handleReplyKeyDown(e, commentId)}
