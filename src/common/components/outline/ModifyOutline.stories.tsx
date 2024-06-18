@@ -49,7 +49,6 @@ const mockUpdatedOutline = `
   </Outline>
 </BlogArticle>`;
 
-
 const mockGetExercise = (
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _id: string
@@ -68,6 +67,7 @@ const mockGetBlogArticleXMLSuggestion = async ({
   blog_article_goal: string;
   blog_article_points?: string;
 }): Promise<string> => {
+  console.log({ blog_article_goal, blog_article_points });
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve(mockUpdatedOutline);
